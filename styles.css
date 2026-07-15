@@ -11,7 +11,8 @@
   --accent: #ffb454;          /* warm gold — change me to re-theme the whole site */
   --accent-soft: #ffd9a0;     /* lighter gold for gradients */
   --line: rgba(232, 230, 227, 0.1);
-  --max-width: 720px;
+  --max-width: 1140px;   /* full page grid */
+  --col-width: 680px;    /* one content column */
   --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
   --font-mono: "Cascadia Code", "SF Mono", Consolas, monospace;
 }
@@ -120,6 +121,23 @@ main {
 
 .section {
   padding: 5.5rem 0 0;
+  max-width: var(--col-width);
+}
+
+/* Content swaps sides as the ribbon crosses the page:
+   ribbon right → content left (default); ribbon left → content right. */
+.section--right {
+  margin-left: auto;
+}
+
+.hero {
+  max-width: var(--col-width);
+}
+
+@media (max-width: 920px) {
+  .section--right {
+    margin-left: 0;
+  }
 }
 
 .section-label {
