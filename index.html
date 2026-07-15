@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Alec Lewis — music tools &amp; automation</title>
-  <meta name="description" content="Alec Lewis builds music tools, AI audio, and automation that runs a media channel by itself.">
-  <meta name="theme-color" content="#0a0a0c">
+  <meta name="description" content="Alec Lewis builds music tools, AI audio, and automation — including a media channel that runs itself.">
+  <meta name="theme-color" content="#f5f5f7">
   <link rel="canonical" href="https://aleclewiss.github.io/">
   <meta property="og:title" content="Alec Lewis">
   <meta property="og:description" content="Music tools, AI audio, and automation that runs a media channel by itself.">
@@ -21,126 +21,185 @@
   <header class="nav">
     <a class="nav-name" href="#top">Alec Lewis</a>
     <nav class="nav-links">
-      <a href="#work">Work</a>
-      <a href="#channel">The Channel</a>
-      <a href="#contact">Contact</a>
+      <a href="#aminal">Aminal House</a>
+      <a href="#backline">Backline</a>
+      <a href="#mixing">AI Mixing</a>
+      <a href="#about">About</a>
     </nav>
   </header>
 
   <main id="top">
 
-    <!-- ============ HERO ============ -->
-    <section class="hero">
-      <h1 class="hero-title">
-        <span class="line-wrap"><span class="line">Alec</span></span>
-        <span class="line-wrap"><span class="line">Lewis</span></span>
-      </h1>
-      <p class="hero-sub">
-        I build music tools, AI audio, and automation —
-        including a media channel that runs itself.
-      </p>
-    </section>
-
-    <!-- ============ WORK ============ -->
-    <section class="section" id="work">
-      <h2 class="section-label"><span>01</span> Music tools</h2>
-
-      <div class="cards">
-        <article class="card">
-          <div class="card-strip card-strip--amber" aria-hidden="true"></div>
-          <h3 class="card-title">Freak-Quencies</h3>
-          <p class="card-desc">
-            An AI mixing engineer for acoustic guitar. A neural network listens
-            to your take and applies a corrective EQ and compressor chain in
-            real time.
-          </p>
-          <p class="card-chain" aria-label="Signal chain">CNN Listener → EQ → Compressor</p>
-          <div class="card-foot">
-            <span class="card-tags">JUCE · PyTorch · DSP</span>
-            <a class="card-link" href="https://github.com/aleclewiss/Freak-Quencies" target="_blank" rel="noopener">Source →</a>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-strip card-strip--teal" aria-hidden="true"></div>
-          <h3 class="card-title">Backline</h3>
-          <p class="card-desc">
-            A desktop studio for the ACE-Step text-to-music model, patched
-            straight into Ableton Live — generate stems with words, arrange
-            them like any other clip.
-          </p>
-          <p class="card-chain" aria-label="Signal chain">ACE-Step → Live Link → Arrangement</p>
-          <div class="card-foot">
-            <span class="card-tags">Electron · React · Max for Live</span>
-            <a class="card-link" href="https://github.com/aleclewiss/backline" target="_blank" rel="noopener">Source →</a>
-          </div>
-        </article>
+    <!-- ============ 01 · AMINAL HOUSE ============ -->
+    <section class="project" id="aminal">
+      <div class="project-chip">
+        <svg class="chip-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="#ff0033" d="M23 7.2s-.2-1.6-.9-2.3c-.9-.9-1.9-.9-2.4-1C16.6 3.6 12 3.6 12 3.6s-4.6 0-7.7.3c-.5.1-1.5.1-2.4 1-.7.7-.9 2.3-.9 2.3S.8 9.1.8 11v1.8c0 1.9.2 3.8.2 3.8s.2 1.6.9 2.3c.9.9 2 .9 2.5 1 1.9.2 7.6.3 7.6.3s4.6 0 7.7-.3c.5-.1 1.5-.1 2.4-1 .7-.7.9-2.3.9-2.3s.2-1.9.2-3.8V11c0-1.9-.2-3.8-.2-3.8z"/><path fill="#fff" d="M9.7 8.6v6.5l6-3.2-6-3.3z"/></svg>
+        <span>On YouTube</span>
       </div>
-    </section>
 
-    <!-- ============ THE CHANNEL ============ -->
-    <section class="section" id="channel">
-      <h2 class="section-label"><span>02</span> The channel that runs itself</h2>
-
-      <div class="channel-head">
-        <img class="channel-avatar" src="https://yt3.googleusercontent.com/X3pcRbfQI5jQ5pSFL5h4l1-kJoR87KBCP8zVC8MFlcasb-1_SvqhlzfqbL7WWs3lEddRIbaYKg=s176-c-k-c0x00ffffff-no-rj" alt="Aminal House channel avatar" width="72" height="72" loading="lazy">
-        <div class="channel-id">
-          <h3 class="channel-name">Aminal House</h3>
-          <p class="channel-handle">@Aminal_House on YouTube</p>
+      <div class="project-head">
+        <img class="ah-avatar" src="https://yt3.googleusercontent.com/X3pcRbfQI5jQ5pSFL5h4l1-kJoR87KBCP8zVC8MFlcasb-1_SvqhlzfqbL7WWs3lEddRIbaYKg=s176-c-k-c0x00ffffff-no-rj" alt="Aminal House avatar" width="56" height="56" loading="lazy">
+        <div>
+          <h2 class="project-title">Aminal House</h2>
+          <p class="project-sub">@Aminal_House · the channel that runs itself</p>
         </div>
-        <a class="channel-visit" href="https://www.youtube.com/@Aminal_House" target="_blank" rel="noopener">Visit channel</a>
       </div>
 
-      <p class="channel-note">
-        Every upload below is real — sourced, edited, and posted by a Python
-        pipeline with no human in the loop.
-        <a href="https://github.com/aleclewiss/aminal-house-pipeline" target="_blank" rel="noopener">How the machine works →</a>
-      </p>
+      <div class="project-grid">
+        <div class="panel panel-media">
+          <ul class="shorts">
+            <li><a class="short" href="https://youtu.be/ifkNxi9HW00" target="_blank" rel="noopener">
+              <span class="short-thumb"><img src="https://i.ytimg.com/vi/ifkNxi9HW00/hqdefault.jpg" alt="" loading="lazy"></span>
+              <span class="short-title">Dachshunds are built different</span>
+              <span class="short-views">2.1K views</span>
+            </a></li>
+            <li><a class="short" href="https://youtu.be/uNAUcWt4b7I" target="_blank" rel="noopener">
+              <span class="short-thumb"><img src="https://i.ytimg.com/vi/uNAUcWt4b7I/hqdefault.jpg" alt="" loading="lazy"></span>
+              <span class="short-title">Goldens</span>
+              <span class="short-views">1.2K views</span>
+            </a></li>
+            <li><a class="short" href="https://youtu.be/ImZp7dTgAwE" target="_blank" rel="noopener">
+              <span class="short-thumb"><img src="https://i.ytimg.com/vi/ImZp7dTgAwE/hqdefault.jpg" alt="" loading="lazy"></span>
+              <span class="short-title">Corgis</span>
+              <span class="short-views">1.2K views</span>
+            </a></li>
+            <li><a class="short" href="https://youtu.be/5XjMj55Nj3w" target="_blank" rel="noopener">
+              <span class="short-thumb"><img src="https://i.ytimg.com/vi/5XjMj55Nj3w/hqdefault.jpg" alt="" loading="lazy"></span>
+              <span class="short-title">Yorkies</span>
+              <span class="short-views">694 views</span>
+            </a></li>
+            <li><a class="short" href="https://youtu.be/lR_tEGg4WVI" target="_blank" rel="noopener">
+              <span class="short-thumb"><img src="https://i.ytimg.com/vi/lR_tEGg4WVI/hqdefault.jpg" alt="" loading="lazy"></span>
+              <span class="short-title">Poms</span>
+              <span class="short-views">567 views</span>
+            </a></li>
+            <li><a class="short" href="https://youtu.be/-w-wkau9WAg" target="_blank" rel="noopener">
+              <span class="short-thumb"><img src="https://i.ytimg.com/vi/-w-wkau9WAg/hqdefault.jpg" alt="" loading="lazy"></span>
+              <span class="short-title">Shibas</span>
+              <span class="short-views">530 views</span>
+            </a></li>
+          </ul>
+        </div>
 
-      <ul class="shorts">
-        <li><a class="short" href="https://youtu.be/ifkNxi9HW00" target="_blank" rel="noopener">
-          <span class="short-thumb"><img src="https://i.ytimg.com/vi/ifkNxi9HW00/hqdefault.jpg" alt="" loading="lazy"></span>
-          <span class="short-title">Dachshunds are built different</span>
-          <span class="short-views">2.1K views</span>
-        </a></li>
-        <li><a class="short" href="https://youtu.be/uNAUcWt4b7I" target="_blank" rel="noopener">
-          <span class="short-thumb"><img src="https://i.ytimg.com/vi/uNAUcWt4b7I/hqdefault.jpg" alt="" loading="lazy"></span>
-          <span class="short-title">Goldens</span>
-          <span class="short-views">1.2K views</span>
-        </a></li>
-        <li><a class="short" href="https://youtu.be/ImZp7dTgAwE" target="_blank" rel="noopener">
-          <span class="short-thumb"><img src="https://i.ytimg.com/vi/ImZp7dTgAwE/hqdefault.jpg" alt="" loading="lazy"></span>
-          <span class="short-title">Corgis</span>
-          <span class="short-views">1.2K views</span>
-        </a></li>
-        <li><a class="short" href="https://youtu.be/5XjMj55Nj3w" target="_blank" rel="noopener">
-          <span class="short-thumb"><img src="https://i.ytimg.com/vi/5XjMj55Nj3w/hqdefault.jpg" alt="" loading="lazy"></span>
-          <span class="short-title">Yorkies</span>
-          <span class="short-views">694 views</span>
-        </a></li>
-        <li><a class="short" href="https://youtu.be/lR_tEGg4WVI" target="_blank" rel="noopener">
-          <span class="short-thumb"><img src="https://i.ytimg.com/vi/lR_tEGg4WVI/hqdefault.jpg" alt="" loading="lazy"></span>
-          <span class="short-title">Poms</span>
-          <span class="short-views">567 views</span>
-        </a></li>
-        <li><a class="short" href="https://youtu.be/-w-wkau9WAg" target="_blank" rel="noopener">
-          <span class="short-thumb"><img src="https://i.ytimg.com/vi/-w-wkau9WAg/hqdefault.jpg" alt="" loading="lazy"></span>
-          <span class="short-title">Shibas</span>
-          <span class="short-views">530 views</span>
-        </a></li>
-      </ul>
+        <aside class="panel panel-info">
+          <h3 class="info-title">A channel with no one behind the camera</h3>
+          <p class="info-text">
+            Every upload is sourced, edited, captioned, and posted by a Python
+            pipeline — no human in the loop. I built the machine; the machine
+            runs the channel.
+          </p>
+          <dl class="stats">
+            <div class="stat"><dt>Uploads</dt><dd>109</dd></div>
+            <div class="stat"><dt>Total views</dt><dd>177K+</dd></div>
+            <div class="stat"><dt>Subscribers</dt><dd>321</dd></div>
+            <div class="stat"><dt>Humans involved</dt><dd>0</dd></div>
+          </dl>
+          <div class="info-actions">
+            <a class="btn btn-primary" href="https://www.youtube.com/@Aminal_House" target="_blank" rel="noopener">Visit channel</a>
+            <a class="btn" href="https://github.com/aleclewiss/aminal-house-pipeline" target="_blank" rel="noopener">Pipeline source</a>
+          </div>
+        </aside>
+      </div>
     </section>
 
-    <!-- ============ CONTACT ============ -->
-    <section class="section" id="contact">
-      <h2 class="section-label"><span>03</span> Contact</h2>
-      <p class="contact-line">
-        Want to talk?
-        <a class="contact-email" href="mailto:aleclewis15946@gmail.com">aleclewis15946@gmail.com</a>
-      </p>
-      <div class="contact-links">
-        <a href="https://github.com/aleclewiss" target="_blank" rel="noopener">GitHub</a>
-        <a href="https://www.youtube.com/@Aminal_House" target="_blank" rel="noopener">YouTube</a>
+    <!-- ============ 02 · BACKLINE ============ -->
+    <section class="project" id="backline">
+      <div class="project-chip">
+        <img class="chip-icon chip-icon--img" src="https://raw.githubusercontent.com/aleclewiss/backline/main/ableton-sidebar/shell/assets/backline.png" alt="" width="22" height="22" loading="lazy">
+        <span>Desktop app</span>
+      </div>
+
+      <div class="project-head">
+        <div>
+          <h2 class="project-title">Backline</h2>
+          <p class="project-sub">Turn a prompt into a finished-sounding song</p>
+        </div>
+      </div>
+
+      <div class="project-grid">
+        <div class="panel panel-media">
+          <!-- Drop a real app screenshot at assets/backline-app.png and
+               replace this placeholder with:
+               <img class="media-img" src="assets/backline-app.png" alt="Backline app"> -->
+          <div class="media-placeholder">
+            <span>App screenshot goes here</span>
+            <small>send me a capture of Backline running and I'll drop it in</small>
+          </div>
+        </div>
+
+        <aside class="panel panel-info">
+          <h3 class="info-title">A studio around a model</h3>
+          <p class="info-text">
+            A desktop music studio for the open-source ACE-Step model — describe
+            the vibe, write or auto-generate lyrics, audition takes
+            Spotify-style, and drag the result into any DAW.
+          </p>
+          <p class="info-text">
+            The Ableton Live bridge syncs tempo and key, and drops finished
+            clips straight into a Session slot.
+          </p>
+          <div class="info-actions">
+            <a class="btn btn-primary" href="https://github.com/aleclewiss/backline" target="_blank" rel="noopener">View source</a>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ============ 03 · AI MIXING PIPELINE ============ -->
+    <section class="project" id="mixing">
+      <div class="project-chip"><span class="chip-dot" aria-hidden="true"></span><span>Freak-Quencies</span></div>
+
+      <div class="project-head">
+        <div>
+          <h2 class="project-title">AI Mixing Pipeline</h2>
+          <p class="project-sub">A neural network that mixes acoustic guitar in real time</p>
+        </div>
+      </div>
+
+      <div class="project-grid">
+        <div class="panel panel-media">
+          <!-- Drop a screen recording at assets/freak-demo.mp4 and replace with:
+               <video class="media-img" src="assets/freak-demo.mp4" autoplay muted loop playsinline></video> -->
+          <div class="media-placeholder">
+            <span>Looping video demo goes here</span>
+            <small>record a short capture of it mixing a take and I'll wire it in</small>
+          </div>
+        </div>
+
+        <aside class="panel panel-info">
+          <h3 class="info-title">It listens, then it mixes</h3>
+          <p class="info-text">
+            A convolutional neural network listens to a fingerpicked acoustic
+            take and predicts a corrective mixing chain — EQ and compression —
+            applied live inside a JUCE app.
+          </p>
+          <p class="info-chain">CNN Listener → EQ → Compressor</p>
+          <div class="info-actions">
+            <a class="btn btn-primary" href="https://github.com/aleclewiss/Freak-Quencies" target="_blank" rel="noopener">View source</a>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ============ 04 · ABOUT / RESUME ============ -->
+    <section class="about" id="about">
+      <div class="panel about-card">
+        <h2 class="about-name">Alec Lewis</h2>
+        <p class="about-line">Music tools · AI audio · automation</p>
+        <div class="about-links">
+          <a class="btn btn-primary" href="mailto:aleclewis15946@gmail.com">Email</a>
+          <a class="btn" href="https://github.com/aleclewiss" target="_blank" rel="noopener">GitHub</a>
+          <!-- add LinkedIn URL when you send it:
+          <a class="btn" href="https://www.linkedin.com/in/..." target="_blank" rel="noopener">LinkedIn</a> -->
+        </div>
+      </div>
+
+      <div class="panel resume-card">
+        <h3 class="info-title">Background</h3>
+        <div class="media-placeholder media-placeholder--short">
+          <span>Resume highlights go here</span>
+          <small>send me the parts of your resume you want shown — experience, education, skills</small>
+        </div>
       </div>
     </section>
 
@@ -148,7 +207,6 @@
 
   <footer class="footer">
     <span>© <span id="year">2026</span> Alec Lewis</span>
-    <span class="footer-note">Made by hand</span>
   </footer>
 
 </body>
