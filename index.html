@@ -12,71 +12,7 @@
 
   <div class="progress" aria-hidden="true"></div>
 
-  <!-- Static nature scene: gold line-art landscape, fixed behind content -->
-  <svg class="bg-scene" aria-hidden="true" viewBox="0 0 1440 810" preserveAspectRatio="xMidYMax slice">
-    <defs>
-      <radialGradient id="moonGlow" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="#ffb454" stop-opacity="0.28"/>
-        <stop offset="100%" stop-color="#ffb454" stop-opacity="0"/>
-      </radialGradient>
-      <linearGradient id="mist" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#0a0a0c" stop-opacity="0"/>
-        <stop offset="100%" stop-color="#0a0a0c" stop-opacity="0.85"/>
-      </linearGradient>
-    </defs>
-
-    <!-- moon -->
-    <circle cx="1150" cy="150" r="150" fill="url(#moonGlow)"/>
-    <circle cx="1150" cy="150" r="46" fill="none" stroke="#ffb454" stroke-opacity="0.6" stroke-width="1.5"/>
-    <path d="M1120 122 a46 46 0 0 0 18 70" fill="none" stroke="#ffb454" stroke-opacity="0.25" stroke-width="1"/>
-
-    <!-- birds -->
-    <g stroke="#ffb454" stroke-opacity="0.5" stroke-width="1.6" fill="none" stroke-linecap="round">
-      <path d="M905 205 q8 -7 15 0 q7 -7 15 0"/>
-      <path d="M955 178 q7 -6 13 0 q6 -6 13 0"/>
-      <path d="M1004 214 q6 -5 11 0 q5 -5 11 0"/>
-      <path d="M878 246 q5 -4 9 0 q4 -4 9 0"/>
-    </g>
-
-    <!-- far ridge -->
-    <path d="M0 560 L130 470 L250 540 L400 420 L540 520 L700 430 L840 510 L1010 390 L1160 500 L1300 440 L1440 520 L1440 810 L0 810 Z"
-          fill="#100e0a" stroke="#ffb454" stroke-opacity="0.16" stroke-width="1.4"/>
-
-    <!-- mid ridge -->
-    <path d="M0 640 L170 540 L320 620 L480 500 L640 610 L800 520 L960 615 L1130 505 L1290 605 L1440 555 L1440 810 L0 810 Z"
-          fill="#0d0b08" stroke="#ffb454" stroke-opacity="0.26" stroke-width="1.4"/>
-
-    <!-- stag on the mid ridge -->
-    <g transform="translate(1114 468) scale(1.05)" stroke="#ffb454" stroke-opacity="0.75" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <!-- body / legs -->
-      <path d="M0 22 q6 -7 14 -6 l16 1 q7 0 9 6 l1 8 M3 23 l-1 14 M13 24 l0 13 M34 25 l1 12 M39 24 l2 13"/>
-      <!-- neck / head -->
-      <path d="M38 17 q6 -8 8 -14 l6 1 q2 3 -1 5 l-4 2"/>
-      <!-- antlers -->
-      <path d="M48 3 q-2 -8 3 -13 M49 4 q4 -7 10 -8 M51 -4 q0 -5 4 -8 M55 -2 q4 -3 7 -3"/>
-    </g>
-
-    <!-- near ridge -->
-    <path d="M0 730 L200 620 L390 710 L560 590 L760 700 L950 610 L1150 705 L1330 630 L1440 690 L1440 810 L0 810 Z"
-          fill="#0a0906" stroke="#ffb454" stroke-opacity="0.4" stroke-width="1.6"/>
-
-    <!-- pines on the near ridge, left cluster -->
-    <g stroke="#ffb454" stroke-opacity="0.5" stroke-width="1.5" fill="none" stroke-linecap="round">
-      <path d="M150 648 l0 -54 M150 600 l-16 22 l10 -4 l-14 20 l11 -4 l-15 21 l24 -6 M150 600 l16 22 l-10 -4 l14 20 l-11 -4 l15 21 l-24 -6"/>
-      <path d="M208 668 l0 -44 M208 630 l-13 18 l8 -3 l-11 16 l9 -3 l-12 17 l19 -5 M208 630 l13 18 l-8 -3 l11 16 l-9 -3 l12 17 l-19 -5"/>
-      <path d="M104 672 l0 -38 M104 640 l-11 15 l7 -3 l-10 14 l8 -3 l-10 15 l16 -4 M104 640 l11 15 l-7 -3 l10 14 l-8 -3 l10 15 l-16 -4"/>
-    </g>
-
-    <!-- leaves drifting, right side -->
-    <g stroke="#ffb454" stroke-opacity="0.35" stroke-width="1.2" fill="none" stroke-linecap="round">
-      <path d="M1250 330 q6 -8 14 -6 q-2 10 -12 10 q-1 -2 -2 -4 Z M1257 331 q6 6 12 14"/>
-      <path d="M1300 390 q5 -7 12 -5 q-2 9 -10 9 q-1 -2 -2 -4 Z"/>
-      <path d="M1218 420 q5 -7 12 -5 q-2 9 -10 9 q-1 -2 -2 -4 Z"/>
-    </g>
-
-    <!-- mist at the base so content stays readable -->
-    <rect x="0" y="600" width="1440" height="210" fill="url(#mist)"/>
-  </svg>
+<div class="hero-art" aria-hidden="true"></div>
 
   <header class="nav">
     <a class="nav-name" href="#top">Alec Lewis</a>
