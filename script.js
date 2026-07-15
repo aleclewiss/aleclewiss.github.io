@@ -44,8 +44,8 @@ if (canvas && !reducedMotion.matches) {
   const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
   let W, H;
 
-  const SEGMENTS = 110;
-  const THREADS = 7;    // faint highlight strands inside the band
+  const SEGMENTS = 120;
+  const FIBERS = 22;    // wispy strands that make up the ribbon body
 
   function resize() {
     W = canvas.width = Math.floor(window.innerWidth * DPR);
@@ -56,25 +56,35 @@ if (canvas && !reducedMotion.matches) {
 
   let t = 0;
   let scrollCur = window.scrollY;
+  let scrollVel = 0;
 
   // One source of truth for the ribbon's shape at height ny (0–1).
   // Everything derives from eased scroll progress + slow idle time,
   // so motion is always continuous — no lurches on direction change.
   function ribbonAt(ny, eased) {
-    const drift = eased * 2.4 + t;
+    const drift = eased * 2.6 + t;
     const center =
-      Math.sin(ny * 3.1 + drift * 1.6) * W * 0.06 +
-      Math.sin(ny * 1.7 - drift) * W * 0.09;
-    const halfW = W * 0.05 * (0.62 + 0.38 * Math.sin(ny * 2.6 + drift * 1.2));
+      Math.sin(ny * 3.4 + drift * 1.6) * W * 0.07 +
+      Math.sin(ny * 1.6 - drift) * W * 0.1 +
+      Math.sin(ny * 6.3 + drift * 2.3) * W * 0.018;
+    // Width pinches to near-zero at points — the "folds" in the light.
+    const fold = Math.sin(ny * 3.9 + drift * 1.4);
+    const halfW = W * 0.055 * (0.12 + 0.88 * Math.abs(fold));
     return { center, halfW };
   }
 
   function frame() {
-    const scrollDelta = window.scrollY - scrollCur;
-    scrollCur += scrollDelta * 0.045;   // heavy easing = gentle motion
-    t += 0.0022;                        // idle breathing, very slow
+    // Critically-damped spring toward the real scroll position —
+    // fluid inertia, glides to rest with no overshoot or lurch.
+    const target = window.scrollY;
+    scrollVel += (target - scrollCur) * 0.0065;
+    scrollVel *= 0.855;
+    scrollCur += scrollVel;
+    t += 0.0022;
 
     ctx.clearRect(0, 0, W, H);
+    ctx.globalCompositeOperation = "lighter";   // light adds up where fibers cross
+    ctx.lineCap = "round";
 
     // The ribbon runs top-to-bottom. It hugs the right side of the
     // viewport at the top of the page and sweeps left as you scroll.
@@ -83,7 +93,7 @@ if (canvas && !reducedMotion.matches) {
     const eased = progress * progress * (3 - 2 * progress);  // smoothstep
     const baseX = W * (0.8 - eased * 0.58);
 
-    // Sample both edges of the band once.
+    // Sample the band edges once.
     const left = [], right = [], ys = [];
     for (let i = 0; i <= SEGMENTS; i++) {
       const ny = i / SEGMENTS;
@@ -94,43 +104,33 @@ if (canvas && !reducedMotion.matches) {
       right.push(baseX + center + halfW);
     }
 
-    // Solid silk body: filled band with a soft cross-fade gradient.
-    const grad = ctx.createLinearGradient(baseX - W * 0.1, 0, baseX + W * 0.1, 0);
-    grad.addColorStop(0, "rgba(255, 180, 84, 0.05)");
-    grad.addColorStop(0.5, "rgba(255, 196, 116, 0.16)");
-    grad.addColorStop(1, "rgba(255, 180, 84, 0.05)");
-    ctx.fillStyle = grad;
-    ctx.beginPath();
-    ctx.moveTo(left[0], ys[0]);
-    for (let i = 1; i <= SEGMENTS; i++) ctx.lineTo(left[i], ys[i]);
-    for (let i = SEGMENTS; i >= 0; i--) ctx.lineTo(right[i], ys[i]);
-    ctx.closePath();
-    ctx.fill();
-
-    // Bright inner core for depth.
-    ctx.beginPath();
-    ctx.moveTo(left[0] * 0.35 + right[0] * 0.65, ys[0]);
-    for (let i = 1; i <= SEGMENTS; i++) {
-      ctx.lineTo(left[i] * 0.35 + right[i] * 0.65, ys[i]);
-    }
-    ctx.strokeStyle = "rgba(255, 214, 150, 0.22)";
-    ctx.lineWidth = DPR * 2.2;
-    ctx.lineCap = "round";
-    ctx.stroke();
-
-    // A few faint threads across the band — the silk texture.
-    for (let k = 0; k < THREADS; k++) {
-      const u = (k + 1) / (THREADS + 1);
+    const strokePath = (u, style, width) => {
       ctx.beginPath();
       ctx.moveTo(left[0] * (1 - u) + right[0] * u, ys[0]);
       for (let i = 1; i <= SEGMENTS; i++) {
         ctx.lineTo(left[i] * (1 - u) + right[i] * u, ys[i]);
       }
-      ctx.strokeStyle = "rgba(255, 190, 100, 0.07)";
-      ctx.lineWidth = DPR;
+      ctx.strokeStyle = style;
+      ctx.lineWidth = width;
       ctx.stroke();
+    };
+
+    // Wispy fibers — denser light toward the ribbon's core, like the
+    // long-exposure light painting: glowing folds, soft edges.
+    for (let k = 0; k < FIBERS; k++) {
+      const u = k / (FIBERS - 1);
+      const coreness = 1 - Math.abs(u - 0.5) * 2;   // 1 at core, 0 at edges
+      const alpha = 0.02 + 0.055 * coreness * coreness;
+      strokePath(u, `rgba(255, 180, 84, ${alpha.toFixed(3)})`, DPR * 1.3);
     }
 
+    // Luminous core: three passes, wide-and-faint to thin-and-bright,
+    // fakes the bloom of overexposed light.
+    strokePath(0.5, "rgba(255, 190, 100, 0.05)", DPR * 10);
+    strokePath(0.5, "rgba(255, 205, 130, 0.13)", DPR * 4);
+    strokePath(0.5, "rgba(255, 226, 170, 0.4)", DPR * 1.4);
+
+    ctx.globalCompositeOperation = "source-over";
     requestAnimationFrame(frame);
   }
 
