@@ -68,10 +68,12 @@ if (canvas && !reducedMotion.matches) {
     ctx.globalCompositeOperation = "lighter";
     ctx.lineCap = "round";
 
-    // The ribbon drifts down the viewport as you move through the page.
+    // The ribbon runs top-to-bottom. It hugs the right side of the
+    // viewport at the top of the page and sweeps left as you scroll.
     const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
     const progress = scrollCur / maxScroll;   // 0 at top, 1 at bottom
-    const baseY = H * (0.32 + progress * 0.36);
+    const eased = progress * progress * (3 - 2 * progress);  // smoothstep
+    const baseX = W * (0.8 - eased * 0.58);
 
     for (let k = 0; k < STRANDS; k++) {
       const u = k / (STRANDS - 1) - 0.5;      // -0.5 … 0.5 across the ribbon
@@ -82,19 +84,19 @@ if (canvas && !reducedMotion.matches) {
       ctx.beginPath();
 
       for (let i = 0; i <= SEGMENTS; i++) {
-        const x = (i / SEGMENTS) * (W + 160 * DPR) - 80 * DPR;
-        const nx = i / SEGMENTS;
+        const y = (i / SEGMENTS) * (H + 160 * DPR) - 80 * DPR;
+        const ny = i / SEGMENTS;
 
         // Shared centerline: two slow waves + scroll phase.
         const center =
-          Math.sin(nx * 4.6 + phase * 6 + t * 2.0) * H * 0.075 +
-          Math.sin(nx * 2.1 - phase * 4 - t * 1.3) * H * 0.105;
+          Math.sin(ny * 4.6 + phase * 6 + t * 2.0) * W * 0.055 +
+          Math.sin(ny * 2.1 - phase * 4 - t * 1.3) * W * 0.08;
 
         // Ribbon width twists along its length — pinches and unfurls.
-        const twist = Math.sin(nx * 5.8 + phase * 9 + t * 2.6 + u * 0.7);
-        const spread = u * H * 0.055 * (0.35 + 0.65 * Math.abs(twist));
+        const twist = Math.sin(ny * 5.8 + phase * 9 + t * 2.6 + u * 0.7);
+        const spread = u * W * 0.042 * (0.35 + 0.65 * Math.abs(twist));
 
-        const y = baseY + center + spread;
+        const x = baseX + center + spread;
         if (i === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
       }
