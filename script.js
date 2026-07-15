@@ -33,83 +33,75 @@ const observer = new IntersectionObserver(
 
 document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
 
-// Animated background: a fluid flow field of amber particle trails.
-// Particles drift along a smooth vector field; scrolling rotates the
-// field, so the whole current swirls as you move down the page.
+// Animated background: a single silk ribbon of gold light.
+// Dozens of fine strands weave around a shared centerline that
+// undulates as you scroll; idle, it only breathes very slowly.
 const canvas = document.getElementById("bg-canvas");
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 if (canvas && !reducedMotion.matches) {
   const ctx = canvas.getContext("2d");
   const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
-  let W, H, particles;
+  let W, H;
 
-  function spawn() {
-    return {
-      x: Math.random() * W,
-      y: Math.random() * H,
-      life: 150 + Math.random() * 350,
-    };
-  }
+  const STRANDS = 26;
+  const SEGMENTS = 90;
 
   function resize() {
     W = canvas.width = Math.floor(window.innerWidth * DPR);
     H = canvas.height = Math.floor(window.innerHeight * DPR);
     canvas.style.width = window.innerWidth + "px";
     canvas.style.height = window.innerHeight + "px";
-    const count = Math.min(340, Math.floor((W * H) / 8000));
-    particles = Array.from({ length: count }, spawn);
-    ctx.fillStyle = "#0a0a0c";
-    ctx.fillRect(0, 0, W, H);
   }
 
   let t = 0;
-  let scrollCur = 0;
+  let phase = 0;        // advances with scroll — the ribbon "travels"
+  let scrollCur = window.scrollY;
 
   function frame() {
-    const doc = document.documentElement;
-    const maxScroll = Math.max(1, doc.scrollHeight - window.innerHeight);
-    const scrollTarget = window.scrollY / maxScroll;
-    const scrollDelta = scrollTarget - scrollCur;
-    scrollCur += scrollDelta * 0.05;
-    t += 0.005;
+    const scrollDelta = window.scrollY - scrollCur;
+    scrollCur += scrollDelta * 0.06;          // heavy easing = gentle motion
+    phase += (scrollDelta * 0.06) * 0.0022;   // scroll feeds the ribbon
+    t += 0.0016;                              // idle breathing, very slow
 
-    // Fade previous frame slightly — this is what creates the trails.
-    ctx.fillStyle = "rgba(10, 10, 12, 0.035)";
-    ctx.fillRect(0, 0, W, H);
-
-    // Flow speeds up briefly while you're actually scrolling.
-    const boost = Math.min(1, Math.abs(scrollDelta) * 60);
-    const speed = (0.7 + boost * 1.6) * DPR;
-
-    ctx.lineWidth = DPR * 1.1;
+    ctx.clearRect(0, 0, W, H);
+    ctx.globalCompositeOperation = "lighter";
     ctx.lineCap = "round";
-    ctx.strokeStyle = "rgba(255, 180, 84, 0.32)";
-    ctx.beginPath();
 
-    for (const p of particles) {
-      const nx = p.x / W;
-      const ny = p.y / H;
-      // Smooth pseudo-noise field; scroll position rotates the current.
-      const angle =
-        Math.sin(nx * 4.2 + t * 0.8) * 1.15 +
-        Math.cos(ny * 3.4 - t * 0.55 + nx * 2.1) * 1.15 +
-        scrollCur * Math.PI * 2.2;
+    // The ribbon drifts down the viewport as you move through the page.
+    const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    const progress = scrollCur / maxScroll;   // 0 at top, 1 at bottom
+    const baseY = H * (0.32 + progress * 0.36);
 
-      const x2 = p.x + Math.cos(angle) * speed;
-      const y2 = p.y + Math.sin(angle) * speed;
-      ctx.moveTo(p.x, p.y);
-      ctx.lineTo(x2, y2);
+    for (let k = 0; k < STRANDS; k++) {
+      const u = k / (STRANDS - 1) - 0.5;      // -0.5 … 0.5 across the ribbon
+      // Strands near the middle are brightest — reads as a silk fold.
+      const alpha = 0.028 + 0.05 * (1 - Math.abs(u) * 2) ** 2;
+      ctx.strokeStyle = `rgba(255, 180, 84, ${alpha.toFixed(3)})`;
+      ctx.lineWidth = DPR * 1.2;
+      ctx.beginPath();
 
-      p.x = x2;
-      p.y = y2;
-      p.life -= 1;
-      if (p.life <= 0 || p.x < -20 || p.x > W + 20 || p.y < -20 || p.y > H + 20) {
-        Object.assign(p, spawn());
+      for (let i = 0; i <= SEGMENTS; i++) {
+        const x = (i / SEGMENTS) * (W + 160 * DPR) - 80 * DPR;
+        const nx = i / SEGMENTS;
+
+        // Shared centerline: two slow waves + scroll phase.
+        const center =
+          Math.sin(nx * 4.6 + phase * 6 + t * 2.0) * H * 0.075 +
+          Math.sin(nx * 2.1 - phase * 4 - t * 1.3) * H * 0.105;
+
+        // Ribbon width twists along its length — pinches and unfurls.
+        const twist = Math.sin(nx * 5.8 + phase * 9 + t * 2.6 + u * 0.7);
+        const spread = u * H * 0.055 * (0.35 + 0.65 * Math.abs(twist));
+
+        const y = baseY + center + spread;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
       }
+      ctx.stroke();
     }
 
-    ctx.stroke();
+    ctx.globalCompositeOperation = "source-over";
     requestAnimationFrame(frame);
   }
 
