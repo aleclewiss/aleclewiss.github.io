@@ -44,8 +44,8 @@ if (canvas && !reducedMotion.matches) {
   const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
   let W, H;
 
-  const STRANDS = 26;
-  const SEGMENTS = 90;
+  const SEGMENTS = 110;
+  const THREADS = 7;    // faint highlight strands inside the band
 
   function resize() {
     W = canvas.width = Math.floor(window.innerWidth * DPR);
@@ -55,55 +55,82 @@ if (canvas && !reducedMotion.matches) {
   }
 
   let t = 0;
-  let phase = 0;        // advances with scroll — the ribbon "travels"
   let scrollCur = window.scrollY;
+
+  // One source of truth for the ribbon's shape at height ny (0–1).
+  // Everything derives from eased scroll progress + slow idle time,
+  // so motion is always continuous — no lurches on direction change.
+  function ribbonAt(ny, eased) {
+    const drift = eased * 2.4 + t;
+    const center =
+      Math.sin(ny * 3.1 + drift * 1.6) * W * 0.06 +
+      Math.sin(ny * 1.7 - drift) * W * 0.09;
+    const halfW = W * 0.05 * (0.62 + 0.38 * Math.sin(ny * 2.6 + drift * 1.2));
+    return { center, halfW };
+  }
 
   function frame() {
     const scrollDelta = window.scrollY - scrollCur;
-    scrollCur += scrollDelta * 0.06;          // heavy easing = gentle motion
-    phase += (scrollDelta * 0.06) * 0.0022;   // scroll feeds the ribbon
-    t += 0.0016;                              // idle breathing, very slow
+    scrollCur += scrollDelta * 0.045;   // heavy easing = gentle motion
+    t += 0.0022;                        // idle breathing, very slow
 
     ctx.clearRect(0, 0, W, H);
-    ctx.globalCompositeOperation = "lighter";
-    ctx.lineCap = "round";
 
     // The ribbon runs top-to-bottom. It hugs the right side of the
     // viewport at the top of the page and sweeps left as you scroll.
     const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-    const progress = scrollCur / maxScroll;   // 0 at top, 1 at bottom
+    const progress = Math.min(1, Math.max(0, scrollCur / maxScroll));
     const eased = progress * progress * (3 - 2 * progress);  // smoothstep
     const baseX = W * (0.8 - eased * 0.58);
 
-    for (let k = 0; k < STRANDS; k++) {
-      const u = k / (STRANDS - 1) - 0.5;      // -0.5 … 0.5 across the ribbon
-      // Strands near the middle are brightest — reads as a silk fold.
-      const alpha = 0.028 + 0.05 * (1 - Math.abs(u) * 2) ** 2;
-      ctx.strokeStyle = `rgba(255, 180, 84, ${alpha.toFixed(3)})`;
-      ctx.lineWidth = DPR * 1.2;
+    // Sample both edges of the band once.
+    const left = [], right = [], ys = [];
+    for (let i = 0; i <= SEGMENTS; i++) {
+      const ny = i / SEGMENTS;
+      const y = ny * (H + 160 * DPR) - 80 * DPR;
+      const { center, halfW } = ribbonAt(ny, eased);
+      ys.push(y);
+      left.push(baseX + center - halfW);
+      right.push(baseX + center + halfW);
+    }
+
+    // Solid silk body: filled band with a soft cross-fade gradient.
+    const grad = ctx.createLinearGradient(baseX - W * 0.1, 0, baseX + W * 0.1, 0);
+    grad.addColorStop(0, "rgba(255, 180, 84, 0.05)");
+    grad.addColorStop(0.5, "rgba(255, 196, 116, 0.16)");
+    grad.addColorStop(1, "rgba(255, 180, 84, 0.05)");
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.moveTo(left[0], ys[0]);
+    for (let i = 1; i <= SEGMENTS; i++) ctx.lineTo(left[i], ys[i]);
+    for (let i = SEGMENTS; i >= 0; i--) ctx.lineTo(right[i], ys[i]);
+    ctx.closePath();
+    ctx.fill();
+
+    // Bright inner core for depth.
+    ctx.beginPath();
+    ctx.moveTo(left[0] * 0.35 + right[0] * 0.65, ys[0]);
+    for (let i = 1; i <= SEGMENTS; i++) {
+      ctx.lineTo(left[i] * 0.35 + right[i] * 0.65, ys[i]);
+    }
+    ctx.strokeStyle = "rgba(255, 214, 150, 0.22)";
+    ctx.lineWidth = DPR * 2.2;
+    ctx.lineCap = "round";
+    ctx.stroke();
+
+    // A few faint threads across the band — the silk texture.
+    for (let k = 0; k < THREADS; k++) {
+      const u = (k + 1) / (THREADS + 1);
       ctx.beginPath();
-
-      for (let i = 0; i <= SEGMENTS; i++) {
-        const y = (i / SEGMENTS) * (H + 160 * DPR) - 80 * DPR;
-        const ny = i / SEGMENTS;
-
-        // Shared centerline: two slow waves + scroll phase.
-        const center =
-          Math.sin(ny * 4.6 + phase * 6 + t * 2.0) * W * 0.055 +
-          Math.sin(ny * 2.1 - phase * 4 - t * 1.3) * W * 0.08;
-
-        // Ribbon width twists along its length — pinches and unfurls.
-        const twist = Math.sin(ny * 5.8 + phase * 9 + t * 2.6 + u * 0.7);
-        const spread = u * W * 0.042 * (0.35 + 0.65 * Math.abs(twist));
-
-        const x = baseX + center + spread;
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+      ctx.moveTo(left[0] * (1 - u) + right[0] * u, ys[0]);
+      for (let i = 1; i <= SEGMENTS; i++) {
+        ctx.lineTo(left[i] * (1 - u) + right[i] * u, ys[i]);
       }
+      ctx.strokeStyle = "rgba(255, 190, 100, 0.07)";
+      ctx.lineWidth = DPR;
       ctx.stroke();
     }
 
-    ctx.globalCompositeOperation = "source-over";
     requestAnimationFrame(frame);
   }
 
