@@ -36,6 +36,7 @@ if (canvas && !reducedMotion.matches) {
       phase: Math.random() * Math.PI * 2,
       twinkle: 0.5 + Math.random() * 1.4,
       drift: (Math.random() - 0.5) * 0.04,
+      tint: Math.random(), // picks white / pink / violet
     };
   }
 
@@ -44,12 +45,23 @@ if (canvas && !reducedMotion.matches) {
     H = canvas.height = Math.floor(window.innerHeight * DPR);
     canvas.style.width = window.innerWidth + "px";
     canvas.style.height = window.innerHeight + "px";
-    const count = Math.min(210, Math.floor((W * H) / 9500));
+    const count = Math.min(230, Math.floor((W * H) / 9000));
     stars = Array.from({ length: count }, makeStar);
     linkDist = Math.min(W, H) * 0.17;
   }
 
   const wrap = (v, max) => ((v % max) + max) % max;
+
+  // Cursor: stars near the pointer link to it and lean toward it.
+  const mouse = { x: -1e6, y: -1e6 };
+  window.addEventListener("pointermove", (e) => {
+    mouse.x = e.clientX * DPR;
+    mouse.y = e.clientY * DPR;
+  }, { passive: true });
+  document.documentElement.addEventListener("pointerleave", () => {
+    mouse.x = -1e6;
+    mouse.y = -1e6;
+  });
 
   let t = 0;
   let scrollCur = 0;
@@ -66,21 +78,33 @@ if (canvas && !reducedMotion.matches) {
     const scrolling = Math.min(1, Math.abs(scrollDelta) * 0.015);
     linkGlow += (scrolling - linkGlow) * 0.05;
 
-    ctx.fillStyle = "#0a0a0c";
-    ctx.fillRect(0, 0, W, H);
+    // Transparent clear — the drifting nebula layer shows through.
+    ctx.clearRect(0, 0, W, H);
 
-    // Project stars: parallax by depth, wrapping at the edges.
+    // Project stars: parallax by depth, wrapping at the edges,
+    // with a gentle gravitational lean toward the cursor.
+    const cursorReach = linkDist * 1.15;
     const pts = [];
     for (const s of stars) {
       s.x += s.drift * DPR;
-      const px = wrap(s.x, W);
-      const py = wrap(s.y - scrollCur * DPR * 0.35 * s.depth, H);
+      let px = wrap(s.x, W);
+      let py = wrap(s.y - scrollCur * DPR * 0.35 * s.depth, H);
+      const mdx = mouse.x - px;
+      const mdy = mouse.y - py;
+      const md = Math.hypot(mdx, mdy);
+      let near = 0;
+      if (md < cursorReach) {
+        near = 1 - md / cursorReach;
+        const pull = near * near * 22 * DPR * s.depth;
+        px += (mdx / (md || 1)) * pull;
+        py += (mdy / (md || 1)) * pull;
+      }
       const glow = 0.55 + 0.45 * Math.sin(t * s.twinkle + s.phase);
-      pts.push({ px, py, s, glow });
+      pts.push({ px, py, s, glow, near });
     }
 
     // Constellation lines between nearby stars.
-    const reach = linkDist * (0.72 + linkGlow * 0.55);
+    const reach = linkDist * (0.76 + linkGlow * 0.55);
     ctx.lineCap = "round";
     ctx.lineWidth = DPR * 0.8;
     for (let i = 0; i < pts.length; i++) {
@@ -89,8 +113,9 @@ if (canvas && !reducedMotion.matches) {
         const dy = pts[i].py - pts[j].py;
         const d = Math.hypot(dx, dy);
         if (d > reach) continue;
-        const a = (1 - d / reach) * (0.08 + linkGlow * 0.26);
-        ctx.strokeStyle = `rgba(255, 180, 84, ${a.toFixed(3)})`;
+        const boost = Math.max(pts[i].near, pts[j].near);
+        const a = (1 - d / reach) * (0.09 + linkGlow * 0.26 + boost * 0.22);
+        ctx.strokeStyle = `rgba(255, 122, 195, ${a.toFixed(3)})`;
         ctx.beginPath();
         ctx.moveTo(pts[i].px, pts[i].py);
         ctx.lineTo(pts[j].px, pts[j].py);
@@ -98,13 +123,31 @@ if (canvas && !reducedMotion.matches) {
       }
     }
 
-    // Stars on top: warm white, the nearest few tinted amber.
-    for (const { px, py, s, glow } of pts) {
-      const r = DPR * (0.5 + s.depth * 1.5) * (0.8 + glow * 0.4);
+    // Threads from nearby stars to the cursor itself.
+    ctx.lineWidth = DPR * 0.7;
+    for (const p of pts) {
+      if (p.near <= 0.05) continue;
+      const a = p.near * 0.3;
+      ctx.strokeStyle = `rgba(255, 122, 195, ${a.toFixed(3)})`;
+      ctx.beginPath();
+      ctx.moveTo(p.px, p.py);
+      ctx.lineTo(mouse.x, mouse.y);
+      ctx.stroke();
+    }
+
+    // Stars on top: white core, pink and violet accents.
+    for (const { px, py, s, glow, near } of pts) {
+      const r = DPR * (0.5 + s.depth * 1.5) * (0.8 + glow * 0.4 + near * 0.5);
       const a = (0.25 + s.depth * 0.75) * glow;
-      ctx.fillStyle = s.depth > 0.88
-        ? `rgba(255, 180, 84, ${a.toFixed(3)})`
-        : `rgba(235, 233, 228, ${(a * 0.9).toFixed(3)})`;
+      let color;
+      if (s.depth > 0.88 || s.tint < 0.2) {
+        color = `rgba(255, 122, 195, ${a.toFixed(3)})`;        // pink
+      } else if (s.tint < 0.38) {
+        color = `rgba(178, 141, 255, ${a.toFixed(3)})`;        // violet
+      } else {
+        color = `rgba(235, 233, 228, ${(a * 0.9).toFixed(3)})`; // white
+      }
+      ctx.fillStyle = color;
       ctx.beginPath();
       ctx.arc(px, py, r, 0, Math.PI * 2);
       ctx.fill();
@@ -114,7 +157,7 @@ if (canvas && !reducedMotion.matches) {
     if (meteor) {
       const m = meteor;
       const a = Math.sin(Math.PI * (m.life / m.maxLife)) * 0.8;
-      ctx.strokeStyle = `rgba(255, 214, 160, ${a.toFixed(3)})`;
+      ctx.strokeStyle = `rgba(255, 170, 220, ${a.toFixed(3)})`;
       ctx.lineWidth = DPR * 1.3;
       ctx.beginPath();
       ctx.moveTo(m.x, m.y);

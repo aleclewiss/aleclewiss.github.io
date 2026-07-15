@@ -8,7 +8,7 @@
   --surface: #121216;
   --text: #e8e6e3;
   --text-dim: #8a8a93;
-  --accent: #ffb454;          /* warm amber — change me to re-theme the whole site */
+  --accent: #ff7ac3;          /* cosmic pink — change me to re-theme the whole site */
   --line: rgba(232, 230, 227, 0.1);
   --max-width: 720px;
   --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
@@ -45,9 +45,26 @@ a {
 }
 
 /* ---------- animated background ----------
-   A live canvas flow field: amber particle trails that drift
-   continuously and swirl with scroll (drawn by script.js).
+   Two layers: a slowly drifting AI-painted nebula underneath,
+   and a live canvas night sky on top (drawn by script.js).
    The .glow div is a static fallback for reduced motion. */
+
+.bg-nebula {
+  position: fixed;
+  inset: -7%;
+  z-index: 0;
+  pointer-events: none;
+  background: url("assets/nebula.jpg") center / cover no-repeat;
+  mix-blend-mode: screen;   /* black parts of the painting vanish */
+  opacity: 0.5;
+  animation: nebula-drift 90s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes nebula-drift {
+  from { transform: scale(1.04) translate(0, 0) rotate(0deg); }
+  to   { transform: scale(1.22) translate(-2%, 2.5%) rotate(1.5deg); }
+}
 
 .bg-canvas {
   position: fixed;
@@ -65,7 +82,7 @@ a {
   width: 90vw;
   height: 70vh;
   background: radial-gradient(ellipse at center,
-      rgba(255, 180, 84, 0.07) 0%,
+      rgba(255, 122, 195, 0.08) 0%,
       transparent 65%);
   pointer-events: none;
   z-index: 0;
@@ -359,6 +376,7 @@ main {
   }
   .status-dot { animation: none; }
   .bg-canvas { display: none; }
+  .bg-nebula { animation: none; }
   .glow { display: block; }
 }
 
