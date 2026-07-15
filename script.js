@@ -1,6 +1,23 @@
 // Signal that JS is running — reveal animations only apply with this class.
 document.documentElement.classList.add("js");
 
+// Hero name: each line rises out of its mask, staggered.
+document.querySelectorAll(".hero-title .line").forEach((line, i) => {
+  setTimeout(() => line.classList.add("in"), 200 + i * 140);
+});
+
+// Scroll progress bar.
+const progressBar = document.querySelector(".progress");
+if (progressBar) {
+  const updateProgress = () => {
+    const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    progressBar.style.transform = `scaleX(${window.scrollY / max})`;
+  };
+  window.addEventListener("scroll", updateProgress, { passive: true });
+  window.addEventListener("resize", updateProgress);
+  updateProgress();
+}
+
 // Scroll-reveal: fade sections in as they enter the viewport.
 const observer = new IntersectionObserver(
   (entries) => {
