@@ -1,7 +1,7 @@
 /* ============================================================
    Alec Lewis — the shapeshifter portfolio
-   One page, three costumes: intro, Ableton-style session view,
-   YouTube channel view, comment-box contact.
+   One page, three costumes, each worn FULL SCREEN:
+   intro → Ableton-style session view → YouTube channel → comments.
    ============================================================ */
 
 :root {
@@ -15,7 +15,7 @@
   --mono: "Cascadia Code", "SF Mono", Consolas, monospace;
 
   /* DAW costume (flat Ableton grays) */
-  --daw-bg: #161616;
+  --daw-bg: #1a1a1a;
   --daw-panel: #232323;
   --daw-panel-2: #2b2b2b;
   --daw-border: #3a3a3a;
@@ -64,7 +64,7 @@ button:focus-visible {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  padding: 1.1rem max(1.5rem, calc((100vw - var(--max)) / 2 + 1.5rem));
+  padding: 1rem max(1.5rem, calc((100vw - var(--max)) / 2 + 1.5rem));
   background: rgba(10, 10, 12, 0.75);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
@@ -95,7 +95,8 @@ button:focus-visible {
 .hero {
   max-width: var(--max);
   margin: 0 auto;
-  padding: min(14vh, 8rem) 1.5rem 5rem;
+  min-height: min(72vh, 44rem);
+  padding: min(12vh, 7rem) 1.5rem 4rem;
 }
 
 .hero-title {
@@ -152,14 +153,42 @@ button:focus-visible {
   background: linear-gradient(90deg, var(--accent), transparent);
 }
 
-/* ---------- stages (themed sections) ---------- */
+/* ---------- switch strips between costumes ---------- */
 
-.stage { padding: 4.5rem 0; scroll-margin-top: 4.5rem; }
+.switch {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--dim);
+  text-align: center;
+  padding: 0.8rem 1.5rem;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid #000;
+  background: #060607;
+}
+
+.switch span::before { content: "▸ "; color: var(--accent); }
+
+.switch--yt span::before { color: var(--yt-red); }
+
+/* ---------- stages ---------- */
+
+.stage { scroll-margin-top: 3.6rem; }
+
+.stage--daw,
+.stage--yt {
+  min-height: min(100vh, 62rem);
+  min-height: min(100svh, 62rem);
+  display: flex;
+  flex-direction: column;
+}
 
 .stage-inner {
   max-width: var(--max);
   margin: 0 auto;
   padding: 0 1.5rem;
+  width: 100%;
 }
 
 .stage-inner--narrow { max-width: 760px; }
@@ -176,26 +205,39 @@ button:focus-visible {
 .stage-label span { color: var(--accent); margin-right: 0.6rem; }
 
 /* ============================================================
-   COSTUME 1 — the DAW
+   COSTUME 1 — full-screen DAW
    ============================================================ */
 
-.stage--daw { background: var(--daw-bg); border-top: 1px solid #000; border-bottom: 1px solid #000; }
+.stage--daw { background: var(--daw-bg); }
 
 .daw {
-  border: 1px solid var(--daw-border);
-  border-radius: 4px;
-  overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   background: var(--daw-panel);
   color: var(--daw-text);
   font-family: var(--mono);
 }
+
+/* menu bar */
+.daw-menu {
+  display: flex;
+  gap: 1.4rem;
+  padding: 0.45rem 1.25rem;
+  font-size: 0.72rem;
+  color: #9a9a94;
+  background: #202020;
+  border-bottom: 1px solid #000;
+}
+
+.daw-menu-right { margin-left: auto; color: #6f6f69; }
 
 /* transport */
 .transport {
   display: flex;
   align-items: center;
   gap: 1.1rem;
-  padding: 0.55rem 1rem;
+  padding: 0.6rem 1.25rem;
   background: var(--daw-panel-2);
   border-bottom: 1px solid #000;
   font-size: 0.8rem;
@@ -203,7 +245,7 @@ button:focus-visible {
 
 .t-file { color: #9a9a94; }
 .t-tempo { color: var(--clip-amber); font-weight: 600; }
-.t-sig { color: #9a9a94; }
+.t-sig, .t-pos { color: #9a9a94; }
 
 .t-btn {
   background: #1a1a1a;
@@ -211,7 +253,7 @@ button:focus-visible {
   border: 1px solid var(--daw-border);
   border-radius: 3px;
   font-size: 0.75rem;
-  padding: 0.2rem 0.7rem;
+  padding: 0.25rem 0.8rem;
   cursor: pointer;
   font-family: inherit;
 }
@@ -223,19 +265,21 @@ button:focus-visible {
 .t-rec { color: #e05555; opacity: 0.5; }
 .t-cpu { margin-left: auto; color: #9a9a94; }
 
-/* session grid */
+/* session grid fills the screen */
 .session {
+  flex: 1;
   display: grid;
-  grid-template-columns: repeat(3, 1fr) 130px;
+  grid-template-columns: repeat(3, 1fr) 150px;
   gap: 1px;
   background: #000;
+  min-height: 0;
 }
 
 .track { background: var(--daw-panel); display: flex; flex-direction: column; }
 
 .track-head {
-  padding: 0.5rem 0.75rem;
-  font-size: 0.78rem;
+  padding: 0.55rem 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
   background: var(--daw-panel-2);
   border-bottom: 1px solid #000;
@@ -245,12 +289,12 @@ button:focus-visible {
 }
 
 .clip {
-  margin: 6px;
-  padding: 0.7rem 0.75rem;
+  margin: 7px;
+  padding: 0.85rem 0.85rem;
   border: 0;
   border-radius: 2px;
   font-family: inherit;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 600;
   color: #141414;
   text-align: left;
@@ -273,34 +317,46 @@ button:focus-visible {
 @keyframes blink { 50% { opacity: 0.15; } }
 
 .slot {
-  margin: 0 6px 6px;
-  padding: 0.55rem 0.75rem;
+  margin: 0 7px 7px;
+  padding: 0.6rem 0.85rem;
   background: #1d1d1d;
   border-radius: 2px;
   color: #454545;
   font-size: 0.65rem;
+  flex: 0 1 auto;
 }
 
 .track-foot {
   margin-top: auto;
-  padding: 0.45rem 0.75rem;
+  padding: 0.5rem 0.85rem;
   font-size: 0.68rem;
-  color: #79797300;
   color: #797973;
   border-top: 1px solid #000;
+  display: flex;
+  justify-content: space-between;
 }
 
 /* master strip */
-.track--master { align-items: center; padding-bottom: 0.75rem; }
+.track--master { align-items: center; padding-bottom: 0.85rem; }
 
 .track--master .track-head { align-self: stretch; text-align: center; }
+
+.scene {
+  align-self: stretch;
+  margin: 7px 7px 0;
+  padding: 0.45rem 0.6rem;
+  background: #1d1d1d;
+  border-radius: 2px;
+  color: #6f6f69;
+  font-size: 0.68rem;
+}
 
 .fader {
   width: 10px;
   flex: 1;
-  min-height: 90px;
-  margin: 12px 0;
-  background: #1a1a1a;
+  min-height: 70px;
+  margin: 14px 0;
+  background: #141414;
   border-radius: 5px;
   position: relative;
 }
@@ -310,20 +366,20 @@ button:focus-visible {
   left: 50%;
   top: 30%;
   transform: translateX(-50%);
-  width: 26px;
-  height: 14px;
+  width: 28px;
+  height: 15px;
   background: #d5d5d0;
   border-radius: 2px;
 }
 
 .master-cta {
-  font-size: 0.68rem;
+  font-size: 0.7rem;
   text-align: center;
   color: var(--clip-amber);
   text-decoration: none;
   border: 1px solid var(--daw-border);
   border-radius: 3px;
-  padding: 0.4rem 0.5rem;
+  padding: 0.45rem 0.6rem;
   line-height: 1.5;
 }
 
@@ -333,23 +389,23 @@ button:focus-visible {
 .rack { border-top: 1px solid #000; background: var(--daw-panel-2); }
 
 .rack-title {
-  padding: 0.45rem 1rem;
-  font-size: 0.78rem;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: var(--clip-amber);
   border-bottom: 1px solid #000;
 }
 
-.rack-body { padding: 0.9rem 1rem 1rem; }
+.rack-body { padding: 1rem 1.25rem 1.1rem; }
 
-.rack-devices { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.8rem; }
+.rack-devices { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.85rem; }
 
 .rack-device {
   border: 1px solid var(--daw-border);
   border-radius: 3px;
   background: var(--daw-panel);
-  padding: 0.45rem 0.7rem;
-  font-size: 0.72rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.74rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -367,9 +423,9 @@ button:focus-visible {
 
 .rack-desc {
   font-family: var(--sans);
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   color: #b9b9b2;
-  max-width: 62ch;
+  max-width: 70ch;
 }
 
 .rack-meta {
@@ -377,8 +433,8 @@ button:focus-visible {
   flex-wrap: wrap;
   gap: 1rem;
   align-items: baseline;
-  margin-top: 0.8rem;
-  font-size: 0.75rem;
+  margin-top: 0.85rem;
+  font-size: 0.76rem;
 }
 
 .rack-tags { color: #797973; }
@@ -389,24 +445,111 @@ button:focus-visible {
 @media (max-width: 860px) {
   .session { grid-template-columns: repeat(2, 1fr); }
   .track--master { display: none; }
+  .daw-menu span:nth-child(n+4):not(.daw-menu-right) { display: none; }
 }
 
 @media (max-width: 540px) {
   .session { grid-template-columns: 1fr; }
   .transport { flex-wrap: wrap; gap: 0.6rem; }
   .t-cpu { margin-left: 0; }
+  .stage--daw, .stage--yt { min-height: 0; }
 }
 
 /* ============================================================
-   COSTUME 2 — the YouTube channel
+   COSTUME 2 — full-screen YouTube
    ============================================================ */
 
-.stage--yt { background: var(--yt-bg); border-bottom: 1px solid #000; font-family: "Roboto", var(--sans); }
+.stage--yt { background: var(--yt-bg); font-family: "Roboto", var(--sans); }
 
-.stage-label--yt span { color: var(--yt-red); }
+.yt { flex: 1; display: flex; flex-direction: column; }
+
+/* top bar */
+.yt-topbar {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  padding: 0.55rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.yt-burger { font-size: 1.3rem; color: var(--dim); }
+
+.yt-logo {
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: -0.03em;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.yt-logo-mark {
+  background: var(--yt-red);
+  color: #fff;
+  font-size: 0.6rem;
+  border-radius: 6px;
+  padding: 0.18rem 0.5rem;
+}
+
+.yt-search {
+  flex: 1;
+  max-width: 480px;
+  margin: 0 auto;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  padding: 0.35rem 0.4rem 0.35rem 1rem;
+  font-size: 0.85rem;
+  color: var(--dim);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.yt-search-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  padding: 0.1rem 0.9rem;
+  font-size: 1rem;
+}
+
+.yt-me {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* rail + main */
+.yt-body { flex: 1; display: grid; grid-template-columns: 76px 1fr; min-height: 0; }
+
+.yt-rail {
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  align-items: center;
+  font-size: 0.62rem;
+  color: var(--dim);
+  text-align: center;
+  line-height: 1.6;
+}
+
+.yt-rail span { display: block; width: 100%; padding: 0.2rem 0; }
+.yt-rail .is-active { color: var(--text); font-weight: 600; }
+
+.yt-main { padding: 1.1rem 1.5rem 2.5rem; min-width: 0; }
 
 .yt-banner {
-  height: 110px;
+  height: clamp(90px, 14vw, 170px);
   border-radius: 12px;
   background: linear-gradient(105deg, #1d2b25, #14202e 55%, #2e1a1a);
   display: flex;
@@ -476,8 +619,8 @@ button:focus-visible {
 .yt-grid {
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 1.1rem;
   padding: 0.25rem;
 }
 
@@ -517,11 +660,17 @@ button:focus-visible {
   margin-top: 0.15rem;
 }
 
+@media (max-width: 640px) {
+  .yt-body { grid-template-columns: 1fr; }
+  .yt-rail { display: none; }
+  .yt-search { display: none; }
+}
+
 /* ============================================================
    COSTUME 3 — contact as a comment thread
    ============================================================ */
 
-.stage--contact { padding-bottom: 6rem; }
+.stage--contact { padding: 4.5rem 0 6rem; }
 
 .comment-box { display: flex; flex-direction: column; gap: 1.5rem; }
 
