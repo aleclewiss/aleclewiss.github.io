@@ -45,26 +45,9 @@ a {
 }
 
 /* ---------- animated background ----------
-   Two layers: a slowly drifting AI-painted nebula underneath,
-   and a live canvas night sky on top (drawn by script.js).
+   A live canvas night sky: procedural nebula clouds, twinkling
+   stars, constellations, meteors — all drawn by script.js.
    The .glow div is a static fallback for reduced motion. */
-
-.bg-nebula {
-  position: fixed;
-  inset: -7%;
-  z-index: 0;
-  pointer-events: none;
-  background: url("assets/nebula.jpg") center / cover no-repeat;
-  mix-blend-mode: screen;   /* black parts of the painting vanish */
-  opacity: 0.5;
-  animation: nebula-drift 90s ease-in-out infinite alternate;
-  will-change: transform;
-}
-
-@keyframes nebula-drift {
-  from { transform: scale(1.04) translate(0, 0) rotate(0deg); }
-  to   { transform: scale(1.22) translate(-2%, 2.5%) rotate(1.5deg); }
-}
 
 .bg-canvas {
   position: fixed;
@@ -376,7 +359,6 @@ main {
   }
   .status-dot { animation: none; }
   .bg-canvas { display: none; }
-  .bg-nebula { animation: none; }
   .glow { display: block; }
 }
 

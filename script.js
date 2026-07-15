@@ -28,6 +28,57 @@ if (canvas && !reducedMotion.matches) {
   const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
   let W, H, stars, linkDist;
 
+  // Procedural nebula: soft gas clouds rendered to a small offscreen
+  // canvas (cheap), then scaled up. They orbit, breathe, and drift
+  // upward as you scroll.
+  const neb = document.createElement("canvas");
+  const nctx = neb.getContext("2d");
+  let blobs;
+  const NEBULA_COLORS = [
+    "255, 95, 191",  // pink
+    "217, 70, 239",  // magenta
+    "139, 92, 246",  // violet
+    "99, 102, 241",  // indigo
+    "236, 72, 153",  // rose
+  ];
+
+  function makeBlobs() {
+    blobs = Array.from({ length: 8 }, (_, i) => ({
+      cx: 0.1 + Math.random() * 0.8,
+      cy: Math.random() * 1.4,           // some start below the fold
+      baseR: 0.22 + Math.random() * 0.33,
+      orbX: 0.03 + Math.random() * 0.07,
+      orbY: 0.02 + Math.random() * 0.05,
+      spX: 0.04 + Math.random() * 0.12,
+      spY: 0.03 + Math.random() * 0.1,
+      spR: 0.05 + Math.random() * 0.1,
+      phase: Math.random() * Math.PI * 2,
+      color: NEBULA_COLORS[i % NEBULA_COLORS.length],
+    }));
+  }
+
+  function drawNebula(t, scrollProgress) {
+    const nw = neb.width;
+    const nh = neb.height;
+    nctx.clearRect(0, 0, nw, nh);
+    nctx.globalCompositeOperation = "lighter";
+    for (const b of blobs) {
+      const bx = (b.cx + Math.cos(t * b.spX + b.phase) * b.orbX) * nw;
+      const by = (b.cy + Math.sin(t * b.spY + b.phase) * b.orbY - scrollProgress * 0.45) * nh;
+      const r = b.baseR * Math.min(nw, nh) * (1.25 + 0.14 * Math.sin(t * b.spR + b.phase * 2));
+      if (by + r < 0 || by - r > nh) continue;
+      const g = nctx.createRadialGradient(bx, by, 0, bx, by, r);
+      g.addColorStop(0, `rgba(${b.color}, 0.14)`);
+      g.addColorStop(0.45, `rgba(${b.color}, 0.07)`);
+      g.addColorStop(1, "rgba(0, 0, 0, 0)");
+      nctx.fillStyle = g;
+      nctx.beginPath();
+      nctx.arc(bx, by, r, 0, Math.PI * 2);
+      nctx.fill();
+    }
+    nctx.globalCompositeOperation = "source-over";
+  }
+
   function makeStar() {
     return {
       x: Math.random() * W,
@@ -48,6 +99,9 @@ if (canvas && !reducedMotion.matches) {
     const count = Math.min(230, Math.floor((W * H) / 9000));
     stars = Array.from({ length: count }, makeStar);
     linkDist = Math.min(W, H) * 0.17;
+    neb.width = Math.max(2, W >> 2);
+    neb.height = Math.max(2, H >> 2);
+    makeBlobs();
   }
 
   const wrap = (v, max) => ((v % max) + max) % max;
@@ -78,8 +132,12 @@ if (canvas && !reducedMotion.matches) {
     const scrolling = Math.min(1, Math.abs(scrollDelta) * 0.015);
     linkGlow += (scrolling - linkGlow) * 0.05;
 
-    // Transparent clear — the drifting nebula layer shows through.
+    // Nebula first, scaled up from the offscreen canvas — the small
+    // buffer plus smoothing gives the gas its softness for free.
     ctx.clearRect(0, 0, W, H);
+    const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    drawNebula(t, scrollCur / maxScroll);
+    ctx.drawImage(neb, 0, 0, W, H);
 
     // Project stars: parallax by depth, wrapping at the edges,
     // with a gentle gravitational lean toward the cursor.
@@ -146,6 +204,17 @@ if (canvas && !reducedMotion.matches) {
         color = `rgba(178, 141, 255, ${a.toFixed(3)})`;        // violet
       } else {
         color = `rgba(235, 233, 228, ${(a * 0.9).toFixed(3)})`; // white
+      }
+      // Soft halo around the brightest stars.
+      if (s.depth > 0.82) {
+        const hr = r * 5;
+        const halo = ctx.createRadialGradient(px, py, 0, px, py, hr);
+        halo.addColorStop(0, color.replace(/[\d.]+\)$/, `${(a * 0.35).toFixed(3)})`));
+        halo.addColorStop(1, "rgba(0, 0, 0, 0)");
+        ctx.fillStyle = halo;
+        ctx.beginPath();
+        ctx.arc(px, py, hr, 0, Math.PI * 2);
+        ctx.fill();
       }
       ctx.fillStyle = color;
       ctx.beginPath();
