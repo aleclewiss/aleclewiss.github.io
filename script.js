@@ -16,22 +16,26 @@ const observer = new IntersectionObserver(
 
 document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
 
-// Animated background: a fluid flow field of amber particle trails.
-// Particles drift along a smooth vector field; scrolling rotates the
-// field, so the whole current swirls as you move down the page.
+// Animated background: a night sky. Stars twinkle at different depths
+// and parallax as you scroll; amber constellation lines glow into
+// existence while you're moving down the page. A meteor passes now
+// and then.
 const canvas = document.getElementById("bg-canvas");
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 if (canvas && !reducedMotion.matches) {
   const ctx = canvas.getContext("2d");
   const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
-  let W, H, particles;
+  let W, H, stars, linkDist;
 
-  function spawn() {
+  function makeStar() {
     return {
       x: Math.random() * W,
       y: Math.random() * H,
-      life: 150 + Math.random() * 350,
+      depth: 0.15 + Math.random() * 0.85, // far (dim, slow) → near (bright, fast)
+      phase: Math.random() * Math.PI * 2,
+      twinkle: 0.5 + Math.random() * 1.4,
+      drift: (Math.random() - 0.5) * 0.04,
     };
   }
 
@@ -40,59 +44,98 @@ if (canvas && !reducedMotion.matches) {
     H = canvas.height = Math.floor(window.innerHeight * DPR);
     canvas.style.width = window.innerWidth + "px";
     canvas.style.height = window.innerHeight + "px";
-    const count = Math.min(340, Math.floor((W * H) / 8000));
-    particles = Array.from({ length: count }, spawn);
-    ctx.fillStyle = "#0a0a0c";
-    ctx.fillRect(0, 0, W, H);
+    const count = Math.min(210, Math.floor((W * H) / 9500));
+    stars = Array.from({ length: count }, makeStar);
+    linkDist = Math.min(W, H) * 0.17;
   }
+
+  const wrap = (v, max) => ((v % max) + max) % max;
 
   let t = 0;
   let scrollCur = 0;
+  let linkGlow = 0;
+  let meteor = null;
+  let nextMeteor = 240;
 
   function frame() {
-    const doc = document.documentElement;
-    const maxScroll = Math.max(1, doc.scrollHeight - window.innerHeight);
-    const scrollTarget = window.scrollY / maxScroll;
-    const scrollDelta = scrollTarget - scrollCur;
-    scrollCur += scrollDelta * 0.05;
-    t += 0.005;
+    const scrollDelta = window.scrollY - scrollCur;
+    scrollCur += scrollDelta * 0.08;
+    t += 0.016;
 
-    // Fade previous frame slightly — this is what creates the trails.
-    ctx.fillStyle = "rgba(10, 10, 12, 0.035)";
+    // Constellations brighten while you're scrolling, fade when you stop.
+    const scrolling = Math.min(1, Math.abs(scrollDelta) * 0.015);
+    linkGlow += (scrolling - linkGlow) * 0.05;
+
+    ctx.fillStyle = "#0a0a0c";
     ctx.fillRect(0, 0, W, H);
 
-    // Flow speeds up briefly while you're actually scrolling.
-    const boost = Math.min(1, Math.abs(scrollDelta) * 60);
-    const speed = (0.7 + boost * 1.6) * DPR;
+    // Project stars: parallax by depth, wrapping at the edges.
+    const pts = [];
+    for (const s of stars) {
+      s.x += s.drift * DPR;
+      const px = wrap(s.x, W);
+      const py = wrap(s.y - scrollCur * DPR * 0.35 * s.depth, H);
+      const glow = 0.55 + 0.45 * Math.sin(t * s.twinkle + s.phase);
+      pts.push({ px, py, s, glow });
+    }
 
-    ctx.lineWidth = DPR * 1.1;
+    // Constellation lines between nearby stars.
+    const reach = linkDist * (0.72 + linkGlow * 0.55);
     ctx.lineCap = "round";
-    ctx.strokeStyle = "rgba(255, 180, 84, 0.32)";
-    ctx.beginPath();
-
-    for (const p of particles) {
-      const nx = p.x / W;
-      const ny = p.y / H;
-      // Smooth pseudo-noise field; scroll position rotates the current.
-      const angle =
-        Math.sin(nx * 4.2 + t * 0.8) * 1.15 +
-        Math.cos(ny * 3.4 - t * 0.55 + nx * 2.1) * 1.15 +
-        scrollCur * Math.PI * 2.2;
-
-      const x2 = p.x + Math.cos(angle) * speed;
-      const y2 = p.y + Math.sin(angle) * speed;
-      ctx.moveTo(p.x, p.y);
-      ctx.lineTo(x2, y2);
-
-      p.x = x2;
-      p.y = y2;
-      p.life -= 1;
-      if (p.life <= 0 || p.x < -20 || p.x > W + 20 || p.y < -20 || p.y > H + 20) {
-        Object.assign(p, spawn());
+    ctx.lineWidth = DPR * 0.8;
+    for (let i = 0; i < pts.length; i++) {
+      for (let j = i + 1; j < pts.length; j++) {
+        const dx = pts[i].px - pts[j].px;
+        const dy = pts[i].py - pts[j].py;
+        const d = Math.hypot(dx, dy);
+        if (d > reach) continue;
+        const a = (1 - d / reach) * (0.08 + linkGlow * 0.26);
+        ctx.strokeStyle = `rgba(255, 180, 84, ${a.toFixed(3)})`;
+        ctx.beginPath();
+        ctx.moveTo(pts[i].px, pts[i].py);
+        ctx.lineTo(pts[j].px, pts[j].py);
+        ctx.stroke();
       }
     }
 
-    ctx.stroke();
+    // Stars on top: warm white, the nearest few tinted amber.
+    for (const { px, py, s, glow } of pts) {
+      const r = DPR * (0.5 + s.depth * 1.5) * (0.8 + glow * 0.4);
+      const a = (0.25 + s.depth * 0.75) * glow;
+      ctx.fillStyle = s.depth > 0.88
+        ? `rgba(255, 180, 84, ${a.toFixed(3)})`
+        : `rgba(235, 233, 228, ${(a * 0.9).toFixed(3)})`;
+      ctx.beginPath();
+      ctx.arc(px, py, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // The occasional meteor.
+    if (meteor) {
+      const m = meteor;
+      const a = Math.sin(Math.PI * (m.life / m.maxLife)) * 0.8;
+      ctx.strokeStyle = `rgba(255, 214, 160, ${a.toFixed(3)})`;
+      ctx.lineWidth = DPR * 1.3;
+      ctx.beginPath();
+      ctx.moveTo(m.x, m.y);
+      ctx.lineTo(m.x - m.vx * 9, m.y - m.vy * 9);
+      ctx.stroke();
+      m.x += m.vx;
+      m.y += m.vy;
+      if (--m.life <= 0) meteor = null;
+    } else if (--nextMeteor <= 0) {
+      const fromLeft = Math.random() < 0.5;
+      meteor = {
+        x: (fromLeft ? 0.1 : 0.9) * W + Math.random() * 0.2 * W,
+        y: Math.random() * H * 0.35,
+        vx: (fromLeft ? 1 : -1) * (2.6 + Math.random() * 2.5) * DPR,
+        vy: (1.4 + Math.random() * 1.6) * DPR,
+        life: 70,
+        maxLife: 70,
+      };
+      nextMeteor = 400 + Math.random() * 600; // every ~7–17s
+    }
+
     requestAnimationFrame(frame);
   }
 
