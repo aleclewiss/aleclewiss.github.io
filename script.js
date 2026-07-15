@@ -33,110 +33,150 @@ const observer = new IntersectionObserver(
 
 document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
 
-// Animated background: a single silk ribbon of gold light.
-// Dozens of fine strands weave around a shared centerline that
-// undulates as you scroll; idle, it only breathes very slowly.
+// Animated background: a ribbon of golden light, rendered per-pixel
+// by a WebGL shader — layered luminous strands with real bloom, like
+// a long-exposure light painting. Scroll sweeps it right → left with
+// spring inertia.
 const canvas = document.getElementById("bg-canvas");
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-if (canvas && !reducedMotion.matches) {
-  const ctx = canvas.getContext("2d");
-  const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
-  let W, H;
+function initRibbon() {
+  if (!canvas || reducedMotion.matches) return false;
+  const gl = canvas.getContext("webgl", { alpha: false, antialias: false });
+  if (!gl) return false;
 
-  const SEGMENTS = 120;
-  const FIBERS = 22;    // wispy strands that make up the ribbon body
+  const VERT = `
+    attribute vec2 aPos;
+    void main() { gl_Position = vec4(aPos, 0.0, 1.0); }
+  `;
 
+  const FRAG = `
+    precision highp float;
+    uniform vec2 uRes;
+    uniform float uTime;    // slow idle drift
+    uniform float uEased;   // eased scroll progress 0..1
+    uniform float uBaseX;   // ribbon anchor, fraction of width
+
+    void main() {
+      vec2 uv = gl_FragCoord.xy / uRes;
+      float y = 1.0 - uv.y;               // 0 at top of screen
+      float drift = uEased * 2.6 + uTime;
+
+      // Shared centerline: layered waves, big and slow.
+      float center = uBaseX
+        + 0.075 * sin(y * 3.4 + drift * 1.6)
+        + 0.100 * sin(y * 1.6 - drift)
+        + 0.016 * sin(y * 6.5 + drift * 2.3);
+
+      vec3 gold  = vec3(1.0, 0.70, 0.33);
+      vec3 amber = vec3(1.0, 0.55, 0.18);
+      vec3 col = vec3(0.0);
+
+      // Nine luminous strands braided around the centerline. Each has
+      // its own sway; brightness folds along its length, so strands
+      // flare where they bunch — the light-painting look.
+      for (int i = 0; i < 9; i++) {
+        float fi = float(i);
+        float u = fi / 8.0 - 0.5;
+        float sway = u * (0.030 + 0.022 * sin(y * 4.2 + drift * 1.3 + fi * 1.9));
+        float d = abs(uv.x - center - sway);
+        float fold = 0.35 + 0.65 * pow(0.5 + 0.5 * sin(y * 5.2 + drift * 2.0 + fi * 2.3), 2.0);
+        float core = 0.00042 / (d + 0.0016);      // sharp bright line
+        float halo = 0.0045 / (1.0 + d * d * 9000.0); // soft bloom around it
+        col += mix(gold, amber, fold) * (core + halo) * fold;
+      }
+
+      // A wide, faint veil of light behind the strands.
+      float dv = uv.x - center;
+      col += gold * 0.06 * exp(-dv * dv * 160.0);
+
+      // Filmic-ish tone map: lets crossings overexpose to near-white
+      // without clipping harshly.
+      col = 1.0 - exp(-col * 1.35);
+
+      // Page background color underneath.
+      vec3 bg = vec3(0.039, 0.039, 0.047);
+      gl_FragColor = vec4(bg + col, 1.0);
+    }
+  `;
+
+  function compile(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) return null;
+    return s;
+  }
+
+  const vs = compile(gl.VERTEX_SHADER, VERT);
+  const fs = compile(gl.FRAGMENT_SHADER, FRAG);
+  if (!vs || !fs) return false;
+
+  const prog = gl.createProgram();
+  gl.attachShader(prog, vs);
+  gl.attachShader(prog, fs);
+  gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return false;
+  gl.useProgram(prog);
+
+  // Fullscreen triangle.
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(prog, "aPos");
+  gl.enableVertexAttribArray(loc);
+  gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+  const uRes = gl.getUniformLocation(prog, "uRes");
+  const uTime = gl.getUniformLocation(prog, "uTime");
+  const uEased = gl.getUniformLocation(prog, "uEased");
+  const uBaseX = gl.getUniformLocation(prog, "uBaseX");
+
+  const DPR = Math.min(window.devicePixelRatio || 1, 2);
   function resize() {
-    W = canvas.width = Math.floor(window.innerWidth * DPR);
-    H = canvas.height = Math.floor(window.innerHeight * DPR);
+    canvas.width = Math.floor(window.innerWidth * DPR);
+    canvas.height = Math.floor(window.innerHeight * DPR);
     canvas.style.width = window.innerWidth + "px";
     canvas.style.height = window.innerHeight + "px";
+    gl.viewport(0, 0, canvas.width, canvas.height);
   }
 
   let t = 0;
   let scrollCur = window.scrollY;
   let scrollVel = 0;
 
-  // One source of truth for the ribbon's shape at height ny (0–1).
-  // Everything derives from eased scroll progress + slow idle time,
-  // so motion is always continuous — no lurches on direction change.
-  function ribbonAt(ny, eased) {
-    const drift = eased * 2.6 + t;
-    const center =
-      Math.sin(ny * 3.4 + drift * 1.6) * W * 0.07 +
-      Math.sin(ny * 1.6 - drift) * W * 0.1 +
-      Math.sin(ny * 6.3 + drift * 2.3) * W * 0.018;
-    // Width pinches to near-zero at points — the "folds" in the light.
-    const fold = Math.sin(ny * 3.9 + drift * 1.4);
-    const halfW = W * 0.055 * (0.12 + 0.88 * Math.abs(fold));
-    return { center, halfW };
-  }
-
   function frame() {
     // Critically-damped spring toward the real scroll position —
     // fluid inertia, glides to rest with no overshoot or lurch.
-    const target = window.scrollY;
-    scrollVel += (target - scrollCur) * 0.0065;
+    scrollVel += (window.scrollY - scrollCur) * 0.0065;
     scrollVel *= 0.855;
     scrollCur += scrollVel;
     t += 0.0022;
 
-    ctx.clearRect(0, 0, W, H);
-    ctx.globalCompositeOperation = "lighter";   // light adds up where fibers cross
-    ctx.lineCap = "round";
-
-    // The ribbon runs top-to-bottom. It hugs the right side of the
-    // viewport at the top of the page and sweeps left as you scroll.
     const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
     const progress = Math.min(1, Math.max(0, scrollCur / maxScroll));
-    const eased = progress * progress * (3 - 2 * progress);  // smoothstep
-    const baseX = W * (0.8 - eased * 0.58);
+    const eased = progress * progress * (3 - 2 * progress);
 
-    // Sample the band edges once.
-    const left = [], right = [], ys = [];
-    for (let i = 0; i <= SEGMENTS; i++) {
-      const ny = i / SEGMENTS;
-      const y = ny * (H + 160 * DPR) - 80 * DPR;
-      const { center, halfW } = ribbonAt(ny, eased);
-      ys.push(y);
-      left.push(baseX + center - halfW);
-      right.push(baseX + center + halfW);
-    }
+    gl.uniform2f(uRes, canvas.width, canvas.height);
+    gl.uniform1f(uTime, t);
+    gl.uniform1f(uEased, eased);
+    gl.uniform1f(uBaseX, 0.8 - eased * 0.58);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
 
-    const strokePath = (u, style, width) => {
-      ctx.beginPath();
-      ctx.moveTo(left[0] * (1 - u) + right[0] * u, ys[0]);
-      for (let i = 1; i <= SEGMENTS; i++) {
-        ctx.lineTo(left[i] * (1 - u) + right[i] * u, ys[i]);
-      }
-      ctx.strokeStyle = style;
-      ctx.lineWidth = width;
-      ctx.stroke();
-    };
-
-    // Wispy fibers — denser light toward the ribbon's core, like the
-    // long-exposure light painting: glowing folds, soft edges.
-    for (let k = 0; k < FIBERS; k++) {
-      const u = k / (FIBERS - 1);
-      const coreness = 1 - Math.abs(u - 0.5) * 2;   // 1 at core, 0 at edges
-      const alpha = 0.02 + 0.055 * coreness * coreness;
-      strokePath(u, `rgba(255, 180, 84, ${alpha.toFixed(3)})`, DPR * 1.3);
-    }
-
-    // Luminous core: three passes, wide-and-faint to thin-and-bright,
-    // fakes the bloom of overexposed light.
-    strokePath(0.5, "rgba(255, 190, 100, 0.05)", DPR * 10);
-    strokePath(0.5, "rgba(255, 205, 130, 0.13)", DPR * 4);
-    strokePath(0.5, "rgba(255, 226, 170, 0.4)", DPR * 1.4);
-
-    ctx.globalCompositeOperation = "source-over";
     requestAnimationFrame(frame);
   }
 
   resize();
   window.addEventListener("resize", resize);
   requestAnimationFrame(frame);
+  return true;
+}
+
+if (!initRibbon() && canvas) {
+  // No WebGL: hide the canvas and show the static glow instead.
+  canvas.style.display = "none";
+  const glowEl = document.querySelector(".glow");
+  if (glowEl) glowEl.style.display = "block";
 }
 
 // Live local time in the hero.
