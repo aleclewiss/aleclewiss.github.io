@@ -60,7 +60,7 @@ function initRibbon() {
     void main() {
       vec2 uv = gl_FragCoord.xy / uRes;
       float y = 1.0 - uv.y;               // 0 at top of screen
-      float drift = uEased * 2.6 + uTime;
+      float drift = uEased * 1.7 + uTime;
 
       // Shared centerline: layered waves, big and slow.
       float center = uBaseX
@@ -148,10 +148,10 @@ function initRibbon() {
   function frame() {
     // Critically-damped spring toward the real scroll position —
     // fluid inertia, glides to rest with no overshoot or lurch.
-    scrollVel += (window.scrollY - scrollCur) * 0.0065;
-    scrollVel *= 0.855;
+    scrollVel += (window.scrollY - scrollCur) * 0.0045;
+    scrollVel *= 0.87;
     scrollCur += scrollVel;
-    t += 0.0022;
+    t += 0.0008;   // idle drift: barely perceptible
 
     const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
     const progress = Math.min(1, Math.max(0, scrollCur / maxScroll));
