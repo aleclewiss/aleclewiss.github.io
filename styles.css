@@ -44,40 +44,31 @@ a {
   color: inherit;
 }
 
-/* ---------- animated background artwork ----------
-   One artwork per section. JS toggles .active as you scroll;
-   screen blend makes the art's black background vanish into
-   the page, so only the golden trails show. */
+/* ---------- animated background ----------
+   A live canvas flow field: amber particle trails that drift
+   continuously and swirl with scroll (drawn by script.js).
+   The .glow div is a static fallback for reduced motion. */
 
-.bg-layer {
+.bg-canvas {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  overflow: hidden;
 }
 
-.bg-art {
-  position: absolute;
-  inset: -8%;
-  background-size: cover;
-  background-position: center;
-  mix-blend-mode: screen;
-  opacity: 0;
-  transition: opacity 1.4s ease;
-  will-change: transform, opacity;
-  animation: drift 50s ease-in-out infinite alternate;
-  -webkit-mask-image: radial-gradient(ellipse 75% 70% at 50% 45%, black 45%, transparent 100%);
-  mask-image: radial-gradient(ellipse 75% 70% at 50% 45%, black 45%, transparent 100%);
-}
-
-.bg-art.active {
-  opacity: 0.5;
-}
-
-@keyframes drift {
-  from { transform: translate3d(0, 0, 0) scale(1.06); }
-  to   { transform: translate3d(2%, -2.5%, 0) scale(1.14); }
+.glow {
+  display: none;
+  position: fixed;
+  top: -30vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90vw;
+  height: 70vh;
+  background: radial-gradient(ellipse at center,
+      rgba(255, 180, 84, 0.07) 0%,
+      transparent 65%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* ---------- nav ---------- */
@@ -367,10 +358,8 @@ main {
     transition: none;
   }
   .status-dot { animation: none; }
-  .bg-art {
-    animation: none;
-    transition: none;
-  }
+  .bg-canvas { display: none; }
+  .glow { display: block; }
 }
 
 /* ---------- small screens ---------- */
