@@ -46,31 +46,18 @@ a {
   color: inherit;
 }
 
-/* ---------- animated background ----------
-   A live canvas flow field: golden particle trails that drift
-   continuously and swirl with scroll (drawn by script.js).
-   The .glow div is a static fallback for reduced motion. */
+/* ---------- background scene ----------
+   A static gold line-art landscape (inline SVG in index.html):
+   moon, birds, three mountain ridges, pines, a stag. Fixed behind
+   the content; no animation. */
 
-.bg-canvas {
+.bg-scene {
   position: fixed;
   inset: 0;
+  width: 100%;
+  height: 100%;
   z-index: 0;
   pointer-events: none;
-}
-
-.glow {
-  display: none;
-  position: fixed;
-  top: -30vh;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90vw;
-  height: 70vh;
-  background: radial-gradient(ellipse at center,
-      rgba(255, 180, 84, 0.08) 0%,
-      transparent 65%);
-  pointer-events: none;
-  z-index: 0;
 }
 
 /* ---------- nav ---------- */
@@ -484,8 +471,6 @@ main {
     transition: none;
   }
   .status-dot { animation: none; }
-  .bg-canvas { display: none; }
-  .glow { display: block; }
   .hero-title { animation: none; }
   .js .line { transform: none; transition: none; }
   .scroll-hint::after { animation: none; }
