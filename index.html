@@ -45,6 +45,10 @@
       <div class="hero-main reveal">
         <h1 class="hero-name">Alec Lewis</h1>
         <p class="hero-line">I live in State College and build the music software I wish existed — plus a few machines that keep going after I close the laptop.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="mailto:aleclewis@psu.edu">Email me</a>
+          <a class="btn" href="https://github.com/aleclewiss" target="_blank" rel="noopener">GitHub</a>
+        </div>
       </div>
 
       <aside class="hero-note reveal" style="--d:.1s">
@@ -56,11 +60,6 @@
         </ul>
         <p class="hero-note-foot">Also: AI + IT work at Penn State · BIS from Pitt ’24</p>
       </aside>
-
-      <div class="hero-actions reveal" style="--d:.16s">
-        <a class="btn btn-primary" href="mailto:aleclewis@psu.edu">Email me</a>
-        <a class="btn" href="https://github.com/aleclewiss" target="_blank" rel="noopener">GitHub</a>
-      </div>
     </section>
 
     <section class="aminal" id="aminal">
@@ -75,48 +74,72 @@
       </div>
 
       <div class="cinema reveal" style="--d:.06s">
-        <a class="player-facade cinema-screen" href="https://youtu.be/ifkNxi9HW00" target="_blank" rel="noopener">
-          <img src="https://i.ytimg.com/vi/ifkNxi9HW00/hqdefault.jpg" alt="" loading="lazy" width="480" height="270">
+        <button type="button" class="cinema-screen player-facade"
+                data-yt="ifkNxi9HW00" data-title="Dachshunds are built different" data-meta="2,150 views"
+                aria-label="Play: Dachshunds are built different">
+          <img class="cinema-thumb" src="https://i.ytimg.com/vi/ifkNxi9HW00/hqdefault.jpg" alt="" loading="lazy" width="480" height="270">
           <span class="cinema-play" aria-hidden="true"></span>
-          <span class="cinema-burn">
-            <b>Dachshunds are built different</b>
-            <em>One short the machine shipped · 2,150 views</em>
-          </span>
-          <span class="visually-hidden">Play video: Dachshunds are built different</span>
-        </a>
+        </button>
+        <p class="cinema-now">
+          <b class="cinema-title">Dachshunds are built different</b>
+          <span class="cinema-sub">2,150 views · tap a thumbnail to switch</span>
+        </p>
       </div>
 
-      <div class="aminal-meta reveal" style="--d:.1s">
-        <p class="aminal-pipe">Scrape → CLIP verify → assemble → post × 4</p>
-        <p class="aminal-stats-line"><strong>109</strong> uploads · <strong>177,653</strong> views · <strong>321</strong> subscribers</p>
-        <div class="aminal-links">
-          <a class="btn btn-yt" href="https://www.youtube.com/@Aminal_House?sub_confirmation=1" target="_blank" rel="noopener">Subscribe</a>
-          <a class="btn" href="https://github.com/aleclewiss/aminal-house-pipeline" target="_blank" rel="noopener">Pipeline on GitHub</a>
+      <div class="gallery reveal" style="--d:.1s">
+        <p class="gallery-label">Play any short — right here, no leaving the page</p>
+        <div class="gallery-strip" tabindex="0">
+          <button type="button" class="vid is-active" data-yt="ifkNxi9HW00" data-title="Dachshunds are built different" data-meta="2,150 views">
+            <img src="https://i.ytimg.com/vi/ifkNxi9HW00/mqdefault.jpg" alt="" loading="lazy">
+            <span class="vid-cap"><b>Dachshunds</b> 2.1K</span>
+          </button>
+          <button type="button" class="vid" data-yt="uNAUcWt4b7I" data-title="Golden retrievers, certified" data-meta="1,200 views">
+            <img src="https://i.ytimg.com/vi/uNAUcWt4b7I/mqdefault.jpg" alt="" loading="lazy">
+            <span class="vid-cap"><b>Goldens</b> 1.2K</span>
+          </button>
+          <button type="button" class="vid" data-yt="ImZp7dTgAwE" data-title="Corgis on a mission" data-meta="1,200 views">
+            <img src="https://i.ytimg.com/vi/ImZp7dTgAwE/mqdefault.jpg" alt="" loading="lazy">
+            <span class="vid-cap"><b>Corgis</b> 1.2K</span>
+          </button>
+          <button type="button" class="vid" data-yt="5XjMj55Nj3w" data-title="Yorkies, tiny and loud" data-meta="694 views">
+            <img src="https://i.ytimg.com/vi/5XjMj55Nj3w/mqdefault.jpg" alt="" loading="lazy">
+            <span class="vid-cap"><b>Yorkies</b> 694</span>
+          </button>
+          <button type="button" class="vid" data-yt="lR_tEGg4WVI" data-title="Pomeranians, fully floofed" data-meta="567 views">
+            <img src="https://i.ytimg.com/vi/lR_tEGg4WVI/mqdefault.jpg" alt="" loading="lazy">
+            <span class="vid-cap"><b>Poms</b> 567</span>
+          </button>
+          <button type="button" class="vid" data-yt="-w-wkau9WAg" data-title="Shibas doing shiba things" data-meta="530 views">
+            <img src="https://i.ytimg.com/vi/-w-wkau9WAg/mqdefault.jpg" alt="" loading="lazy">
+            <span class="vid-cap"><b>Shibas</b> 530</span>
+          </button>
         </div>
       </div>
 
-      <div class="filmstrip-wrap reveal" style="--d:.12s">
-        <div class="filmstrip" tabindex="0">
-          <a class="film" href="https://youtu.be/uNAUcWt4b7I" target="_blank" rel="noopener">
-            <img src="https://i.ytimg.com/vi/uNAUcWt4b7I/mqdefault.jpg" alt="" loading="lazy">
-            <span>Goldens · 1.2K</span>
-          </a>
-          <a class="film" href="https://youtu.be/ImZp7dTgAwE" target="_blank" rel="noopener">
-            <img src="https://i.ytimg.com/vi/ImZp7dTgAwE/mqdefault.jpg" alt="" loading="lazy">
-            <span>Corgis · 1.2K</span>
-          </a>
-          <a class="film" href="https://youtu.be/5XjMj55Nj3w" target="_blank" rel="noopener">
-            <img src="https://i.ytimg.com/vi/5XjMj55Nj3w/mqdefault.jpg" alt="" loading="lazy">
-            <span>Yorkies · 694</span>
-          </a>
-          <a class="film" href="https://youtu.be/lR_tEGg4WVI" target="_blank" rel="noopener">
-            <img src="https://i.ytimg.com/vi/lR_tEGg4WVI/mqdefault.jpg" alt="" loading="lazy">
-            <span>Poms · 567</span>
-          </a>
-          <a class="film" href="https://youtu.be/-w-wkau9WAg" target="_blank" rel="noopener">
-            <img src="https://i.ytimg.com/vi/-w-wkau9WAg/mqdefault.jpg" alt="" loading="lazy">
-            <span>Shibas · 530</span>
-          </a>
+      <div class="stats reveal" style="--d:.12s">
+        <p class="aminal-pipe">Scrape → CLIP verify → assemble → post × 4</p>
+        <div class="stats-grid" data-countup>
+          <div class="stat">
+            <span class="stat-num" data-to="109">0</span>
+            <span class="stat-label">Shorts published</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num" data-to="177653">0</span>
+            <span class="stat-label">Total views</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num" data-to="321">0</span>
+            <span class="stat-label">Subscribers</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num" data-to="1630" data-prefix="~">0</span>
+            <span class="stat-label">Avg views / short</span>
+          </div>
+        </div>
+        <p class="stats-foot">Every one of those posted to <b>YouTube</b>, <b>TikTok</b>, <b>Instagram</b> &amp; <b>Facebook</b> from a single job — <b>zero</b> hands on deck.</p>
+        <div class="aminal-links">
+          <a class="btn btn-yt" href="https://www.youtube.com/@Aminal_House?sub_confirmation=1" target="_blank" rel="noopener">Subscribe on YouTube</a>
+          <a class="btn" href="https://github.com/aleclewiss/aminal-house-pipeline" target="_blank" rel="noopener">Pipeline on GitHub</a>
         </div>
       </div>
     </section>

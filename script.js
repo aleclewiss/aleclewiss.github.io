@@ -86,43 +86,82 @@ if (devVideo) {
   }
 }
 
-// YouTube facade — also unlocks audio for the mix later.
-var facade = document.querySelector(".player-facade");
-if (facade) {
-  facade.addEventListener("click", function (ev) {
-    ev.preventDefault();
-    unlockAudio();
-    var f = document.createElement("iframe");
-    f.src = "https://www.youtube-nocookie.com/embed/ifkNxi9HW00?autoplay=1";
-    f.title = "Aminal House — Dachshunds are built different";
-    f.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-    f.allowFullscreen = true;
-    var shell = document.createElement("div");
-    shell.className = "cinema-screen is-playing";
-    shell.appendChild(f);
-    facade.replaceWith(shell);
-  }, { once: true });
+// --- Aminal inline player + video gallery (stays on the page) ---
+var cinemaScreen = document.querySelector(".cinema-screen");
+var nowTitle = document.querySelector(".cinema-title");
+var nowSub = document.querySelector(".cinema-sub");
+var vids = document.querySelectorAll(".vid");
+
+function playInScreen(id, title, meta) {
+  if (!cinemaScreen || !id) return;
+  unlockAudio(); // also unlocks the mix video's audio later
+  var f = document.createElement("iframe");
+  f.src = "https://www.youtube-nocookie.com/embed/" + id + "?autoplay=1&rel=0";
+  f.title = title || "Aminal House short";
+  f.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+  f.allowFullscreen = true;
+  cinemaScreen.innerHTML = "";
+  cinemaScreen.appendChild(f);
+  cinemaScreen.classList.add("is-playing");
+  if (nowTitle && title) nowTitle.textContent = title;
+  if (nowSub && meta) nowSub.textContent = meta + " · now playing";
 }
 
-var filmstrip = document.querySelector(".filmstrip");
-if (filmstrip && !reduceMotion) {
-  var dragging = false;
-  var startX = 0;
-  var startScroll = 0;
-  filmstrip.addEventListener("pointerdown", function (e) {
-    if (e.pointerType === "touch") return;
-    dragging = true;
-    startX = e.clientX;
-    startScroll = filmstrip.scrollLeft;
-    filmstrip.setPointerCapture(e.pointerId);
+if (cinemaScreen) {
+  cinemaScreen.addEventListener("click", function () {
+    if (cinemaScreen.querySelector("iframe")) return; // already playing
+    playInScreen(cinemaScreen.dataset.yt, cinemaScreen.dataset.title, cinemaScreen.dataset.meta);
   });
-  filmstrip.addEventListener("pointermove", function (e) {
-    if (!dragging) return;
-    filmstrip.scrollLeft = startScroll - (e.clientX - startX);
+}
+
+vids.forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    vids.forEach(function (b) { b.classList.remove("is-active"); });
+    btn.classList.add("is-active");
+    if (cinemaScreen) {
+      cinemaScreen.dataset.yt = btn.dataset.yt;
+      cinemaScreen.dataset.title = btn.dataset.title;
+      cinemaScreen.dataset.meta = btn.dataset.meta;
+      cinemaScreen.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
+    }
+    playInScreen(btn.dataset.yt, btn.dataset.title, btn.dataset.meta);
   });
-  var endDrag = function () { dragging = false; };
-  filmstrip.addEventListener("pointerup", endDrag);
-  filmstrip.addEventListener("pointercancel", endDrag);
+});
+
+// --- Stat count-up when the numbers scroll into view ---
+var statsGrid = document.querySelector("[data-countup]");
+function animateCount(el) {
+  var to = parseInt(el.dataset.to, 10) || 0;
+  var prefix = el.dataset.prefix || "";
+  var done = function () { el.textContent = prefix + to.toLocaleString(); };
+  if (reduceMotion) { done(); return; }
+  var start = null;
+  var dur = 1400;
+  function step(ts) {
+    if (start === null) start = ts;
+    var p = Math.min((ts - start) / dur, 1);
+    var eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = prefix + Math.round(to * eased).toLocaleString();
+    if (p < 1) requestAnimationFrame(step);
+    else done();
+  }
+  requestAnimationFrame(step);
+}
+if (statsGrid && "IntersectionObserver" in window) {
+  var counted = false;
+  new IntersectionObserver(function (entries, ob) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting && !counted) {
+        counted = true;
+        statsGrid.querySelectorAll(".stat-num").forEach(animateCount);
+        ob.disconnect();
+      }
+    });
+  }, { threshold: 0.4 }).observe(statsGrid);
+} else if (statsGrid) {
+  statsGrid.querySelectorAll(".stat-num").forEach(function (el) {
+    el.textContent = (el.dataset.prefix || "") + (parseInt(el.dataset.to, 10) || 0).toLocaleString();
+  });
 }
 
 var navLinks = document.querySelectorAll(".nav-links a[href^='#']");
