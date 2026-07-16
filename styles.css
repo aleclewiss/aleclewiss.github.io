@@ -52,7 +52,19 @@
   .nav-name { font-weight: 600; font-size: 0.95rem; text-decoration: none; color: var(--ink); }
   .nav-links { display: flex; gap: 1.4rem; flex-wrap: wrap; }
   .nav-links a { font-size: 0.85rem; color: var(--dim); text-decoration: none; padding: 0.3rem 0.1rem; transition: color 0.2s; }
-  .nav-links a:hover { color: var(--ink); }
+  .nav-links a:hover, .nav-links a:focus-visible, .nav-links a.active { color: var(--ink); }
+
+  /* thin reading-progress line above the nav */
+  .progress {
+    position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 20;
+    background: linear-gradient(90deg, var(--blue), #6db4f5);
+    transform: scaleX(0); transform-origin: left; pointer-events: none;
+  }
+
+  @media (max-width: 380px) {
+    .nav { padding-left: 1rem; padding-right: 1rem; }
+    .nav-links { gap: 0.9rem; }
+  }
 
   main { position: relative; z-index: 1; max-width: var(--max); margin: 0 auto; padding: 0 1.5rem; }
 
@@ -88,8 +100,8 @@
   /* ---------- 01 identity (now first, per the new order) ---------- */
   .hero { padding: min(11vh, 6.5rem) 0 3rem; }
   .hero-name {
-    font-size: clamp(3.2rem, 9vw, 6rem);
-    font-weight: 700; letter-spacing: -0.035em; line-height: 1.02;
+    font-size: clamp(3.5rem, 10vw, 7rem);
+    font-weight: 800; letter-spacing: -0.045em; line-height: 0.98;
     text-wrap: balance;
   }
   .hero-line { color: var(--dim); font-size: 1.2rem; margin-top: 0.8rem; }
