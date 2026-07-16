@@ -13,6 +13,15 @@ if ("IntersectionObserver" in window) {
   document.querySelectorAll(".reveal, .yt-hero").forEach(function (el) { el.classList.add("visible"); });
 }
 
+// Reduced motion: don't autoplay the demo video; give controls instead.
+if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  document.querySelectorAll("video[autoplay]").forEach(function (v) {
+    v.removeAttribute("autoplay");
+    v.setAttribute("controls", "");
+    v.pause();
+  });
+}
+
 // Footer year.
 var yearEl = document.getElementById("year");
 if (yearEl) yearEl.textContent = new Date().getFullYear();

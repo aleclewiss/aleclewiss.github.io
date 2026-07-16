@@ -42,24 +42,26 @@
       <h1 class="hero-name reveal" style="--d:.08s">Alec Lewis</h1>
       <p class="hero-line reveal" style="--d:.16s">I build software that makes music — and software that runs itself.</p>
       <div class="hero-actions reveal" style="--d:.24s">
-        <a class="btn btn-primary" href="mailto:aleclewis15946@gmail.com">Email</a>
+        <a class="btn btn-primary" href="mailto:aleclewis@psu.edu">Email</a>
         <a class="btn" href="https://github.com/aleclewiss" target="_blank" rel="noopener">GitHub</a>
         <!-- LinkedIn button ready — add the URL:
         <a class="btn" href="https://www.linkedin.com/in/..." target="_blank" rel="noopener">LinkedIn</a> -->
       </div>
+      <p class="hero-loc reveal" style="--d:.3s">State College, PA</p>
 
       <div class="glass resume reveal" style="--d:.34s">
         <div class="resume-item">
           <h3>Experience</h3>
-          <p><em>resume highlights land here</em></p>
+          <p>AI Portfolio Services — Penn State <em>(2026–now)</em></p>
+          <p>IT Support Specialist — Penn State <em>(2024–now)</em> · 2,126 tickets resolved at 4.89/5</p>
         </div>
         <div class="resume-item">
           <h3>Education</h3>
-          <p><em>—</em></p>
+          <p>B.S. Business Information Systems, University of Pittsburgh <em>(2024, magna cum laude)</em></p>
         </div>
         <div class="resume-item">
           <h3>Skills</h3>
-          <p>Python · JUCE · PyTorch · Electron · DSP · Max for Live</p>
+          <p>Python · C++ / JUCE · PyTorch · Electron · React · DSP · Max for Live · CLIP</p>
         </div>
       </div>
     </section>
@@ -121,7 +123,8 @@
           <div class="stat"><dt>Humans involved</dt><dd>0</dd></div>
         </dl>
 
-        <p class="yt-note">Sourced, edited, captioned, and posted by the machine.
+        <p class="yt-note">Scrapes clips, verifies them with a local CLIP model, assembles vertical
+          video with AI narration — then posts to YouTube, TikTok, Instagram, and Facebook, unattended.
           <a href="https://github.com/aleclewiss/aminal-house-pipeline" target="_blank" rel="noopener">See the pipeline →</a></p>
       </div>
     </section>
@@ -163,12 +166,15 @@
             </div>
           </div>
           <p class="tool-desc">
-            A convolutional neural network listens to a fingerpicked acoustic take
-            and predicts a corrective mixing chain, applied live inside a JUCE app.
+            A convolutional neural network listens to an acoustic take and predicts
+            a 24-parameter corrective mixing chain — applied live in a JUCE app with
+            a real-time spectrum analyzer, draggable 6-band parametric EQ, and
+            soft-knee compressor, all C++ DSP.
           </p>
           <div class="tool-actions"><a class="btn btn-primary" href="https://github.com/aleclewiss/Freak-Quencies" target="_blank" rel="noopener">View source</a></div>
         </div>
         <div>
+          <video class="demo-video" src="assets/ai-mix-demo.mp4" autoplay muted loop playsinline aria-label="Screen recording of the AI mixing assistant analyzing and mixing a guitar take"></video>
           <p class="chain">🎸 take → CNN Listener → EQ → Compressor → mixed</p>
         </div>
       </div>

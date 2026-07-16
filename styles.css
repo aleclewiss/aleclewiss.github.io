@@ -95,6 +95,8 @@
   .hero-line { color: var(--dim); font-size: 1.2rem; margin-top: 0.8rem; }
   .hero-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1.6rem; }
 
+  .hero-loc { margin-top: 0.9rem; font-size: 0.85rem; color: var(--dim); }
+
   .resume { margin-top: 2.6rem; padding: 1.5rem 1.75rem; text-align: left; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; }
   .resume-item h3 { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); margin-bottom: 0.25rem; }
   .resume-item p { font-size: 0.95rem; }
@@ -177,6 +179,15 @@
     font-family: "SF Mono", Consolas, monospace; font-size: 0.82rem;
     background: rgba(255, 255, 255, 0.6); border: 1px solid rgba(255, 255, 255, 0.8);
     border-radius: 14px; padding: 0.8rem 1rem;
+  }
+
+  .demo-video {
+    width: 100%;
+    display: block;
+    border-radius: 16px;
+    border: 1px solid var(--glass-edge);
+    margin-bottom: 0.8rem;
+    box-shadow: 0 8px 28px rgba(31, 38, 60, 0.15);
   }
 
   .footer {
