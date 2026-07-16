@@ -1,3 +1,7 @@
+// Reveal animations only apply once JS is confirmed running (here, so the
+// trigger and the payoff can't be split by a failed script load).
+document.documentElement.classList.add("js");
+
 // Scroll reveals: content fades up as it enters the viewport.
 if ("IntersectionObserver" in window) {
   var obs = new IntersectionObserver(function (entries) {
@@ -13,13 +17,31 @@ if ("IntersectionObserver" in window) {
   document.querySelectorAll(".reveal, .yt-hero").forEach(function (el) { el.classList.add("visible"); });
 }
 
-// Reduced motion: don't autoplay the demo video; give controls instead.
-if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-  document.querySelectorAll("video[autoplay]").forEach(function (v) {
-    v.removeAttribute("autoplay");
-    v.setAttribute("controls", "");
-    v.pause();
-  });
+// Play the device demo when it scrolls into view — unless the user prefers
+// reduced motion (they keep the poster + native controls).
+var devVideo = document.querySelector(".dev-display");
+if (devVideo && !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    && "IntersectionObserver" in window) {
+  new IntersectionObserver(function (entries, o) {
+    if (entries.some(function (e) { return e.isIntersecting; })) {
+      devVideo.play().catch(function () {});
+      o.disconnect();
+    }
+  }, { threshold: 0.4 }).observe(devVideo);
+}
+
+// Click-to-load YouTube facade: inject the real player on demand.
+var facade = document.querySelector(".player-facade");
+if (facade) {
+  facade.addEventListener("click", function (ev) {
+    ev.preventDefault();
+    var f = document.createElement("iframe");
+    f.src = "https://www.youtube-nocookie.com/embed/ifkNxi9HW00?autoplay=1";
+    f.title = "Aminal House — Dachshunds are built different";
+    f.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+    f.allowFullscreen = true;
+    facade.replaceWith(f);
+  }, { once: true });
 }
 
 // Reading-progress line.
@@ -38,25 +60,25 @@ if (progress) {
   updateProgress();
 }
 
-// Nav highlights the section you're reading.
+// Nav highlights the section you're reading; clears back on the hero.
 var navLinks = document.querySelectorAll(".nav-links a[href^='#']");
 if (navLinks.length && "IntersectionObserver" in window) {
   var byId = {};
   navLinks.forEach(function (a) { byId[a.getAttribute("href").slice(1)] = a; });
   var spy = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) {
+      if (!e.isIntersecting) return;
       var link = byId[e.target.id];
-      if (!link) return;
-      if (e.isIntersecting) {
-        navLinks.forEach(function (a) { a.classList.remove("active"); });
-        link.classList.add("active");
-      }
+      navLinks.forEach(function (a) { a.classList.remove("active"); });
+      if (link) link.classList.add("active");
     });
   }, { rootMargin: "-35% 0px -55% 0px" });
   Object.keys(byId).forEach(function (id) {
     var el = document.getElementById(id);
     if (el) spy.observe(el);
   });
+  var hero = document.querySelector(".hero");
+  if (hero) spy.observe(hero);
 }
 
 // Footer year.

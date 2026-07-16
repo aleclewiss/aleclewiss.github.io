@@ -12,11 +12,15 @@
   <meta property="og:url" content="https://aleclewiss.github.io/">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://aleclewiss.github.io/assets/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Alec Lewis — music tools and automation">
+  <meta property="og:site_name" content="Alec Lewis">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://aleclewiss.github.io/assets/og.jpg">
+  <link rel="icon" href="assets/favicon-32.png">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-  <script>document.documentElement.classList.add("js");</script>
   <link rel="stylesheet" href="styles.css">
   <script src="script.js" defer></script>
 </head>
@@ -57,16 +61,16 @@
 
       <div class="glass resume reveal" style="--d:.34s">
         <div class="resume-item">
-          <h3>Experience</h3>
+          <h2>Experience</h2>
           <p>AI Portfolio Services — Penn State <em>(2026–now)</em></p>
           <p>IT Support Specialist — Penn State <em>(2024–now)</em> · 2,126 tickets resolved at 4.89/5</p>
         </div>
         <div class="resume-item">
-          <h3>Education</h3>
+          <h2>Education</h2>
           <p>B.S. Business Information Systems, University of Pittsburgh <em>(2024, magna cum laude)</em></p>
         </div>
         <div class="resume-item">
-          <h3>Skills</h3>
+          <h2>Skills</h2>
           <p>Python · C++ / JUCE · PyTorch · Electron · React · DSP · Max for Live · CLIP</p>
         </div>
       </div>
@@ -75,15 +79,19 @@
     <!-- ============ AMINAL HOUSE ============ -->
     <section class="yt-section" id="aminal">
       <div class="yt-hero">
-        <div class="yt-logo-big"><span class="yt-logo-mark" aria-hidden="true"></span><span>Aminal House</span></div>
-        <p class="yt-hero-line reveal" style="--d:.3s"><strong>109 uploads. 177,000 views. Zero humans.</strong><br>A channel run entirely by a Python pipeline.</p>
+        <h2 class="yt-logo-big"><span class="yt-logo-mark" aria-hidden="true"></span><span>Aminal House</span></h2>
+        <p class="yt-hero-line reveal" style="--d:.3s"><strong>109 uploads. 177K views. Zero humans.</strong><br>A channel run entirely by a Python pipeline.</p>
       </div>
 
       <div class="glass yt-panel reveal">
         <div class="watch">
           <div class="player-col">
             <div class="player">
-              <iframe src="https://www.youtube-nocookie.com/embed/ifkNxi9HW00" title="Aminal House — Dachshunds are built different" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              <a class="player-facade" href="https://youtu.be/ifkNxi9HW00" target="_blank" rel="noopener">
+                <img src="https://i.ytimg.com/vi/ifkNxi9HW00/oar2.jpg" alt="" loading="lazy" width="405" height="720">
+                <span class="player-play" aria-hidden="true"></span>
+                <span class="visually-hidden">Play video: Dachshunds are built different</span>
+              </a>
             </div>
             <p class="watch-title">Dachshunds are built different</p>
             <div class="watch-row">
@@ -93,7 +101,7 @@
             </div>
           </div>
           <aside class="upnext">
-            <p class="upnext-label">Up next — all posted by the pipeline</p>
+            <p class="upnext-label">Up next — posted by the pipeline</p>
             <a class="un" href="https://youtu.be/uNAUcWt4b7I" target="_blank" rel="noopener">
               <img src="https://i.ytimg.com/vi/uNAUcWt4b7I/mqdefault.jpg" alt="" loading="lazy">
               <span><b>Goldens</b><em>1.2K views</em></span>
@@ -135,7 +143,7 @@
       <div class="glass tool-panel reveal">
         <div>
           <div class="tool-head">
-            <img src="https://raw.githubusercontent.com/aleclewiss/backline/main/ableton-sidebar/shell/assets/backline.png" alt="" width="40" height="40" loading="lazy">
+            <img src="assets/backline.png" alt="" width="40" height="40" loading="lazy">
             <div>
               <h2 class="tool-title">Backline</h2>
               <p class="tool-sub">Turn a prompt into a finished-sounding song</p>
@@ -174,14 +182,16 @@
           </p>
           <div class="tool-actions"><a class="btn btn-primary" href="https://github.com/aleclewiss/Freak-Quencies" target="_blank" rel="noopener">View source</a></div>
         </div>
-        <div class="dev" role="img" aria-label="Freak-Quencies presented as an Ableton audio-effect device, with its demo playing in the display">
+        <div class="dev">
           <div class="dev-head">
             <span class="dev-dot" aria-hidden="true"></span>
             <span class="dev-name">Freak-Quencies</span>
             <span class="dev-kind">Audio Effect — CNN</span>
           </div>
-          <video class="dev-display" src="assets/ai-mix-demo.mp4" poster="assets/demo-poster.jpg" autoplay muted loop playsinline></video>
-          <div class="dev-knobs" aria-hidden="true">
+          <video class="dev-display" src="assets/ai-mix-demo.mp4" poster="assets/demo-poster.jpg"
+                 aria-label="Freak-Quencies demo: the plugin mixing a guitar take in real time"
+                 preload="metadata" muted loop playsinline controls width="1280" height="720"></video>
+          <div class="dev-knobs">
             <span class="knob"><span class="knob-dial" style="--a:-52deg"></span><span class="knob-l">HPF</span><span class="knob-v">84 Hz</span></span>
             <span class="knob"><span class="knob-dial" style="--a:-24deg"></span><span class="knob-l">210 Hz</span><span class="knob-v">-2.2 dB</span></span>
             <span class="knob"><span class="knob-dial" style="--a:31deg"></span><span class="knob-l">2.4 kHz</span><span class="knob-v">+1.8 dB</span></span>
