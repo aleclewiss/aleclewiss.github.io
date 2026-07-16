@@ -106,8 +106,8 @@
   /* ---------- 01 identity (now first, per the new order) ---------- */
   .hero { padding: min(11vh, 6.5rem) 0 3rem; }
   .hero-name {
-    font-size: clamp(3.5rem, 10vw, 7rem);
-    font-weight: 800; letter-spacing: -0.045em; line-height: 0.98;
+    font-size: clamp(3.8rem, 11.5vw, 8.75rem);
+    font-weight: 800; letter-spacing: -0.045em; line-height: 0.96;
     text-wrap: balance;
   }
   .hero-line { color: var(--dim-ground); font-size: 1.2rem; margin-top: 0.8rem; }
@@ -126,11 +126,11 @@
   .yt-hero { padding: 0.5rem 0 3rem; position: relative; }
 
   .yt-logo-big {
-    display: inline-flex; align-items: center; gap: 0.7rem;
-    font-size: clamp(2.2rem, 6vw, 3.6rem); font-weight: 700; letter-spacing: -0.045em;
+    display: inline-flex; align-items: center; gap: 0.9rem;
+    font-size: clamp(2.6rem, 7.5vw, 4.6rem); font-weight: 800; letter-spacing: -0.045em;
   }
   .yt-logo-mark {
-    width: clamp(64px, 10vw, 96px); height: clamp(46px, 7vw, 68px);
+    width: clamp(76px, 12vw, 122px); height: clamp(54px, 8.5vw, 86px);
     background: var(--red); border-radius: 22%;
     display: inline-flex; align-items: center; justify-content: center;
     box-shadow: 0 12px 40px rgba(255, 0, 51, 0.35);
@@ -179,6 +179,10 @@
   /* ---------- 03 / 04 tool sections ---------- */
   .tool { padding: 4.5rem 0 1rem; scroll-margin-top: 4rem; }
   .tool-panel { padding: 2rem; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 2rem; align-items: center; }
+
+  /* stacked variant: text row on top, media full width below */
+  .tool-panel--stack { display: block; }
+  .tool-panel--stack .dev { margin-top: 1.75rem; }
   @media (max-width: 760px) { .tool-panel { grid-template-columns: 1fr; } }
 
   .tool-head { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.9rem; }
@@ -227,8 +231,8 @@
     padding: 1.1rem;
     color: #f1f1f1;
     display: grid;
-    grid-template-columns: minmax(0, 315px) minmax(0, 1fr);
-    gap: 1.4rem;
+    grid-template-columns: minmax(0, 383px) minmax(0, 1fr);
+    gap: 1.6rem;
     box-shadow: 0 30px 90px -25px rgba(255, 0, 51, 0.35), 0 12px 40px rgba(0, 0, 0, 0.35);
   }
   @media (max-width: 760px) {
@@ -238,7 +242,7 @@
 
   .player {
     border-radius: 12px; overflow: hidden; background: #000;
-    aspect-ratio: 9 / 16; max-height: 560px;
+    aspect-ratio: 9 / 16; max-height: 681px;
   }
   .player iframe { width: 100%; height: 100%; border: 0; display: block; }
 
@@ -280,7 +284,8 @@
     padding: 0.5rem; border-radius: 10px; margin: 0 -0.5rem;
   }
   .un:hover { background: rgba(255, 255, 255, 0.07); }
-  .un img { width: 148px; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
+  .un img { width: 172px; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
+  .un b { font-size: 0.95rem; }
   .un span { min-width: 0; line-height: 1.35; }
   .un b { display: block; font-size: 0.85rem; color: #fff; font-weight: 600; }
   .un em { font-style: normal; font-size: 0.74rem; color: #aaa; }
