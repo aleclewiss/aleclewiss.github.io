@@ -69,7 +69,7 @@
   @media (max-width: 380px) {
     .nav { padding-left: 1rem; padding-right: 1rem; }
     .nav-links { gap: 0.9rem; }
-    .yt-section, .tool { scroll-margin-top: 6.5rem; }
+    .yt-stage, .live-stage, .tool { scroll-margin-top: 6.5rem; }
   }
 
   main { position: relative; z-index: 1; max-width: var(--max); margin: 0 auto; padding: 0 1.5rem; }
@@ -121,9 +121,7 @@
   .resume-item p em { color: var(--dim); font-style: italic; font-size: 0.88rem; }
 
   /* ---------- 02 the YouTube demo moment ---------- */
-  .yt-section { padding: 5.5rem 0 1rem; scroll-margin-top: 4rem; }
-
-  .yt-hero { padding: 0.5rem 0 3rem; position: relative; }
+  .yt-hero { padding: 0 0 2.5rem; position: relative; }
 
   .yt-logo-big {
     display: inline-flex; align-items: center; gap: 0.9rem;
@@ -144,46 +142,32 @@
   .js .yt-logo-big { opacity: 0; transform: scale(0.55); transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.19, 1, 0.22, 1); }
   .js .yt-hero.visible .yt-logo-big { opacity: 1; transform: scale(1); }
 
-  .yt-hero-line { margin-top: 1.1rem; color: var(--dim-ground); font-size: 1.1rem; }
-  .yt-hero-line strong { color: var(--ink); }
+  .yt-hero-line { margin-top: 1.1rem; color: #aaa; font-size: 1.1rem; }
+  .yt-hero-line strong { color: #fff; }
 
-  .yt-panel { padding: 2rem; }
-
-  .channel-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.4rem; }
-  .channel-row img { border-radius: 50%; width: 56px; height: 56px; }
-  .channel-name { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.015em; }
-  .channel-handle { font-size: 0.85rem; color: var(--dim); }
-  .channel-row .btn { margin-left: auto; }
-
-  .shorts { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 1rem; }
-  .short { text-decoration: none; color: var(--ink); display: block; }
-  .short-thumb { display: block; aspect-ratio: 9 / 14; border-radius: 16px; overflow: hidden; background: #e8e8ec; }
-  .short-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.25s ease; }
-  .short:hover .short-thumb img { transform: scale(1.05); }
-  .short-title { display: block; font-size: 0.8rem; font-weight: 600; margin-top: 0.45rem; line-height: 1.3; }
-  .short-views { display: block; font-size: 0.72rem; color: var(--dim); }
-
-  .yt-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem; margin-top: 1.4rem; }
-  .stat { background: rgba(255, 255, 255, 0.55); border: 1px solid rgba(255, 255, 255, 0.7); border-radius: 16px; padding: 0.8rem 1rem; }
-  .stat dt { font-size: 0.72rem; color: var(--dim); }
-  .stat dd { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
-
-  .yt-note { margin-top: 1.3rem; font-size: 0.92rem; color: var(--dim); }
-  .yt-note a {
-    color: var(--ink); font-weight: 600;
-    text-decoration: underline; text-decoration-color: var(--red);
-    text-decoration-thickness: 2px; text-underline-offset: 3px;
+  .yt-stats {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem; margin-top: 1.1rem;
   }
-  .yt-note a:hover { text-decoration-thickness: 3px; }
+  .stat { background: #272727; border-radius: 12px; padding: 0.7rem 0.95rem; }
+  .stat dt { font-size: 0.72rem; color: #aaa; }
+  .stat dd { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; color: #fff; font-variant-numeric: tabular-nums; }
 
   /* ---------- 03 / 04 tool sections ---------- */
   .tool { padding: 4.5rem 0 1rem; scroll-margin-top: 4rem; }
   .tool-panel { padding: 2rem; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 2rem; align-items: center; }
-
-  /* stacked variant: text row on top, media full width below */
-  .tool-panel--stack { display: block; }
-  .tool-panel--stack .dev { margin-top: 1.75rem; }
   @media (max-width: 760px) { .tool-panel { grid-template-columns: 1fr; } }
+
+  /* ---------- the Ableton environment ---------- */
+  .live-stage { background: #202020; color: #d5d5d0; }
+  .live-stage .tool-title { color: #e8e6e0; }
+  .live-stage .tool-sub { color: #a5a59d; margin-top: 0.2rem; }
+  .live-stage .tool-desc { color: #a5a59d; max-width: 62ch; margin-top: 0.9rem; }
+  .live-stage .tool-actions { margin-top: 1.3rem; }
+  .live-stage .dev {
+    margin-top: 2rem;
+    box-shadow: 0 34px 90px -20px rgba(0, 0, 0, 0.7);
+  }
 
   .tool-head { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.9rem; }
   .tool-head img { width: 40px; height: 40px; border-radius: 10px; }
@@ -224,29 +208,51 @@
     color: var(--dim-ground); font-size: 0.8rem;
   }
 
-  /* ---------- the watch page: a real Short playing in a real player ---------- */
-  .watch {
-    background: #0f0f0f;
-    border-radius: 18px;
-    padding: 1.1rem;
-    color: #f1f1f1;
+  /* ---------- immersive app stages: full-bleed environments ---------- */
+  .yt-stage, .live-stage {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    scroll-margin-top: 4rem;
+    padding: 4.5rem 0 5rem;
+    margin-top: 4.5rem;
+  }
+  .stage-inner { max-width: var(--max); margin: 0 auto; padding: 0 1.5rem; }
+
+  /* ---------- the YouTube environment: a real watch page ---------- */
+  .yt-stage { background: #0f0f0f; color: #f1f1f1; }
+
+  .watchpage {
     display: grid;
-    grid-template-columns: minmax(0, 383px) minmax(0, 1fr);
-    gap: 1.6rem;
-    box-shadow: 0 30px 90px -25px rgba(255, 0, 51, 0.35), 0 12px 40px rgba(0, 0, 0, 0.35);
+    grid-template-columns: minmax(0, 1fr) 402px;
+    gap: 1.75rem;
+    margin-top: 0.5rem;
   }
-  @media (max-width: 760px) {
-    .watch { grid-template-columns: 1fr; }
-    .player { max-width: 315px; margin-inline: auto; }
-  }
+  @media (max-width: 900px) { .watchpage { grid-template-columns: 1fr; } }
 
-  .player {
+  .wp-player {
     border-radius: 12px; overflow: hidden; background: #000;
-    aspect-ratio: 9 / 16; max-height: 681px;
+    aspect-ratio: 16 / 9;
   }
-  .player iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .wp-player iframe { width: 100%; height: 100%; border: 0; display: block; }
 
-  .watch-title { font-size: 1rem; font-weight: 600; margin-top: 0.85rem; color: #fff; }
+  .wp-title { font-size: 1.3rem; font-weight: 700; margin-top: 1rem; color: #fff; }
+
+  .wp-chrow { display: flex; align-items: center; gap: 0.8rem; margin-top: 0.8rem; flex-wrap: wrap; }
+  .wp-avatar { border-radius: 50%; }
+  .wp-ch { flex: 1; min-width: 0; line-height: 1.3; }
+  .wp-ch b { display: block; font-size: 0.95rem; color: #fff; }
+  .wp-ch span { font-size: 0.78rem; color: #aaa; }
+
+  .wp-desc {
+    margin-top: 1.1rem; background: #272727; border-radius: 12px;
+    padding: 0.95rem 1.15rem; font-size: 0.92rem; color: #ddd;
+    line-height: 1.55;
+  }
+  .wp-desc-head { font-weight: 600; color: #fff; margin-bottom: 0.4rem; font-size: 0.9rem; }
+  .wp-desc a { color: #3ea6ff; text-decoration: none; font-weight: 600; }
+  .wp-desc a:hover { text-decoration: underline; }
+
+  .wp-rail { display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; }
 
   /* click-to-load facade: a plain link until the player is requested */
   .player-facade { position: relative; display: block; width: 100%; height: 100%; background: #000; }
@@ -261,12 +267,6 @@
   }
   .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 
-  .watch-row { display: flex; align-items: center; gap: 0.7rem; margin-top: 0.65rem; }
-  .watch-avatar { border-radius: 50%; }
-  .watch-ch { flex: 1; line-height: 1.3; min-width: 0; }
-  .watch-ch b { display: block; font-size: 0.88rem; color: #fff; }
-  .watch-ch span { font-size: 0.75rem; color: #aaa; }
-
   .subscribe {
     background: #ff0033; color: #fff; font-size: 0.9rem; font-weight: 600;
     text-decoration: none; padding: 0.6rem 1.25rem; border-radius: 999px;
@@ -274,21 +274,15 @@
   }
   .subscribe:hover { background: #ff2b55; }
 
-  .upnext { min-width: 0; display: flex; flex-direction: column; }
-  .upnext-label {
-    font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
-    color: #aaa; margin-bottom: 0.8rem;
-  }
   .un {
-    flex: 1; display: flex; gap: 0.7rem; align-items: center; text-decoration: none;
-    padding: 0.5rem; border-radius: 10px; margin: 0 -0.5rem;
+    display: flex; gap: 0.7rem; align-items: flex-start; text-decoration: none;
+    padding: 0.4rem; border-radius: 10px; margin: 0 -0.4rem;
   }
   .un:hover { background: rgba(255, 255, 255, 0.07); }
-  .un img { width: 172px; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
-  .un b { font-size: 0.95rem; }
-  .un span { min-width: 0; line-height: 1.35; }
-  .un b { display: block; font-size: 0.85rem; color: #fff; font-weight: 600; }
-  .un em { font-style: normal; font-size: 0.74rem; color: #aaa; }
+  .un img { width: 168px; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
+  .un span { min-width: 0; line-height: 1.4; }
+  .un b { display: block; font-size: 0.9rem; color: #fff; font-weight: 600; }
+  .un em { display: block; font-style: normal; font-size: 0.76rem; color: #aaa; }
 
   /* glow behind the marks */
   .yt-logo-mark { box-shadow: 0 0 46px rgba(255, 0, 51, 0.55), 0 12px 40px rgba(255, 0, 51, 0.35); }
@@ -348,7 +342,7 @@
 
   @media (max-width: 480px) {
     .dev-knobs { display: grid; grid-template-columns: repeat(3, 1fr); row-gap: 0.9rem; }
-    .upnext-label { letter-spacing: 0.08em; }
+    .un img { width: 132px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
