@@ -12,37 +12,31 @@ Then open http://localhost:8734. Do NOT open index.html via file:// — the YouT
 embed and the Backline demo iframe need a real http origin.
 
 ## The design (SETTLED — do not re-explore)
-Frosted-glass identity on a mid-dark gray ground (`--ground: #7f7f88`), warm-white
-text, blue accent `#0071e3`, left-aligned, Apple-adjacent. Pastel blurred washes sit
-behind the glass. Content fades up on scroll (IntersectionObserver, one-shot).
+Warm personal site (`--ground: #1c1814`), not a numbered portfolio template.
+**Fraunces** + **Instrument Sans**. Hero is a name + sticky-note aside of projects.
+Each project section has its own layout (Aminal story→cinema, Backline banner→
+full demo, Mix copy beside video). Mixing video autoplays **with sound** when
+scrolled into view after any page click (browser autoplay policy); otherwise
+shows “Tap for sound.” YouTube cinema keeps a 16:9 shell. No fake app chrome.
 
 Structure, top to bottom:
-1. **Intro** — name, one-liner, Email/GitHub buttons, résumé strip (glass).
-2. **Aminal House** — a faithful **YouTube dark watch page** recreation (real Roboto
-   font via Google Fonts): masthead, 16:9 player (click-to-load facade → real embed),
-   title/channel/Subscribe, description, related rail. Real channel: @Aminal_House,
-   109 uploads, 177,653 views, 321 subs — a pipeline-run dog-shorts channel.
-3. **Backline** — the **real interactive demo** embedded as an iframe from
-   `backline-demo/` (Alec built this; 2.25MB self-contained, real ACE-Step audio).
-4. **AI Mixing (Freak-Quencies)** — a clean **Ableton Live device** frame around the
-   real screen-recording (`assets/ai-mix-demo.mp4`). NOTE: an earlier version had
-   fake CSS knobs — they were removed for reading "vibecoded." Keep it real: the
-   recording is the content, frame it minimally.
+1. **Intro** — `Alec / Lewis`, role line, compact jump links, résumé.
+2. **Aminal** — cinema first, story + stats, compact pipeline strip, quiet filmstrip.
+3. **Backline** — story + points, full-bleed real demo iframe.
+4. **Mixing** — large Live theater video first, then explanation + signal steps.
 
-## Hard-won taste rules (respect these — a full day of iteration produced them)
+## Hard-won taste rules (respect these)
 - Real content only. Never fabricate stats, videos, testimonials, or fake app chrome.
-- App recreations must look authentic (real fonts, real colors, real proportions) or
-  be dropped. "Vibecoded" = the instant-reject signal.
-- Motion stays calm and scroll/interaction-driven. No constant ambient motion
-  (it caused motion sickness). Idle screen ≈ still.
+- Prefer art-directed portfolio moments over literal UI clones — clones read as
+  "vibecoded." Keep YouTube/Ableton *associations* via color, type, and real media.
+- Motion stays calm and scroll/interaction-driven. No constant ambient motion.
 - No emojis anywhere in the UI.
-- Owner iterates by feel and reverses often; prefer previewing a change before large
-  rewrites. Don't relitigate the settled design — refine within it.
+- Owner iterates by feel; prefer previewing before large rewrites. Refine within
+  the settled editorial direction.
 
 ## Accessibility / perf conventions already in place
 - `.js` class gate for reveals; reduced-motion fully handled.
-- YouTube player and the demo video are click/scroll-loaded, not eager (keeps initial
-  load light). Contrast tuned to WCAG AA on the gray ground (`--dim-ground: #17171b`).
+- YouTube player and the demo video are click/scroll-loaded, not eager.
 - Real favicons + Open Graph/Twitter meta present.
 
 ## Real details

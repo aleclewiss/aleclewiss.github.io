@@ -1,8 +1,7 @@
-// Reveal animations only apply once JS is confirmed running (here, so the
-// trigger and the payoff can't be split by a failed script load).
 document.documentElement.classList.add("js");
 
-// Scroll reveals: content fades up as it enters the viewport.
+var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 if ("IntersectionObserver" in window) {
   var obs = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) {
@@ -11,56 +10,121 @@ if ("IntersectionObserver" in window) {
         obs.unobserve(e.target);
       }
     });
-  }, { threshold: 0.18 });
-  document.querySelectorAll(".reveal, .yt-hero").forEach(function (el) { obs.observe(el); });
+  }, { threshold: 0.1, rootMargin: "0px 0px -4% 0px" });
+  document.querySelectorAll(".reveal").forEach(function (el) { obs.observe(el); });
 } else {
-  document.querySelectorAll(".reveal, .yt-hero").forEach(function (el) { el.classList.add("visible"); });
+  document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("visible"); });
 }
 
-// Play the device demo when it scrolls into view — unless the user prefers
-// reduced motion (they keep the poster + native controls).
+// --- Mix video: play with sound on scroll (after any user gesture unlocks audio) ---
+var audioUnlocked = false;
+var mixStarted = false;
+var mixInView = false;
 var devVideo = document.querySelector(".dev-display");
-if (devVideo && !window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    && "IntersectionObserver" in window) {
-  new IntersectionObserver(function (entries, o) {
-    if (entries.some(function (e) { return e.isIntersecting; })) {
-      devVideo.play().catch(function () {});
-      o.disconnect();
+var mixPlay = document.querySelector(".mix-play");
+var mixHint = document.getElementById("mix-hint");
+
+function unlockAudio() {
+  if (audioUnlocked) return;
+  audioUnlocked = true;
+  // Warm up a silent context so later unmuted play is allowed.
+  try {
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (AC) {
+      var ctx = new AC();
+      if (ctx.state === "suspended") ctx.resume();
     }
-  }, { threshold: 0.4 }).observe(devVideo);
+  } catch (err) {}
+  if (mixInView && !mixStarted) tryStartMix();
 }
 
-// Click-to-load YouTube facade: inject the real player on demand.
+function tryStartMix() {
+  if (!devVideo || mixStarted || reduceMotion) return;
+  devVideo.muted = false;
+  var p = devVideo.play();
+  if (p && typeof p.then === "function") {
+    p.then(function () {
+      mixStarted = true;
+      if (mixPlay) mixPlay.hidden = true;
+      if (mixHint) {
+        mixHint.textContent = "Playing with sound.";
+      }
+    }).catch(function () {
+      // Browser still blocked unmuted autoplay — show tap fallback.
+      if (mixPlay) mixPlay.hidden = false;
+      if (mixHint) {
+        mixHint.textContent = "Tap the video once for sound — browsers block autoplay until you interact.";
+      }
+    });
+  }
+}
+
+["pointerdown", "keydown", "touchstart"].forEach(function (evt) {
+  window.addEventListener(evt, unlockAudio, { once: true, passive: true });
+});
+
+if (devVideo) {
+  if (mixPlay) {
+    mixPlay.addEventListener("click", function () {
+      unlockAudio();
+      mixStarted = false;
+      tryStartMix();
+    });
+  }
+  devVideo.addEventListener("play", function () {
+    if (!devVideo.muted && mixPlay) mixPlay.hidden = true;
+  });
+
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        mixInView = true;
+        tryStartMix();
+      });
+    }, { threshold: 0.45 }).observe(devVideo);
+  }
+}
+
+// YouTube facade — also unlocks audio for the mix later.
 var facade = document.querySelector(".player-facade");
 if (facade) {
   facade.addEventListener("click", function (ev) {
     ev.preventDefault();
+    unlockAudio();
     var f = document.createElement("iframe");
     f.src = "https://www.youtube-nocookie.com/embed/ifkNxi9HW00?autoplay=1";
     f.title = "Aminal House — Dachshunds are built different";
     f.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
     f.allowFullscreen = true;
-    facade.replaceWith(f);
+    var shell = document.createElement("div");
+    shell.className = "cinema-screen is-playing";
+    shell.appendChild(f);
+    facade.replaceWith(shell);
   }, { once: true });
 }
 
-// Reading-progress line.
-var progress = document.querySelector(".progress");
-if (progress) {
-  var ticking = false;
-  var updateProgress = function () {
-    ticking = false;
-    var max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-    progress.style.transform = "scaleX(" + Math.min(1, window.scrollY / max) + ")";
-  };
-  window.addEventListener("scroll", function () {
-    if (!ticking) { ticking = true; requestAnimationFrame(updateProgress); }
-  }, { passive: true });
-  window.addEventListener("resize", updateProgress);
-  updateProgress();
+var filmstrip = document.querySelector(".filmstrip");
+if (filmstrip && !reduceMotion) {
+  var dragging = false;
+  var startX = 0;
+  var startScroll = 0;
+  filmstrip.addEventListener("pointerdown", function (e) {
+    if (e.pointerType === "touch") return;
+    dragging = true;
+    startX = e.clientX;
+    startScroll = filmstrip.scrollLeft;
+    filmstrip.setPointerCapture(e.pointerId);
+  });
+  filmstrip.addEventListener("pointermove", function (e) {
+    if (!dragging) return;
+    filmstrip.scrollLeft = startScroll - (e.clientX - startX);
+  });
+  var endDrag = function () { dragging = false; };
+  filmstrip.addEventListener("pointerup", endDrag);
+  filmstrip.addEventListener("pointercancel", endDrag);
 }
 
-// Nav highlights the section you're reading; clears back on the hero.
 var navLinks = document.querySelectorAll(".nav-links a[href^='#']");
 if (navLinks.length && "IntersectionObserver" in window) {
   var byId = {};
@@ -77,10 +141,7 @@ if (navLinks.length && "IntersectionObserver" in window) {
     var el = document.getElementById(id);
     if (el) spy.observe(el);
   });
-  var hero = document.querySelector(".hero");
-  if (hero) spy.observe(hero);
 }
 
-// Footer year.
 var yearEl = document.getElementById("year");
 if (yearEl) yearEl.textContent = new Date().getFullYear();

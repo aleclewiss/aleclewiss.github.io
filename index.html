@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Alec Lewis — music tools &amp; automation</title>
   <meta name="description" content="Alec Lewis builds software that makes music — and software that runs itself.">
-  <meta name="theme-color" content="#7f7f88">
+  <meta name="theme-color" content="#1c1814">
   <link rel="canonical" href="https://aleclewiss.github.io/">
   <meta property="og:title" content="Alec Lewis">
   <meta property="og:description" content="Music tools, AI audio, and automation that runs a media channel by itself.">
@@ -23,155 +23,153 @@
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Instrument+Sans:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="styles.css">
   <script src="script.js" defer></script>
 </head>
-<body>
-
-  <div class="washes" aria-hidden="true">
-    <div class="wash wash-1"></div>
-    <div class="wash wash-2"></div>
-    <div class="wash wash-3"></div>
-    <div class="wash wash-4"></div>
-  </div>
-
-  <div class="progress" aria-hidden="true"></div>
+<body data-stage="hero">
 
   <header class="nav">
     <a class="nav-name" href="#top">Alec Lewis</a>
     <nav class="nav-links">
-      <a href="#aminal">Aminal House</a>
+      <a href="#aminal">Aminal</a>
       <a href="#backline">Backline</a>
-      <a href="#mixing">AI Mixing</a>
+      <a href="#mixing">Mixing</a>
     </nav>
+    <a class="nav-mail" href="mailto:aleclewis@psu.edu">aleclewis@psu.edu</a>
   </header>
 
   <main id="top">
 
-    <!-- ============ IDENTITY ============ -->
     <section class="hero">
-      <p class="eyebrow reveal">Music tools · AI audio · Automation</p>
-      <h1 class="hero-name reveal" style="--d:.08s">Alec Lewis</h1>
-      <p class="hero-line reveal" style="--d:.16s">I build software that makes music — and software that runs itself.</p>
-      <div class="hero-actions reveal" style="--d:.24s">
-        <a class="btn btn-primary" href="mailto:aleclewis@psu.edu">Email</a>
+      <div class="hero-main reveal">
+        <h1 class="hero-name">Alec Lewis</h1>
+        <p class="hero-line">I live in State College and build the music software I wish existed — plus a few machines that keep going after I close the laptop.</p>
+      </div>
+
+      <aside class="hero-note reveal" style="--d:.1s">
+        <p>Three things I’m proud of lately:</p>
+        <ul>
+          <li><a href="#aminal">Aminal House</a> — a dog-shorts channel my pipeline runs for me</li>
+          <li><a href="#backline">Backline</a> — an AI co-producer you can click around in below</li>
+          <li><a href="#mixing">Freak-Quencies</a> — a plugin that mixes guitar inside Ableton</li>
+        </ul>
+        <p class="hero-note-foot">Also: AI + IT work at Penn State · BIS from Pitt ’24</p>
+      </aside>
+
+      <div class="hero-actions reveal" style="--d:.16s">
+        <a class="btn btn-primary" href="mailto:aleclewis@psu.edu">Email me</a>
         <a class="btn" href="https://github.com/aleclewiss" target="_blank" rel="noopener">GitHub</a>
-        <!-- LinkedIn button ready — add the URL:
-        <a class="btn" href="https://www.linkedin.com/in/..." target="_blank" rel="noopener">LinkedIn</a> -->
-      </div>
-      <p class="hero-loc reveal" style="--d:.3s">State College, PA</p>
-
-      <div class="glass resume reveal" style="--d:.34s">
-        <div class="resume-item">
-          <h2>Experience</h2>
-          <p>AI Portfolio Services — Penn State <em>(2026–now)</em></p>
-          <p>IT Support Specialist — Penn State <em>(2024–now)</em> · 2,126 tickets resolved at 4.89/5</p>
-        </div>
-        <div class="resume-item">
-          <h2>Education</h2>
-          <p>B.S. Business Information Systems, University of Pittsburgh <em>(2024, magna cum laude)</em></p>
-        </div>
-        <div class="resume-item">
-          <h2>Skills</h2>
-          <p>Python · C++ / JUCE · PyTorch · Electron · React · DSP · Max for Live · CLIP</p>
-        </div>
       </div>
     </section>
 
-    <!-- ============ AMINAL HOUSE — you're on YouTube ============ -->
-    <section class="ytx" id="aminal">
-      <div class="ytx-mast">
-        <div class="ytx-mast-left">
-          <span class="ytx-burger" aria-hidden="true"><i></i><i></i><i></i></span>
-          <span class="ytx-word"><span class="ytx-tv" aria-hidden="true"></span>YouTube</span>
-        </div>
-        <div class="ytx-search" aria-hidden="true">
-          <span class="ytx-search-box">aminal house</span>
-          <span class="ytx-search-btn"><svg viewBox="0 0 24 24"><path d="M20.87 20.17l-5.59-5.59A6.96 6.96 0 0016.5 10c0-3.87-3.13-7-7-7s-7 3.13-7 7 3.13 7 7 7c1.71 0 3.28-.61 4.5-1.62l5.59 5.59.78-.8zM9.5 16c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/></svg></span>
-        </div>
-        <span class="ytx-me" aria-hidden="true">A</span>
+    <section class="aminal" id="aminal">
+      <div class="aminal-intro reveal">
+        <h2>Aminal House</h2>
+        <p>
+          I wanted to know if a real channel could post without me babysitting it.
+          So I built one. Python finds clips, CLIP checks they’re actually on-brief,
+          AI narrates the short, and the same job ships to YouTube, TikTok, Instagram,
+          and Facebook.
+        </p>
       </div>
 
-      <div class="ytx-watch">
-        <div class="ytx-main">
-          <a class="player-facade ytx-player" href="https://youtu.be/ifkNxi9HW00" target="_blank" rel="noopener">
-            <img src="https://i.ytimg.com/vi/ifkNxi9HW00/hqdefault.jpg" alt="" loading="lazy" width="480" height="270">
-            <span class="player-play" aria-hidden="true"></span>
-            <span class="visually-hidden">Play video: Dachshunds are built different</span>
+      <div class="cinema reveal" style="--d:.06s">
+        <a class="player-facade cinema-screen" href="https://youtu.be/ifkNxi9HW00" target="_blank" rel="noopener">
+          <img src="https://i.ytimg.com/vi/ifkNxi9HW00/hqdefault.jpg" alt="" loading="lazy" width="480" height="270">
+          <span class="cinema-play" aria-hidden="true"></span>
+          <span class="cinema-burn">
+            <b>Dachshunds are built different</b>
+            <em>One short the machine shipped · 2,150 views</em>
+          </span>
+          <span class="visually-hidden">Play video: Dachshunds are built different</span>
+        </a>
+      </div>
+
+      <div class="aminal-meta reveal" style="--d:.1s">
+        <p class="aminal-pipe">Scrape → CLIP verify → assemble → post × 4</p>
+        <p class="aminal-stats-line"><strong>109</strong> uploads · <strong>177,653</strong> views · <strong>321</strong> subscribers</p>
+        <div class="aminal-links">
+          <a class="btn btn-yt" href="https://www.youtube.com/@Aminal_House?sub_confirmation=1" target="_blank" rel="noopener">Subscribe</a>
+          <a class="btn" href="https://github.com/aleclewiss/aminal-house-pipeline" target="_blank" rel="noopener">Pipeline on GitHub</a>
+        </div>
+      </div>
+
+      <div class="filmstrip-wrap reveal" style="--d:.12s">
+        <div class="filmstrip" tabindex="0">
+          <a class="film" href="https://youtu.be/uNAUcWt4b7I" target="_blank" rel="noopener">
+            <img src="https://i.ytimg.com/vi/uNAUcWt4b7I/mqdefault.jpg" alt="" loading="lazy">
+            <span>Goldens · 1.2K</span>
           </a>
-          <h2 class="ytx-title">Dachshunds are built different</h2>
-          <div class="ytx-rowa">
-            <img class="ytx-chav" src="https://yt3.googleusercontent.com/X3pcRbfQI5jQ5pSFL5h4l1-kJoR87KBCP8zVC8MFlcasb-1_SvqhlzfqbL7WWs3lEddRIbaYKg=s88-c-k-c0x00ffffff-no-rj" alt="" width="40" height="40" loading="lazy">
-            <div class="ytx-chmeta"><b>Aminal House</b><span>321 subscribers</span></div>
-            <a class="ytx-sub" href="https://www.youtube.com/@Aminal_House?sub_confirmation=1" target="_blank" rel="noopener">Subscribe</a>
-          </div>
-          <div class="ytx-desc">
-            <b>2,150 views&nbsp;&nbsp;<span class="hash">#shorts</span> <span class="hash">#dogs</span></b>
-            This channel runs itself. A Python pipeline scrapes clips, verifies them with a local CLIP
-            model, assembles vertical video with AI narration, and posts to YouTube, TikTok, Instagram,
-            and Facebook — unattended. Built by Alec Lewis.
-            <a href="https://github.com/aleclewiss/aminal-house-pipeline" target="_blank" rel="noopener">See how the machine works</a>
-          </div>
+          <a class="film" href="https://youtu.be/ImZp7dTgAwE" target="_blank" rel="noopener">
+            <img src="https://i.ytimg.com/vi/ImZp7dTgAwE/mqdefault.jpg" alt="" loading="lazy">
+            <span>Corgis · 1.2K</span>
+          </a>
+          <a class="film" href="https://youtu.be/5XjMj55Nj3w" target="_blank" rel="noopener">
+            <img src="https://i.ytimg.com/vi/5XjMj55Nj3w/mqdefault.jpg" alt="" loading="lazy">
+            <span>Yorkies · 694</span>
+          </a>
+          <a class="film" href="https://youtu.be/lR_tEGg4WVI" target="_blank" rel="noopener">
+            <img src="https://i.ytimg.com/vi/lR_tEGg4WVI/mqdefault.jpg" alt="" loading="lazy">
+            <span>Poms · 567</span>
+          </a>
+          <a class="film" href="https://youtu.be/-w-wkau9WAg" target="_blank" rel="noopener">
+            <img src="https://i.ytimg.com/vi/-w-wkau9WAg/mqdefault.jpg" alt="" loading="lazy">
+            <span>Shibas · 530</span>
+          </a>
         </div>
-        <aside class="ytx-rail">
-          <p class="ytx-rail-h">More from Aminal House</p>
-          <a class="ytx-rel" href="https://youtu.be/uNAUcWt4b7I" target="_blank" rel="noopener"><img src="https://i.ytimg.com/vi/uNAUcWt4b7I/mqdefault.jpg" alt="" loading="lazy"><span><b>Goldens are built different</b><em>Aminal House</em><em>1.2K views · 2 weeks ago</em></span></a>
-          <a class="ytx-rel" href="https://youtu.be/ImZp7dTgAwE" target="_blank" rel="noopener"><img src="https://i.ytimg.com/vi/ImZp7dTgAwE/mqdefault.jpg" alt="" loading="lazy"><span><b>Corgis on another level</b><em>Aminal House</em><em>1.2K views · 3 weeks ago</em></span></a>
-          <a class="ytx-rel" href="https://youtu.be/5XjMj55Nj3w" target="_blank" rel="noopener"><img src="https://i.ytimg.com/vi/5XjMj55Nj3w/mqdefault.jpg" alt="" loading="lazy"><span><b>Yorkies are so adorable</b><em>Aminal House</em><em>694 views · 3 weeks ago</em></span></a>
-          <a class="ytx-rel" href="https://youtu.be/lR_tEGg4WVI" target="_blank" rel="noopener"><img src="https://i.ytimg.com/vi/lR_tEGg4WVI/mqdefault.jpg" alt="" loading="lazy"><span><b>Pomeranians are so adorable</b><em>Aminal House</em><em>567 views · a month ago</em></span></a>
-          <a class="ytx-rel" href="https://youtu.be/-w-wkau9WAg" target="_blank" rel="noopener"><img src="https://i.ytimg.com/vi/-w-wkau9WAg/mqdefault.jpg" alt="" loading="lazy"><span><b>Perfectly cute Shibas</b><em>Aminal House</em><em>530 views · a month ago</em></span></a>
-        </aside>
       </div>
     </section>
 
-    <!-- ============ BACKLINE — the real interactive demo ============ -->
     <section class="blx" id="backline">
-      <div class="stage-inner">
-        <div class="blx-head reveal">
-          <h2 class="blx-title">Backline</h2>
-          <p class="blx-sub">An AI co-producer for Ableton Live — describe a song, audition real takes, drop the winner into a session. Try it right here:</p>
+      <div class="blx-banner reveal">
+        <div>
+          <h2>Backline</h2>
+          <p>
+            The co-producer I wanted next to Ableton. Describe a song, audition real
+            ACE-Step takes in the browser, drop the winner into a session. What’s below
+            is the real UI — not a mock.
+          </p>
         </div>
-        <div class="blx-frame reveal">
-          <iframe src="backline-demo/index.html" title="Backline — interactive demo" loading="lazy"></iframe>
-        </div>
-        <div class="blx-actions reveal">
-          <a class="btn btn-primary" href="https://github.com/aleclewiss/backline" target="_blank" rel="noopener">View source</a>
-          <span class="blx-note">Every take is real ACE-Step output. Audio plays after you press play.</span>
-        </div>
+        <a class="btn btn-primary" href="https://github.com/aleclewiss/backline" target="_blank" rel="noopener">Source</a>
+      </div>
+      <div class="blx-frame reveal" style="--d:.08s">
+        <iframe src="backline-demo/index.html" title="Backline — interactive demo" loading="lazy"></iframe>
       </div>
     </section>
 
-    <!-- ============ AI MIXING — Freak-Quencies in Ableton ============ -->
-    <section class="fqx" id="mixing">
-      <div class="stage-inner">
-        <div class="fqx-head reveal">
-          <h2 class="fqx-title">AI Mixing Pipeline</h2>
-          <p class="fqx-sub">Freak-Quencies — a neural network that mixes acoustic guitar in real time. A CNN listens to a take and writes a 24-parameter EQ + compression chain, live inside a JUCE plugin.</p>
-          <div class="fqx-actions"><a class="btn btn-primary" href="https://github.com/aleclewiss/Freak-Quencies" target="_blank" rel="noopener">View source</a></div>
+    <section class="mix" id="mixing">
+      <div class="mix-layout">
+        <div class="mix-copy reveal">
+          <h2>Freak-Quencies</h2>
+          <p>
+            Born from mixing guitar the slow way. A JUCE plugin with a CNN that hears
+            the DI and writes a 24-parameter EQ + compression chain live in Ableton —
+            the moves I’d make, just faster.
+          </p>
+          <p class="mix-hint" id="mix-hint">Scroll here and it should play with sound. If your browser blocks it, tap the video once.</p>
+          <a class="btn btn-primary" href="https://github.com/aleclewiss/Freak-Quencies" target="_blank" rel="noopener">Source</a>
         </div>
-        <div class="fqx-crumb reveal" aria-hidden="true">
-          <span class="dot"></span><span>Live 12</span><span>·</span><span>Guitar DI</span><span>▸</span><span class="amber">Freak-Quencies</span><span class="grow"></span><span>128.00 BPM</span>
-        </div>
-        <div class="fq reveal">
-          <div class="fq-title">
-            <span class="fq-power" aria-hidden="true"></span>
-            Freak-Quencies
-            <span class="fq-kind">Audio Effect — Convolutional Neural Network</span>
-          </div>
-          <div class="fq-screen">
+        <div class="theater reveal" style="--d:.08s">
+          <div class="theater-screen">
+            <button type="button" class="mix-play" hidden aria-label="Play mixing demo with sound">
+              <span class="mix-play-icon" aria-hidden="true"></span>
+              <span class="mix-play-label">Tap for sound</span>
+            </button>
             <video class="dev-display" src="assets/ai-mix-demo.mp4" poster="assets/demo-poster.jpg"
-                   preload="metadata" muted loop playsinline controls width="1280" height="720"
+                   preload="auto" loop playsinline controls width="1280" height="720"
                    aria-label="Freak-Quencies analyzing and mixing a guitar take in real time"></video>
           </div>
-          <div class="fq-foot"><span>take → CNN Listener → EQ → Compressor → out</span><span class="fq-foot-r">24 parameters · decided per glance</span></div>
         </div>
       </div>
     </section>
 
   </main>
 
-  <footer class="footer">© <span id="year">2026</span> Alec Lewis</footer>
+  <footer class="footer">
+    <span>Alec · State College · © <span id="year">2026</span></span>
+    <a href="mailto:aleclewis@psu.edu">Say hi</a>
+  </footer>
 
 </body>
 </html>
