@@ -2,6 +2,16 @@ document.documentElement.classList.add("js");
 
 var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+// Hero reveals fire on load so the first viewport reads as one entrance.
+var heroReveals = document.querySelectorAll(".hero .reveal");
+if (reduceMotion) {
+  heroReveals.forEach(function (el) { el.classList.add("visible"); });
+} else {
+  requestAnimationFrame(function () {
+    heroReveals.forEach(function (el) { el.classList.add("visible"); });
+  });
+}
+
 if ("IntersectionObserver" in window) {
   var obs = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) {
@@ -10,8 +20,11 @@ if ("IntersectionObserver" in window) {
         obs.unobserve(e.target);
       }
     });
-  }, { threshold: 0.1, rootMargin: "0px 0px -4% 0px" });
-  document.querySelectorAll(".reveal").forEach(function (el) { obs.observe(el); });
+  }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
+  document.querySelectorAll(".reveal").forEach(function (el) {
+    if (el.closest(".hero")) return; // already handled above
+    obs.observe(el);
+  });
 } else {
   document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("visible"); });
 }
@@ -88,30 +101,32 @@ if (devVideo) {
 
 // --- Aminal inline player + video gallery (stays on the page) ---
 var cinemaScreen = document.querySelector(".cinema-screen");
+var cinemaFrame = cinemaScreen ? cinemaScreen.querySelector("iframe") : null;
 var nowTitle = document.querySelector(".cinema-title");
 var nowSub = document.querySelector(".cinema-sub");
 var vids = document.querySelectorAll(".vid");
 
-function playInScreen(id, title, meta) {
-  if (!cinemaScreen || !id) return;
-  unlockAudio(); // also unlocks the mix video's audio later
-  var f = document.createElement("iframe");
-  f.src = "https://www.youtube-nocookie.com/embed/" + id + "?autoplay=1&rel=0";
-  f.title = title || "Aminal House short";
-  f.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-  f.allowFullscreen = true;
-  cinemaScreen.innerHTML = "";
-  cinemaScreen.appendChild(f);
-  cinemaScreen.classList.add("is-playing");
-  if (nowTitle && title) nowTitle.textContent = title;
-  if (nowSub && meta) nowSub.textContent = meta + " · now playing";
+function ytEmbed(id, autoplay) {
+  return "https://www.youtube-nocookie.com/embed/" + id +
+    "?rel=0&modestbranding=1&playsinline=1" + (autoplay ? "&autoplay=1" : "");
 }
 
-if (cinemaScreen) {
-  cinemaScreen.addEventListener("click", function () {
-    if (cinemaScreen.querySelector("iframe")) return; // already playing
-    playInScreen(cinemaScreen.dataset.yt, cinemaScreen.dataset.title, cinemaScreen.dataset.meta);
-  });
+function playInScreen(id, title, meta, autoplay) {
+  if (!cinemaScreen || !id) return;
+  unlockAudio();
+  if (!cinemaFrame) {
+    cinemaFrame = document.createElement("iframe");
+    cinemaFrame.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+    cinemaFrame.allowFullscreen = true;
+    cinemaFrame.referrerPolicy = "strict-origin-when-cross-origin";
+    cinemaScreen.appendChild(cinemaFrame);
+  }
+  cinemaFrame.src = ytEmbed(id, !!autoplay);
+  cinemaFrame.title = title || "Aminal House short";
+  cinemaScreen.dataset.yt = id;
+  cinemaScreen.classList.add("is-playing");
+  if (nowTitle && title) nowTitle.textContent = title;
+  if (nowSub && meta) nowSub.textContent = meta + (autoplay ? " · now playing" : " · tap a thumbnail to switch");
 }
 
 vids.forEach(function (btn) {
@@ -124,7 +139,7 @@ vids.forEach(function (btn) {
       cinemaScreen.dataset.meta = btn.dataset.meta;
       cinemaScreen.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
     }
-    playInScreen(btn.dataset.yt, btn.dataset.title, btn.dataset.meta);
+    playInScreen(btn.dataset.yt, btn.dataset.title, btn.dataset.meta, true);
   });
 });
 
@@ -179,6 +194,32 @@ if (navLinks.length && "IntersectionObserver" in window) {
   Object.keys(byId).forEach(function (id) {
     var el = document.getElementById(id);
     if (el) spy.observe(el);
+  });
+}
+
+// --- Freak-Quencies demo: auto-fit the iframe to its content (same-origin) ---
+var freakFrame = document.getElementById("freak-frame");
+if (freakFrame) {
+  var fitFreak = function () {
+    try {
+      var doc = freakFrame.contentWindow && freakFrame.contentWindow.document;
+      if (!doc || !doc.body) return;
+      var h = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight);
+      if (h > 0) freakFrame.style.height = h + "px";
+    } catch (err) {
+      // cross-origin or not ready — keep the CSS fallback height
+    }
+  };
+  freakFrame.addEventListener("load", function () {
+    fitFreak();
+    // the demo lays out a canvas after load; re-measure a couple of times
+    setTimeout(fitFreak, 250);
+    setTimeout(fitFreak, 800);
+  });
+  var freakResizeTimer;
+  window.addEventListener("resize", function () {
+    clearTimeout(freakResizeTimer);
+    freakResizeTimer = setTimeout(fitFreak, 150);
   });
 }
 

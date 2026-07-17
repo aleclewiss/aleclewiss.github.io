@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Alec Lewis — music tools &amp; automation</title>
   <meta name="description" content="Alec Lewis builds software that makes music — and software that runs itself.">
-  <meta name="theme-color" content="#1c1814">
+  <meta name="theme-color" content="#09090b">
   <link rel="canonical" href="https://aleclewiss.github.io/">
   <meta property="og:title" content="Alec Lewis">
   <meta property="og:description" content="Music tools, AI audio, and automation that runs a media channel by itself.">
@@ -23,7 +23,7 @@
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Instrument+Sans:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap">
   <link rel="stylesheet" href="styles.css">
   <script src="script.js" defer></script>
 </head>
@@ -42,28 +42,66 @@
   <main id="top">
 
     <section class="hero">
-      <div class="hero-main reveal">
-        <h1 class="hero-name">Alec Lewis</h1>
-        <p class="hero-line">I live in State College and build the music software I wish existed — plus a few machines that keep going after I close the laptop.</p>
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="mailto:aleclewis@psu.edu">Email me</a>
-          <a class="btn" href="https://github.com/aleclewiss" target="_blank" rel="noopener">GitHub</a>
+      <div class="hero-glow" aria-hidden="true"></div>
+      <div class="hero-inner">
+        <div class="hero-main reveal">
+          <h1 class="hero-name">
+            <span>Alec</span>
+            <span>Lewis</span>
+          </h1>
+          <p class="hero-line">I live in State College and build the music software I wish existed — plus a few machines that keep going after I close the laptop.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="mailto:aleclewis@psu.edu">Email me</a>
+            <a class="btn-text" href="https://github.com/aleclewiss" target="_blank" rel="noopener">GitHub</a>
+          </div>
         </div>
-      </div>
 
-      <aside class="hero-note reveal" style="--d:.1s">
-        <p>Three things I’m proud of lately:</p>
-        <ul>
-          <li><a href="#aminal">Aminal House</a> — a dog-shorts channel my pipeline runs for me</li>
-          <li><a href="#backline">Backline</a> — an AI co-producer you can click around in below</li>
-          <li><a href="#mixing">Freak-Quencies</a> — a plugin that mixes guitar inside Ableton</li>
-        </ul>
-        <p class="hero-note-foot">Also: AI + IT work at Penn State · BIS from Pitt ’24</p>
-      </aside>
+        <aside class="hero-aside reveal" style="--d:.12s">
+          <p class="hero-aside-lead">Lately</p>
+          <ul class="hero-work">
+            <li>
+              <a href="#aminal">
+                <b>Aminal House</b>
+                <span>A dog-shorts channel my pipeline runs for me</span>
+              </a>
+            </li>
+            <li>
+              <a href="#backline">
+                <b>Backline</b>
+                <span>An AI co-producer you can click around in below</span>
+              </a>
+            </li>
+            <li>
+              <a href="#mixing">
+                <b>Freak-Quencies</b>
+                <span>A plugin that mixes guitar inside Ableton</span>
+              </a>
+            </li>
+          </ul>
+          <p class="hero-meta">AI + IT at Penn State · BIS from Pitt ’24</p>
+        </aside>
+      </div>
     </section>
 
     <section class="aminal" id="aminal">
-      <div class="aminal-intro reveal">
+      <div class="cinema reveal">
+        <div class="cinema-screen"
+             data-yt="6_kjs4aNw_s" data-title="Goldens are so adorable" data-meta="36K views">
+          <iframe
+            src="https://www.youtube-nocookie.com/embed/6_kjs4aNw_s?rel=0&modestbranding=1&playsinline=1"
+            title="Goldens are so adorable"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+            loading="eager"
+            referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        </div>
+        <p class="cinema-now">
+          <b class="cinema-title">Goldens are so adorable</b>
+          <span class="cinema-sub">36K views · tap a thumbnail to switch</span>
+        </p>
+      </div>
+
+      <div class="aminal-intro reveal" style="--d:.06s">
         <h2>Aminal House</h2>
         <p>
           I wanted to know if a real channel could post without me babysitting it.
@@ -73,44 +111,31 @@
         </p>
       </div>
 
-      <div class="cinema reveal" style="--d:.06s">
-        <button type="button" class="cinema-screen player-facade"
-                data-yt="6_kjs4aNw_s" data-title="Goldens are so adorable" data-meta="36K views"
-                aria-label="Play: Goldens are so adorable">
-          <img class="cinema-thumb" src="https://i.ytimg.com/vi/6_kjs4aNw_s/hqdefault.jpg" alt="" loading="lazy" width="480" height="270">
-          <span class="cinema-play" aria-hidden="true"></span>
-        </button>
-        <p class="cinema-now">
-          <b class="cinema-title">Goldens are so adorable</b>
-          <span class="cinema-sub">36K views · tap a thumbnail to switch</span>
-        </p>
-      </div>
-
       <div class="gallery reveal" style="--d:.1s">
         <p class="gallery-label">The channel’s most-watched — play any one right here</p>
         <div class="gallery-strip">
           <button type="button" class="vid is-active" data-yt="6_kjs4aNw_s" data-title="Goldens are so adorable" data-meta="36K views">
-            <img src="https://i.ytimg.com/vi/6_kjs4aNw_s/mqdefault.jpg" alt="" loading="lazy">
+            <img src="https://i.ytimg.com/vi/6_kjs4aNw_s/hqdefault.jpg" alt="" loading="lazy" width="480" height="360">
             <span class="vid-cap"><b>Goldens</b> 36K</span>
           </button>
           <button type="button" class="vid" data-yt="06zBHnTDSUQ" data-title="Dachshunds are built different" data-meta="17K views">
-            <img src="https://i.ytimg.com/vi/06zBHnTDSUQ/mqdefault.jpg" alt="" loading="lazy">
+            <img src="https://i.ytimg.com/vi/06zBHnTDSUQ/hqdefault.jpg" alt="" loading="lazy" width="480" height="360">
             <span class="vid-cap"><b>Dachshunds</b> 17K</span>
           </button>
           <button type="button" class="vid" data-yt="wqiywAoppdk" data-title="Dachshund" data-meta="4,900 views">
-            <img src="https://i.ytimg.com/vi/wqiywAoppdk/mqdefault.jpg" alt="" loading="lazy">
+            <img src="https://i.ytimg.com/vi/wqiywAoppdk/hqdefault.jpg" alt="" loading="lazy" width="480" height="360">
             <span class="vid-cap"><b>Dachshund</b> 4.9K</span>
           </button>
           <button type="button" class="vid" data-yt="d6_QjHM7b6Q" data-title="Bear, Raven, and Wolf" data-meta="4,800 views">
-            <img src="https://i.ytimg.com/vi/d6_QjHM7b6Q/mqdefault.jpg" alt="" loading="lazy">
+            <img src="https://i.ytimg.com/vi/d6_QjHM7b6Q/hqdefault.jpg" alt="" loading="lazy" width="480" height="360">
             <span class="vid-cap"><b>Bear &amp; Wolf</b> 4.8K</span>
           </button>
           <button type="button" class="vid" data-yt="0TQ_3SqfWJo" data-title="German shepherds" data-meta="4,700 views">
-            <img src="https://i.ytimg.com/vi/0TQ_3SqfWJo/mqdefault.jpg" alt="" loading="lazy">
+            <img src="https://i.ytimg.com/vi/0TQ_3SqfWJo/hqdefault.jpg" alt="" loading="lazy" width="480" height="360">
             <span class="vid-cap"><b>Shepherds</b> 4.7K</span>
           </button>
           <button type="button" class="vid" data-yt="M3GPqLDo6t0" data-title="Pugs" data-meta="4,100 views">
-            <img src="https://i.ytimg.com/vi/M3GPqLDo6t0/mqdefault.jpg" alt="" loading="lazy">
+            <img src="https://i.ytimg.com/vi/M3GPqLDo6t0/hqdefault.jpg" alt="" loading="lazy" width="480" height="360">
             <span class="vid-cap"><b>Pugs</b> 4.1K</span>
           </button>
         </div>
@@ -139,7 +164,7 @@
         <p class="stats-foot">Every one of those posted to <b>YouTube</b>, <b>TikTok</b>, <b>Instagram</b> &amp; <b>Facebook</b> from a single job — <b>zero</b> hands on deck.</p>
         <div class="aminal-links">
           <a class="btn btn-yt" href="https://www.youtube.com/@Aminal_House?sub_confirmation=1" target="_blank" rel="noopener">Subscribe on YouTube</a>
-          <a class="btn" href="https://github.com/aleclewiss/aminal-house-pipeline" target="_blank" rel="noopener">Pipeline on GitHub</a>
+          <a class="btn-text" href="https://github.com/aleclewiss/aminal-house-pipeline" target="_blank" rel="noopener">Pipeline on GitHub</a>
         </div>
       </div>
     </section>
@@ -163,17 +188,7 @@
 
     <section class="mix" id="mixing">
       <div class="mix-layout">
-        <div class="mix-copy reveal">
-          <h2>Freak-Quencies</h2>
-          <p>
-            Born from mixing guitar the slow way. A JUCE plugin with a CNN that hears
-            the DI and writes a 24-parameter EQ + compression chain live in Ableton —
-            the moves I’d make, just faster.
-          </p>
-          <p class="mix-hint" id="mix-hint">Scroll here and it should play with sound. If your browser blocks it, tap the video once.</p>
-          <a class="btn btn-primary" href="https://github.com/aleclewiss/Freak-Quencies" target="_blank" rel="noopener">Source</a>
-        </div>
-        <div class="theater reveal" style="--d:.08s">
+        <div class="theater reveal">
           <div class="theater-screen">
             <button type="button" class="mix-play" hidden aria-label="Play mixing demo with sound">
               <span class="mix-play-icon" aria-hidden="true"></span>
@@ -184,6 +199,21 @@
                    aria-label="Freak-Quencies analyzing and mixing a guitar take in real time"></video>
           </div>
         </div>
+        <div class="mix-copy reveal" style="--d:.08s">
+          <h2>Freak-Quencies</h2>
+          <p>
+            Born from mixing guitar the slow way. A JUCE plugin with a CNN that hears
+            the DI and writes a 24-parameter EQ + compression chain live in Ableton —
+            the moves I’d make, just faster.
+          </p>
+          <p class="mix-hint" id="mix-hint">Scroll here and it should play with sound. If your browser blocks it, tap the video once.</p>
+          <a class="btn btn-primary" href="https://github.com/aleclewiss/Freak-Quencies" target="_blank" rel="noopener">Source</a>
+        </div>
+      </div>
+
+      <div class="mix-frame reveal" style="--d:.12s">
+        <p class="mix-frame-label">Hear it yourself — raw take vs. the AI-corrected mix, right in the browser.</p>
+        <iframe id="freak-frame" src="freak-demo/index.html" title="Freak-Quencies — interactive AI mix-correction demo" loading="lazy" scrolling="no"></iframe>
       </div>
     </section>
 

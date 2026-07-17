@@ -12,18 +12,18 @@ Then open http://localhost:8734. Do NOT open index.html via file:// — the YouT
 embed and the Backline demo iframe need a real http origin.
 
 ## The design (SETTLED — do not re-explore)
-Warm personal site (`--ground: #1c1814`), not a numbered portfolio template.
-**Fraunces** + **Instrument Sans**. Hero is a name + sticky-note aside of projects.
-Each project section has its own layout (Aminal story→cinema, Backline banner→
-full demo, Mix copy beside video). Mixing video autoplays **with sound** when
-scrolled into view after any page click (browser autoplay policy); otherwise
-shows “Tap for sound.” YouTube cinema keeps a 16:9 shell. No fake app chrome.
+Bold near-black studio (`--ground: #09090b`), not a warm-brown editorial template.
+**Syne** + **Outfit**. Hot pink accent (`#ff3d8a`); YouTube red only for Aminal
+subscribe. Aminal cinema is a **preloaded** YouTube iframe (no custom play facade);
+gallery thumbs use `hqdefault`. Motion is sleeker (blur/scale reveals, name
+stagger, nav underlines) and respects reduced-motion. No fake app chrome, no
+media collages.
 
 Structure, top to bottom:
-1. **Intro** — `Alec / Lewis`, role line, compact jump links, résumé.
-2. **Aminal** — cinema first, story + stats, compact pipeline strip, quiet filmstrip.
-3. **Backline** — story + points, full-bleed real demo iframe.
-4. **Mixing** — large Live theater video first, then explanation + signal steps.
+1. **Intro** — stacked name, personal line, email/GitHub, Lately list.
+2. **Aminal** — cinema, story, filmstrip, metrics + pipeline.
+3. **Backline** — banner, live demo iframe.
+4. **Mixing** — theater video, then explanation + Source.
 
 ## Hard-won taste rules (respect these)
 - Real content only. Never fabricate stats, videos, testimonials, or fake app chrome.
