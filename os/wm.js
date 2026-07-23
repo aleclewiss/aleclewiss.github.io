@@ -16,7 +16,7 @@
                 backline: "File Edit Song Generate Window Help", aminal: "History Bookmarks Profiles Tab Window",
                 contact: "File Edit View Mailbox Message Format" };
   // per-app presentation size (design px, centered on the wallpaper, scaled to fit)
-  var SIZES = { hello: { w: 500, h: 400 }, photos: { w: 1460, h: 680 }, freak: { w: 1040, h: 815 },
+  var SIZES = { hello: { w: 500, h: 400 }, photos: { w: 1460, h: 680 }, freak: { w: 1280, h: 760 },
                 backline: { w: 960, h: 660 }, aminal: { w: 1300, h: 700 }, contact: { w: 980, h: 580 } };
 
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -267,7 +267,11 @@
       // Any leftover space collects harmlessly toward the dock.
       st.cx = innerWidth / 2;
       var region = innerHeight - topInset - headH - dockRoom;
-      st.cy = topInset + headH + DROP + Math.min(region / 2, (st.size.h * s) / 2 + 6);
+      var half = (st.size.h * s) / 2;
+      var cy = topInset + headH + DROP + Math.min(region / 2, half + 6);
+      // hard clamp: the window bottom must never reach the dock, no matter the DROP
+      var maxBottom = innerHeight - dockRoom - 6;
+      st.cy = Math.min(cy, maxBottom - half);
       st.el.style.left = (st.cx - st.size.w / 2) + "px";
       st.el.style.top = (st.cy - st.size.h / 2) + "px";
       // on-screen box of the SCALED window — heading aligns to its left edge
