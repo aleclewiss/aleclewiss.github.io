@@ -406,7 +406,7 @@
           // so no pop-in when you swipe) but don't compete with the first paint.
           var pr = i === 0 ? ' fetchpriority="high"' : (i <= 2 ? "" : ' fetchpriority="low"');
           var m = s.video
-            ? '<video src="' + BASE + s.f + '" poster="' + BASE + esc(s.poster) + '" muted loop playsinline preload="metadata"></video>'
+            ? '<video src="' + BASE + s.f + '" poster="' + BASE + esc(s.poster) + '" muted loop playsinline autoplay preload="auto"></video>'
             : '<img src="' + BASE + s.f + '" alt="' + esc(s.alt) + '" decoding="async"' + pr + '>';
           return '<div class="moscf-card">' + m + '</div>';
         }).join("");
