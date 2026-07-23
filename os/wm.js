@@ -259,9 +259,12 @@
       if (mobile) { st.el.style.transform = ""; return; }   // CSS handles mobile stacking
       var s = Math.min(1, availW / st.size.w, availH / st.size.h) * COMFORT;
       st.scale = s;
-      // position: horizontally centered; vertically centered in the band below the heading
+      // position: horizontally centered; TOP-aligned just below the heading band (not
+      // vertically centered) so the content sits right under its heading — no big gap.
+      // Any leftover space collects harmlessly toward the dock.
       st.cx = innerWidth / 2;
-      st.cy = topInset + headH + (innerHeight - topInset - headH - dockRoom) / 2;
+      var region = innerHeight - topInset - headH - dockRoom;
+      st.cy = topInset + headH + Math.min(region / 2, (st.size.h * s) / 2 + 6);
       st.el.style.left = (st.cx - st.size.w / 2) + "px";
       st.el.style.top = (st.cy - st.size.h / 2) + "px";
       // on-screen box of the SCALED window — heading aligns to its left edge
