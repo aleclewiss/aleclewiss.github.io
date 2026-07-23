@@ -44,9 +44,9 @@
       background:radial-gradient(circle at 32% 28%,#e6bd6f,#d3a24c 70%);
       box-shadow:0 0 0 1px rgba(230,189,111,.25),0 6px 14px -6px rgba(211,162,76,.7);
       display:grid;place-items:center;}
-    .bl-brand{font-size:16px;font-weight:700;letter-spacing:-.02em;}
+    .bl-brand{font-size:16px;font-weight:700;letter-spacing:-.02em;white-space:nowrap;}
     .bl-sub{font-size:11px;letter-spacing:.2em;color:#6f665a;text-transform:uppercase;margin-top:2px;
-      font-family:ui-monospace,"SF Mono",Menlo,monospace;}
+      font-family:ui-monospace,"SF Mono",Menlo,monospace;white-space:nowrap;}
     .bl-dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
     .bl-pill{margin-left:auto;display:inline-flex;align-items:center;gap:7px;font-size:11px;
       padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid #3a3227;color:#a89d8c;
@@ -62,9 +62,10 @@
     .bl-prompt .bl-caret{display:inline-block;width:1.5px;height:16px;background:#e6bd6f;margin-left:1px;
       vertical-align:-2px;animation:bl-blink 1.05s steps(1) infinite;}
     @keyframes bl-blink{50%{opacity:0;}}
-    .bl-row{display:flex;align-items:center;gap:8px;margin-top:16px;}
+    .bl-row{display:flex;align-items:center;gap:8px;margin-top:16px;flex-wrap:nowrap;}
     .bl-chip{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:11px;color:#a89d8c;background:rgba(0,0,0,.24);
-      border:1px solid #322d28;border-radius:8px;padding:7px 12px;letter-spacing:.04em;}
+      border:1px solid #322d28;border-radius:8px;padding:7px 12px;letter-spacing:.04em;
+      white-space:nowrap;flex:0 0 auto;}
     .bl-chip b{color:#ece6da;font-weight:600;}
     .bl-generate{margin-left:auto;border:0;cursor:pointer;font:inherit;font-size:13px;font-weight:700;color:#241d10;
       padding:9px 20px;border-radius:9px;background:linear-gradient(180deg,#e6bd6f,#d3a24c);
