@@ -1,69 +1,58 @@
-# AlecOS — Mobile ("feels like an iPhone") Build Brief
+# AlecOS — Mobile REBUILD Brief (continuous horizontal swipe)
 
-Goal: on phones, replace the current cramped desktop-windows-in-a-column with a **genuine
-iOS-feeling experience**. It should feel like picking up an iPhone: a status bar, a home
-screen of app icons, tapping an icon opens that app full-screen with an iOS-style motion,
-and a home indicator / swipe returns you home. Same content and story as desktop — just
-presented natively for a thumb.
+REPLACE the current mobile experience (home-screen grid + tap-to-open) with a single
+**continuous horizontal swipe pager** — the mobile mirror of the desktop's horizontal Spaces,
+but touch-native. Same idea as desktop: one thing on screen at a time, swipe left/right (both
+directions) to move through everything.
 
-## The experience (what "good" is)
-- **Status bar** (top): time (live), and signal/wifi/battery glyphs — iOS style, tiny, clean.
-- **Home screen**: the aurora wallpaper, a grid of large rounded **app icons** (reuse each
-  registered app's `dock.svg` + label): Photos, Freak-Quencies, Backline, Aminal House, Contact.
-  Big friendly layout, iOS spacing. A **home indicator** bar at the very bottom.
-- **Open an app**: tap an icon → it opens **full-screen** with an iOS open animation (icon
-  scales up / view springs in). The app shows a large iOS title + its content, vertically
-  scrollable with momentum.
-- **Return home**: a home-indicator swipe-up affordance AND/OR a back control → app closes
-  back to the home screen (reverse animation).
-- iOS feel throughout: SF system font, large titles, rounded cards, generous touch targets
-  (min ~44px), smooth spring/ease transitions, respect safe areas (`env(safe-area-inset-*)`).
-
-## Architecture / CONTRACT (both agents build to this)
-- `os/wm.js` already detects `mobile` (`AlecOS.isMobile()`), and each app is registered via
-  `AlecOS.registerApp({id, name, accent, dock:{svg,label}, build(ctx), tour})`. `build(ctx)`
-  populates `ctx.body` (the app's scrollable content), and `ctx.win` is the app's element.
-- **Agent 1 (iOS shell)** owns the mobile SHELL in `wm.js` + a new `os/mobile.css`. On mobile,
-  instead of the desktop Spaces layout, build: the status bar, the home screen (grid of the
-  registered apps' icons/labels), and the open/close full-screen navigation + home indicator +
-  transitions. Reuse each app's already-built `ctx.body`/window element as the full-screen
-  screen (each app's content is provided by Agent 2). Keep the DESKTOP path 100% unchanged —
-  only the `is-mobile` branch changes.
-- **Agent 2 (mobile app content)** owns the app files. In each app's `build(ctx)`, when
-  `AlecOS.isMobile()` is true, render **mobile-optimized** content into `ctx.body` (see below).
-  Do NOT touch wm.js/mobile.css. Desktop content stays exactly as-is (branch on isMobile).
-
-## Per-app mobile content (Agent 2)
-- **Photos**: NOT the 3D coverflow (too heavy/awkward on touch). Instead a clean vertical,
-  native feel: the sectioned photos (Me & my girlfriend / My doggies / My hobbies) as a
-  swipeable horizontal strip per section OR a simple full-width stack — big images, caption
-  under each, videos autoplay muted inline. Smooth, tappable.
-- **Freak-Quencies** & **Backline**: do NOT embed the heavy demo iframes inline on mobile.
-  Show a clean card: title, what it does, the spec line, and a big **"Open the demo ↗"** button
-  that opens the full demo (freak-demo/index.html / backline-demo/index.html) — full screen
-  (new view or _blank). Keep it light and fast.
-- **Aminal House**: the automation dashboard reflowed to one narrow column — stats, the
-  pipeline steps stacked, the "Watch on YouTube" button. No horizontal overflow.
-- **Contact**: the working form full-width (To / From input / message / Send), GitHub + LinkedIn
-  buttons, big touch targets. The Formsubmit send must still work.
+## The model (what to build)
+- Mobile = ONE full-screen **horizontal scroll-snap pager** (native touch swipe + momentum,
+  `scroll-snap-type: x mandatory`, each page = 100vw, `scroll-snap-align:start`). Swipes both
+  directions. This is the whole experience — NO home-screen-of-icons, NO tap-to-open-a-screen.
+- **Page order (one continuous swipe):**
+  `[ photo 1 ][ photo 2 ] … [ photo N ]  →  [ Freak-Quencies ]  →  [ Backline ]  →  [ Aminal House ]  →  [ Contact ]`
+  The **gallery is FIRST** — you swipe through each photo, then keep swiping into the projects.
+- **Each photo** is its own full-screen slide: the image fills nicely, with its caption + the
+  section label (Me & my girlfriend / My doggies / My hobbies). Videos autoplay muted when
+  their slide is active (pause when off-screen for perf).
+- **Freak-Quencies & Backline**: the real demo is **EMBEDDED INLINE** on the page (like desktop)
+  — NOT a button that opens a new screen. Include a short title/desc above it. LAZY-LOAD the
+  demo iframe (set its `src` only when that page is active or adjacent) so swiping stays smooth
+  and heavy canvases don't all load at once.
+- **Aminal House**: the automation dashboard as one full-screen page (stats, pipeline, Watch
+  button), single column, no horizontal overflow.
+- **Contact**: the working Formsubmit form as one full-screen page (To / From / message / Send,
+  GitHub + LinkedIn), big touch targets, send still works.
+- Keep an **iOS status bar** on top (live time + signal/wifi/battery) and add a slim **position
+  indicator** (a progress bar or small dots — 18 pages, so a bar likely reads cleaner than dots),
+  plus a home-indicator bar at the bottom if it fits the feel. Safe-area insets, SF font.
 
 ## LOCKED — do not break
-Desktop experience (only touch the mobile/`is-mobile` branch), all wording/copy, the working
-Contact form (Formsubmit), real Aminal logo, autoplay video behavior, no emoji (use the SVG
-icons), cache-busting `?v=` tags. `node --check` clean on every JS file; zero console errors on
-both mobile AND desktop.
+Desktop experience stays 100% unchanged (only the mobile / `is-mobile` path changes), all
+wording/copy, the working Contact form (Formsubmit), real Aminal logo, real photos/captions,
+no emoji, cache-busting `?v=` tags. `node --check` clean on every JS file; zero console errors
+on BOTH mobile and desktop.
+
+## Architecture
+- `wm.js` detects mobile (`AlecOS.isMobile()`). Rebuild `buildMobile()` to construct the
+  horizontal scroll-snap pager and collect the page-slides from each app in ORDER (photos first).
+- Each app's mobile `build()` should produce its slide(s) as full-viewport `.mos-page` elements
+  the pager can place in the single track: **Photos → many slides (one per photo)**, the other
+  apps → one slide each. (You own all the files, so pick a clean way to hand slides to the pager —
+  e.g., the app appends its `.mos-page`(s) into a shared track element, or exposes them for the
+  shell to append. Just keep it in ONE horizontal scroll-snap track so it's one continuous swipe.)
+- Perf: lazy-load demo iframes; pause off-screen videos; use an IntersectionObserver or the
+  scroll position to know the active page. Respect prefers-reduced-motion.
 
 ## QA
-Local http://127.0.0.1:8777/. Emulate a phone with a narrow window + touch:
-`"/c/Program Files/Google/Chrome/Application/chrome.exe" --headless=new --disable-gpu --no-sandbox --window-size=390,844 --virtual-time-budget=3500 --screenshot=OUT.png URL`
-(`AlecOS.isMobile()` is true at ≤860px wide.) Test the home screen, opening each app, and
-returning home. NOTE: the Freak/Backline embedded demo canvases hang headless capture — on
-mobile you're NOT embedding them anyway (button to open), so that's avoided; verify the button
-+ links via DOM. Also test that DESKTOP (1440×900) is unchanged.
+Local http://127.0.0.1:8777/. Phone width: `--window-size=390,844` (note: headless may report a
+wider innerWidth and crop the screenshot — verify structurally via DOM/geometry as well as
+screenshots). `AlecOS.isMobile()` is true at ≤860px. Verify: gallery is first and you can swipe
+photo→photo→…→into the projects; demos are embedded (not buttons); Contact form present + send
+wired; status bar + position indicator; and DESKTOP (1440×900) is completely unchanged.
 
-## File ownership (STRICT)
-- **Agent 1 (iOS shell)** → `os/wm.js` + `os/mobile.css` (new file; remember to add it to
-  index.html's <head> with a `?v=` tag — Agent 1 may edit index.html ONLY to add that one link).
-- **Agent 2 (mobile content)** → `os/app-media.js` + `os/app-freak.js` + `os/app-backline.js`.
-
-Be surgical + token-efficient. `node --check` once at the end. Report exactly what you built.
+## File ownership
+ONE engineer owns ALL mobile code: `os/wm.js`, `os/mobile.css`, `os/app-media.js`,
+`os/app-freak.js`, `os/app-backline.js`, and may bump the `?v=` on the mobile.css link in
+`index.html`. Be surgical on the desktop paths (leave them byte-for-byte); rework only mobile.
+`node --check` all touched JS once at the end; report what you built.

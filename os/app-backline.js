@@ -204,19 +204,21 @@
     build: function (ctx) {
       injectStyles();
 
-      /* ---- MOBILE: light card + button to open the real demo (no heavy inline iframe) ---- */
+      /* ---- MOBILE: the real demo EMBEDDED inline as one swipe page (lazy-loaded via data-src) ---- */
       if (AlecOS.isMobile()) {
-        ctx.body.innerHTML =
-          '<div class="m-screen m-proj" style="--m-accent:#e6bd6f">' +
-            '<div class="m-hd"><h1 class="m-title">Type it. Hear it.</h1>' +
-              '<p class="m-sub">Backline — a music generator.</p></div>' +
-            '<div class="m-card">' +
-              '<p class="m-lead">Describe a sound in plain words and it renders real, usable audio in seconds — a full desktop app wrapped around a diffusion model I run locally.</p>' +
-              '<div class="m-spec">ACE-Step diffusion · Electron + React · generative AI</div>' +
-              '<a class="m-btn m-btn-primary" href="backline-demo/index.html" target="_blank" rel="noopener">Open the demo ↗</a>' +
-              '<a class="m-btn" href="https://github.com/aleclewiss/backline" target="_blank" rel="noopener">Source ↗</a>' +
-            '</div>' +
+        var pg = document.createElement("div");
+        pg.className = "mos-page mos-demo";
+        pg.style.setProperty("--m-accent", "#e6bd6f");
+        pg.innerHTML =
+          '<div class="mos-demo-hd">' +
+            '<h1 class="mos-demo-h">Type it. Hear it.</h1>' +
+            '<p class="mos-demo-d">Backline — a music generator. Describe a sound in plain words and it renders real, usable audio in seconds, from a diffusion model I run locally.</p>' +
+          '</div>' +
+          '<div class="mos-demo-frame">' +
+            '<iframe data-src="backline-demo/index.html" title="Backline — the real music generator" ' +
+              'allow="autoplay; clipboard-write; encrypted-media; fullscreen" scrolling="auto"></iframe>' +
           '</div>';
+        ctx.addPage(pg);
         return {};
       }
 

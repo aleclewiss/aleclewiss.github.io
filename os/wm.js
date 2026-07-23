@@ -181,83 +181,76 @@
     });
   }
 
-  /* ================= MOBILE (iPhone-style shell) =================
-     On phones we drop the desktop Spaces UI and present an iOS home screen:
-     status bar, a grid of app icons, tap-to-open a full-screen app, home
-     indicator / swipe-up to return. Each app's already-built window (st.el,
-     with its scrollable ctx.body) is reused as the full-screen app screen. */
-  var mosCurrent = null, mosTimeEl = null, mosTitleEl = null, mosStartY = 0;
+  /* ================= MOBILE (continuous horizontal swipe pager) =================
+     Phones get ONE full-screen horizontal scroll-snap pager — the touch-native
+     mirror of the desktop Spaces. Every page comes, IN ORDER, from an app: Photos
+     contributes one slide per photo (the gallery opens the experience), then
+     Freak-Quencies, Backline, Aminal House and Contact contribute one slide each.
+     Apps hand their slides to the shell via ctx.addPage(el) during their build();
+     here we string them into a single track (scroll-snap-type:x mandatory). A
+     scroll listener drives a slim position bar, plays only the on-screen video, and
+     lazy-loads each demo iframe when its page is active or adjacent (so the heavy
+     canvases never all load at once and swiping stays smooth). */
+  var mosTimeEl = null, mosPager = null;
   var MOS_SIGNAL = '<svg viewBox="0 0 18 12" aria-hidden="true"><g fill="currentColor">' +
     '<rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/>' +
     '<rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></g></svg>';
 
   function buildMobile() {
-    // status bar (always visible)
+    // status bar (always visible): live time + signal / wifi / battery
     var sb = el("div", "mos-statusbar");
     sb.innerHTML = '<span class="mos-time" id="mosTime"></span>' +
       '<span class="mos-sbr">' + MOS_SIGNAL + ICON.wifi + ICON.battery + '</span>';
     root.appendChild(sb);
     mosTimeEl = sb.querySelector("#mosTime");
 
-    // home screen: hello + grid of app icons
-    var home = el("div", "mos-home");
-    var hello = el("div", "mos-hello", '<h1>Alec Lewis</h1><p>Portfolio &middot; tap an app</p>');
-    var grid = el("div", "mos-grid");
+    // the single horizontal pager; gather each app's page-slides IN ORDER
+    var pager = el("div", "mos-pager"); pager.id = "mosPager"; mosPager = pager;
     live.forEach(function (id) {
-      var st = byId[id], d = st.spec.dock || {};
-      var a = el("button", "mos-app"); a.dataset.id = id;
-      a.setAttribute("aria-label", d.label || st.spec.name);
-      a.innerHTML = '<span class="mos-ic" style="--tone:' + (d.tone || st.spec.accent || "#888") + '">' + (d.svg || "") + '</span>' +
-                    '<span class="mos-lbl">' + (d.label || st.spec.name) + '</span>';
-      on(a, "click", function () { openApp(id); });
-      grid.appendChild(a);
+      var st = byId[id], pgs = st.pages || [];
+      st.mosPages = pgs;
+      pgs.forEach(function (pg) { pager.appendChild(pg); });
     });
-    home.appendChild(hello); home.appendChild(grid);
-    root.appendChild(home);
+    root.appendChild(pager);
 
-    // app bar (back + title), shown when an app is open
-    var appbar = el("div", "mos-appbar");
-    appbar.innerHTML =
-      '<button class="mos-back" id="mosBack" aria-label="Home">' +
-        '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>' +
-      '</button><span class="mos-apptitle" id="mosTitle"></span>';
-    root.appendChild(appbar);
-    mosTitleEl = appbar.querySelector("#mosTitle");
-    on(appbar.querySelector("#mosBack"), "click", closeApp);
+    // slim position indicator (a thin bar reads cleaner than ~18 dots)
+    var pos = el("div", "mos-pos"); pos.innerHTML = '<i></i>';
+    root.appendChild(pos);
+    var posFill = pos.firstChild;
 
-    // home indicator (tap or swipe-up = home)
-    var hi = el("button", "mos-homebar"); hi.setAttribute("aria-label", "Home");
-    on(hi, "click", closeApp);
-    root.appendChild(hi);
+    // home indicator
+    root.appendChild(el("div", "mos-homebar"));
 
-    // swipe-up from the bottom edge closes the open app (iOS home gesture)
-    on(stage, "touchstart", function (e) { mosStartY = e.touches[0].clientY; }, { passive: true });
-    on(stage, "touchend", function (e) {
-      if (!mosCurrent) return;
-      var dy = mosStartY - e.changedTouches[0].clientY;
-      if (mosStartY > innerHeight * 0.72 && dy > 55) closeApp();
-    }, { passive: true });
+    var pages = [].slice.call(pager.querySelectorAll(".mos-page"));
+    var count = pages.length, activeIdx = -1, ticking = false;
+
+    function onActive(idx) {
+      for (var i = 0; i < count; i++) {
+        var pg = pages[i], near = Math.abs(i - idx) <= 1, j, list;
+        if (near) {                       // lazy-load demo iframes for active + adjacent pages
+          list = pg.querySelectorAll("iframe[data-src]");
+          for (j = 0; j < list.length; j++) {
+            if (!list[j].getAttribute("src")) list[j].src = list[j].getAttribute("data-src");
+          }
+        }
+        list = pg.querySelectorAll("video");   // play ONLY the on-screen video; pause the rest
+        for (j = 0; j < list.length; j++) {
+          if (i === idx) { try { list[j].play(); } catch (e) {} } else { try { list[j].pause(); } catch (e) {} }
+        }
+      }
+    }
+    function apply() {
+      ticking = false;
+      var pw = pager.clientWidth || innerWidth;
+      var maxScroll = Math.max(1, pager.scrollWidth - pw);
+      posFill.style.width = (clamp(pager.scrollLeft / maxScroll, 0, 1) * 100).toFixed(2) + "%";
+      var idx = clamp(Math.round(pager.scrollLeft / pw), 0, count - 1);
+      if (idx !== activeIdx) { activeIdx = idx; onActive(idx); }
+    }
+    on(pager, "scroll", function () { if (!ticking) { ticking = true; requestAnimationFrame(apply); } }, { passive: true });
 
     root.classList.add("mos-ready");
-  }
-
-  function openApp(id) {
-    var st = byId[id]; if (!st || !st.el) return;
-    mosCurrent = id; activeId = id;
-    st.el.classList.add("mos-open");
-    if (mosTitleEl) mosTitleEl.textContent = st.spec.name;
-    root.classList.add("mos-app-active");
-    if (st.body) st.body.scrollTop = 0;
-    if (st.hooks && st.hooks.onFocus) try { st.hooks.onFocus(); } catch (e) {}
-    emit("focus", id);
-  }
-  function closeApp() {
-    if (!mosCurrent) return;
-    var st = byId[mosCurrent];
-    if (st && st.el) st.el.classList.remove("mos-open");
-    root.classList.remove("mos-app-active");
-    if (st && st.hooks && st.hooks.onBlur) try { st.hooks.onBlur(); } catch (e) {}
-    mosCurrent = null;
+    requestAnimationFrame(apply);        // initial: load + play the first page
   }
   function markDock() {
     live.forEach(function (id) { var st = byId[id]; if (st.dockEl) st.dockEl.classList.toggle("active", id === activeId); });
@@ -317,6 +310,10 @@
 
     var ctx = {
       body: body, win: w, accent: spec.accent,
+      isMobile: mobile,
+      // MOBILE hand-off: an app appends its full-viewport .mos-page slide(s) here; the
+      // shell strings every app's pages into one horizontal swipe track (see buildMobile).
+      addPage: function (elm) { (st.pages || (st.pages = [])).push(elm); return elm; },
       launchDemo: function (url, opts) { return makeDemo(url, opts, spec.accent); },
       open: AlecOS.open, focus: AlecOS.focus, close: AlecOS.close
     };
@@ -395,7 +392,7 @@
   function goTo(id) {
     var idx = live.indexOf(id); if (idx < 0) return;
     if (!entered && bootEl) { bootEl.click(); }
-    if (mobile) { var st = byId[id]; if (st && st.el) st.el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" }); return; }
+    if (mobile) { var st = byId[id]; if (st && mosPager && st.mosPages && st.mosPages[0]) mosPager.scrollTo({ left: st.mosPages[0].offsetLeft, behavior: reduce ? "auto" : "smooth" }); return; }
     var max = Math.max(1, trackEl.offsetHeight - innerHeight);
     var y = (idx / (live.length - 1)) * max;
     window.scrollTo({ top: y, behavior: reduce ? "auto" : "smooth" });

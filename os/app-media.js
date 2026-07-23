@@ -394,21 +394,26 @@
         return "hobbies";
       }
 
-      /* ---- MOBILE: a native, scrollable photo feed grouped into sections ---- */
+      /* ---- MOBILE: one photo per full-screen swipe slide (the gallery opens the pager) ---- */
       if (AlecOS.isMobile()) {
-        var mh = '<div class="m-screen m-photos"><div class="m-hd"><h1 class="m-title">First, me.</h1>' +
-          '<p class="m-sub">Before the software, the person who builds it — around State College, PA.</p></div>';
+        var first = true;
         ORDERK.forEach(function (k) {
-          mh += '<div class="m-sec-h">' + SECT[k] + '</div>';
           SHOTS.filter(function (s) { return secOf(s) === k; }).forEach(function (s) {
-            var m = s.video
-              ? '<video src="' + BASE + s.f + '" poster="' + BASE + s.poster + '" muted loop playsinline autoplay></video>'
+            // videos autoplay muted only when their slide is active (the shell drives play/pause)
+            var media = s.video
+              ? '<video src="' + BASE + s.f + '" poster="' + BASE + esc(s.poster) + '" muted loop playsinline preload="metadata"></video>'
               : '<img src="' + BASE + s.f + '" alt="' + esc(s.alt) + '" loading="lazy">';
-            mh += '<figure class="m-photo">' + m + '<figcaption class="m-cap">' + esc(s.cap) + '</figcaption></figure>';
+            var pg = document.createElement("div");
+            pg.className = "mos-page mos-shot";
+            pg.innerHTML =
+              (first ? '<div class="mos-shot-hello">Alec Lewis</div>' : "") +
+              '<div class="mos-shot-lbl">' + esc(SECT[k]) + '</div>' +
+              '<div class="mos-shot-media">' + media + '</div>' +
+              '<div class="mos-shot-cap">' + esc(s.cap) + '</div>';
+            ctx.addPage(pg);
+            first = false;
           });
         });
-        mh += '</div>';
-        ctx.body.innerHTML = mh;
         return {};
       }
       var ITEMS = [];
@@ -535,14 +540,16 @@
       var IC_PUB = SV + '<path d="M12 20V8m0 0 4 4m-4-4-4 4M5 4h14"/></svg>';
       var ARROW = SV + '<path d="M5 12h14m0 0-5-5m5 5-5 5"/></svg>';
 
-      /* ---- MOBILE: single-column automation dashboard ---- */
+      /* ---- MOBILE: single-column automation dashboard as one full-screen page ---- */
       if (AlecOS.isMobile()) {
-        function mastep(svg, name, desc, note) {
+        var mastep = function (svg, name, desc, note) {
           return '<div class="m-astep"><div class="ic">' + svg + '</div><div><b>' + name + '</b>' +
             '<p>' + desc + '</p><em>' + note + '</em></div></div>';
-        }
-        ctx.body.innerHTML =
-          '<div class="m-screen m-aminal">' +
+        };
+        var pg = document.createElement("div");
+        pg.className = "mos-page mos-pane m-aminal";
+        pg.innerHTML =
+          '<div class="mos-inner">' +
             '<div class="m-hd"><h1 class="m-title">It runs itself.</h1>' +
               '<p class="m-sub">@Aminal_House — a dog-shorts channel that posts on its own.</p></div>' +
             '<a class="m-btn m-btn-primary" style="--m-accent:#ff0033;color:#fff;margin-bottom:20px" href="https://www.youtube.com/@Aminal_House" target="_blank" rel="noopener">' +
@@ -560,6 +567,7 @@
             mastep(IC_PUB, "Publish", "Posts to four platforms, 4× a day.", "YT · TikTok · IG · FB") +
             '<div class="m-note">Built with Python · CLIP · ElevenLabs · FFmpeg</div>' +
           '</div>';
+        ctx.addPage(pg);
         return {};
       }
 
@@ -646,8 +654,10 @@
       if (AlecOS.isMobile()) {
         var GH = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg>';
         var LI = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M6.94 5a1.94 1.94 0 1 1-3.88 0 1.94 1.94 0 0 1 3.88 0ZM3.4 8.4h3.1V21H3.4V8.4Zm5.06 0h2.97v1.72h.04c.41-.78 1.42-1.6 2.92-1.6 3.13 0 3.71 2.06 3.71 4.73V21h-3.1v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94V21h-3.1V8.4Z"/></svg>';
-        ctx.body.innerHTML =
-          '<div class="m-screen m-contact">' +
+        var pg = document.createElement("div");
+        pg.className = "mos-page mos-pane m-contact";
+        pg.innerHTML =
+          '<div class="mos-inner">' +
             '<div class="m-hd"><h1 class="m-title">Say hi.</h1>' +
               '<p class="m-sub">A real inbox — I read and answer everything.</p></div>' +
             '<form id="mCtForm" novalidate>' +
@@ -664,9 +674,10 @@
               '<div class="m-note">Sent from a website pretending to be a computer.</div>' +
             '</form>' +
           '</div>';
-        var mFrom = ctx.body.querySelector("#mFrom"), mMsg = ctx.body.querySelector("#mMsg");
-        var mStatus = ctx.body.querySelector("#mStatus"), mSend = ctx.body.querySelector("#mSend");
-        var mForm = ctx.body.querySelector("#mCtForm"), mSending = false;
+        ctx.addPage(pg);
+        var mFrom = pg.querySelector("#mFrom"), mMsg = pg.querySelector("#mMsg");
+        var mStatus = pg.querySelector("#mStatus"), mSend = pg.querySelector("#mSend");
+        var mForm = pg.querySelector("#mCtForm"), mSending = false;
         function mSet(t, cls) { mStatus.textContent = t; mStatus.className = "m-status" + (cls ? " " + cls : ""); }
         function mSendFn() {
           if (mSending) return;

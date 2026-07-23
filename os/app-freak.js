@@ -83,19 +83,21 @@
     build: function (ctx) {
       inject();
 
-      /* ---- MOBILE: a light card + button to open the real demo (no heavy inline iframe) ---- */
+      /* ---- MOBILE: the real demo EMBEDDED inline as one swipe page (lazy-loaded via data-src) ---- */
       if (AlecOS.isMobile()) {
-        ctx.body.innerHTML =
-          '<div class="m-screen m-proj" style="--m-accent:' + AMBER + '">' +
-            '<div class="m-hd"><h1 class="m-title">It mixes like I do.</h1>' +
-              '<p class="m-sub">Freak-Quencies — an AI mixing plugin.</p></div>' +
-            '<div class="m-card">' +
-              '<p class="m-lead">Drop it on a raw guitar take and a neural net writes a corrective EQ and compressor in real time — the exact moves I’d make by ear.</p>' +
-              '<div class="m-spec">PyTorch CNN · JUCE / C++ · Web Audio · real-time DSP</div>' +
-              '<a class="m-btn m-btn-primary" href="freak-demo/index.html" target="_blank" rel="noopener">Open the demo ↗</a>' +
-              '<a class="m-btn" href="https://github.com/aleclewiss/Freak-Quencies" target="_blank" rel="noopener">Source ↗</a>' +
-            '</div>' +
+        var pg = document.createElement("div");
+        pg.className = "mos-page mos-demo";
+        pg.style.setProperty("--m-accent", AMBER);
+        pg.innerHTML =
+          '<div class="mos-demo-hd">' +
+            '<h1 class="mos-demo-h">It mixes like I do.</h1>' +
+            '<p class="mos-demo-d">Freak-Quencies — an AI mixing plugin. Pick a raw guitar take and a neural net writes a corrective EQ and compressor in real time. Hear raw vs. the AI-corrected mix.</p>' +
+          '</div>' +
+          '<div class="mos-demo-frame">' +
+            '<iframe data-src="freak-demo/index.html?embed=1" title="Freak-Quencies — the real AI mixing plugin" ' +
+              'allow="autoplay; clipboard-write; encrypted-media; fullscreen" scrolling="auto"></iframe>' +
           '</div>';
+        ctx.addPage(pg);
         return {};
       }
 
