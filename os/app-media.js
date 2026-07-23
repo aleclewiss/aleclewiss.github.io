@@ -290,6 +290,53 @@
       ".ct-link:hover{background:#31313a;border-color:#3B82F6;transform:translateY(-1px)}",
       ".ct-link:focus-visible{outline:2px solid #3B82F6;outline-offset:3px}",
       ".ct-note{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:#57535d;padding:2px 24px 24px}",
+
+      /* ================= MOBILE — native iOS-feel app screens (shared .m-*) ================= */
+      ".m-screen{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;",
+      "  background:#0d0c10;color:#f3f1f6;font-family:-apple-system,'SF Pro Text','SF Pro Display',system-ui,sans-serif;",
+      "  padding:6px 18px calc(30px + env(safe-area-inset-bottom))}",
+      ".m-hd{padding:6px 2px 14px}",
+      ".m-title{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:0;line-height:1.05}",
+      ".m-sub{font-size:15px;color:#a7a3af;margin:5px 0 0;line-height:1.45}",
+      ".m-sec-h{font-size:12.5px;font-weight:600;letter-spacing:.06em;color:#8b8790;text-transform:uppercase;margin:24px 2px 11px}",
+      ".m-photo{margin:0 0 18px}",
+      ".m-photo img,.m-photo video{width:100%;display:block;border-radius:18px;background:#1a1a1e}",
+      ".m-cap{font-size:14.5px;color:#d3d0d8;margin:9px 4px 0}",
+      ".m-proj{--m-accent:#888}",
+      ".m-card{background:#161519;border:1px solid #262630;border-radius:22px;padding:22px 20px;display:flex;flex-direction:column;gap:16px}",
+      ".m-lead{font-size:16.5px;line-height:1.5;color:#e8e5ec;margin:0}",
+      ".m-spec{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#8b8790;letter-spacing:.02em;line-height:1.5}",
+      ".m-btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:54px;border-radius:15px;",
+      "  font-size:16px;font-weight:600;text-decoration:none;border:1px solid #34343c;color:#f3f1f6;background:#26262c;transition:transform .12s}",
+      ".m-btn-primary{background:var(--m-accent);color:#111;border-color:transparent}",
+      ".m-btn:active{transform:scale(.98)}",
+      ".m-astats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:2px 0 6px}",
+      ".m-astat{background:#161519;border:1px solid #262630;border-radius:16px;padding:16px 16px 14px}",
+      ".m-astat b{display:block;font-size:27px;font-weight:700;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:-.02em}",
+      ".m-astat span{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#8b8790;margin-top:4px;display:block}",
+      ".m-astat.hero b{color:#ff5870}.m-astat.zero b{color:#ff5870}",
+      ".m-astep{display:flex;gap:13px;align-items:flex-start;background:#141317;border:1px solid #242329;border-radius:15px;padding:14px;margin-bottom:10px}",
+      ".m-astep .ic{width:36px;height:36px;flex:none;border-radius:11px;display:grid;place-items:center;color:#ff6b81;background:#211416;border:1px solid #3a2429}",
+      ".m-astep .ic svg{width:19px;height:19px}",
+      ".m-astep b{font-size:15px;color:#f2e8ea}",
+      ".m-astep p{font-size:13px;color:#a2878e;margin:3px 0 0;line-height:1.4}",
+      ".m-astep em{font-style:normal;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:#7a666c;display:block;margin-top:4px}",
+      ".m-field{display:flex;flex-direction:column;gap:7px;padding:14px 0;border-bottom:1px solid #24242a}",
+      ".m-field .k{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6b6570}",
+      ".m-field .v{font-size:16px;color:#f3f1f6}",
+      ".m-input,.m-textarea{width:100%;box-sizing:border-box;background:#161519;border:1px solid #2a2a30;border-radius:12px;",
+      "  color:#f3f1f6;font:inherit;font-size:16px;padding:14px;outline:none}",   /* 16px = no iOS focus-zoom */
+      ".m-input:focus,.m-textarea:focus{border-color:#3B82F6}",
+      ".m-textarea{min-height:150px;resize:vertical;line-height:1.5;margin-top:4px}",
+      ".m-send{min-height:54px;border-radius:15px;border:0;background:#3B82F6;color:#fff;font-size:16px;font-weight:700;margin-top:18px;cursor:pointer;width:100%}",
+      ".m-send:disabled{opacity:.5}",
+      ".m-status{font-size:14px;min-height:20px;padding-top:11px;color:#8a8590}",
+      ".m-status.ok{color:#49c46b}.m-status.err{color:#ff6b81}",
+      ".m-links{display:flex;gap:12px;margin-top:20px}",
+      ".m-links a{flex:1;display:flex;align-items:center;justify-content:center;gap:9px;min-height:54px;border-radius:15px;",
+      "  border:1px solid #34343c;background:#26262c;color:#f3f1f6;text-decoration:none;font-size:15px;font-weight:600}",
+      ".m-links a svg{width:18px;height:18px}",
+      ".m-note{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#57535d;margin-top:22px}",
       "@media (prefers-reduced-motion: reduce){.am-vid,.ph-tile img,.ph-tile video,.am-subscribe,.ct-tb.send{transition:none!important}}"
     ].join("\n");
     document.head.appendChild(st);
@@ -345,6 +392,24 @@
         if (["gf-and-me.jpg", "photo-guitars.jpg", "moto.jpg"].indexOf(s.f) >= 0) return "personal";
         if (s.album === "Dogs") return "dogs";
         return "hobbies";
+      }
+
+      /* ---- MOBILE: a native, scrollable photo feed grouped into sections ---- */
+      if (AlecOS.isMobile()) {
+        var mh = '<div class="m-screen m-photos"><div class="m-hd"><h1 class="m-title">First, me.</h1>' +
+          '<p class="m-sub">Before the software, the person who builds it — around State College, PA.</p></div>';
+        ORDERK.forEach(function (k) {
+          mh += '<div class="m-sec-h">' + SECT[k] + '</div>';
+          SHOTS.filter(function (s) { return secOf(s) === k; }).forEach(function (s) {
+            var m = s.video
+              ? '<video src="' + BASE + s.f + '" poster="' + BASE + s.poster + '" muted loop playsinline autoplay></video>'
+              : '<img src="' + BASE + s.f + '" alt="' + esc(s.alt) + '" loading="lazy">';
+            mh += '<figure class="m-photo">' + m + '<figcaption class="m-cap">' + esc(s.cap) + '</figcaption></figure>';
+          });
+        });
+        mh += '</div>';
+        ctx.body.innerHTML = mh;
+        return {};
       }
       var ITEMS = [];
       ORDERK.forEach(function (k) {
@@ -469,6 +534,35 @@
       var IC_NARR = SV + '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg>';
       var IC_PUB = SV + '<path d="M12 20V8m0 0 4 4m-4-4-4 4M5 4h14"/></svg>';
       var ARROW = SV + '<path d="M5 12h14m0 0-5-5m5 5-5 5"/></svg>';
+
+      /* ---- MOBILE: single-column automation dashboard ---- */
+      if (AlecOS.isMobile()) {
+        function mastep(svg, name, desc, note) {
+          return '<div class="m-astep"><div class="ic">' + svg + '</div><div><b>' + name + '</b>' +
+            '<p>' + desc + '</p><em>' + note + '</em></div></div>';
+        }
+        ctx.body.innerHTML =
+          '<div class="m-screen m-aminal">' +
+            '<div class="m-hd"><h1 class="m-title">It runs itself.</h1>' +
+              '<p class="m-sub">@Aminal_House — a dog-shorts channel that posts on its own.</p></div>' +
+            '<a class="m-btn m-btn-primary" style="--m-accent:#ff0033;color:#fff;margin-bottom:20px" href="https://www.youtube.com/@Aminal_House" target="_blank" rel="noopener">' +
+              '<span style="width:22px;height:16px;display:inline-flex">' + ICON_YOUTUBE + '</span>Watch on YouTube</a>' +
+            '<div class="m-astats">' +
+              '<div class="m-astat hero"><b>177,653</b><span>total views</span></div>' +
+              '<div class="m-astat"><b>321</b><span>subscribers</span></div>' +
+              '<div class="m-astat"><b>108</b><span>videos</span></div>' +
+              '<div class="m-astat zero"><b>0</b><span>hands on deck</span></div>' +
+            '</div>' +
+            '<div class="m-sec-h">How every video gets made — nobody at the wheel</div>' +
+            mastep(IC_SCRAPE, "Scrape", "Pulls fresh candidate dog clips from the web.", "Python · ~24/day") +
+            mastep(IC_VERIFY, "Verify", "CLIP checks each clip is actually on-brief.", "OpenAI CLIP") +
+            mastep(IC_NARR, "Narrate", "Writes a caption, voices it, renders 9:16.", "ElevenLabs · FFmpeg") +
+            mastep(IC_PUB, "Publish", "Posts to four platforms, 4× a day.", "YT · TikTok · IG · FB") +
+            '<div class="m-note">Built with Python · CLIP · ElevenLabs · FFmpeg</div>' +
+          '</div>';
+        return {};
+      }
+
       function step(i, svg, name, desc, note) {
         return '<div class="am-step"><div class="am-sic" style="--si:' + i + '">' + svg + '</div>' +
           '<b>' + name + '</b><p>' + desc + '</p><em>' + note + '</em></div>';
@@ -547,6 +641,52 @@
       // A real, working contact form: the visitor adds their From email + message and hits
       // Send — it posts to Formsubmit (no backend needed) which emails aleclewis@psu.edu.
       var ENDPOINT = "https://formsubmit.co/ajax/aleclewis@psu.edu";
+
+      /* ---- MOBILE: full-width native form (same working Formsubmit send) ---- */
+      if (AlecOS.isMobile()) {
+        var GH = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg>';
+        var LI = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M6.94 5a1.94 1.94 0 1 1-3.88 0 1.94 1.94 0 0 1 3.88 0ZM3.4 8.4h3.1V21H3.4V8.4Zm5.06 0h2.97v1.72h.04c.41-.78 1.42-1.6 2.92-1.6 3.13 0 3.71 2.06 3.71 4.73V21h-3.1v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94V21h-3.1V8.4Z"/></svg>';
+        ctx.body.innerHTML =
+          '<div class="m-screen m-contact">' +
+            '<div class="m-hd"><h1 class="m-title">Say hi.</h1>' +
+              '<p class="m-sub">A real inbox — I read and answer everything.</p></div>' +
+            '<form id="mCtForm" novalidate>' +
+              '<div class="m-field"><span class="k">To</span><span class="v">Alec Lewis &lt;aleclewis@psu.edu&gt;</span></div>' +
+              '<div class="m-field"><span class="k">From</span><input class="m-input" id="mFrom" type="email" autocomplete="email" placeholder="your email"></div>' +
+              '<div class="m-field"><span class="k">Message</span>' +
+                '<textarea class="m-textarea" id="mMsg" placeholder="Write your message…">Saw your work and wanted to reach out. Would love to talk.</textarea></div>' +
+              '<div class="m-status" id="mStatus" role="status"></div>' +
+              '<button class="m-send" id="mSend" type="submit">Send</button>' +
+              '<div class="m-links">' +
+                '<a href="https://github.com/aleclewiss" target="_blank" rel="noopener">' + GH + 'GitHub</a>' +
+                '<a href="https://www.linkedin.com/in/aleclewiss/" target="_blank" rel="noopener">' + LI + 'LinkedIn</a>' +
+              '</div>' +
+              '<div class="m-note">Sent from a website pretending to be a computer.</div>' +
+            '</form>' +
+          '</div>';
+        var mFrom = ctx.body.querySelector("#mFrom"), mMsg = ctx.body.querySelector("#mMsg");
+        var mStatus = ctx.body.querySelector("#mStatus"), mSend = ctx.body.querySelector("#mSend");
+        var mForm = ctx.body.querySelector("#mCtForm"), mSending = false;
+        function mSet(t, cls) { mStatus.textContent = t; mStatus.className = "m-status" + (cls ? " " + cls : ""); }
+        function mSendFn() {
+          if (mSending) return;
+          var email = (mFrom.value || "").trim(), message = (mMsg.value || "").trim();
+          if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { mSet("Add a valid email in the From field.", "err"); mFrom.focus(); return; }
+          if (!message) { mSet("Write a message first.", "err"); mMsg.focus(); return; }
+          mSending = true; mSend.disabled = true; mSet("Sending…", "");
+          fetch(ENDPOINT, {
+            method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" },
+            body: JSON.stringify({ email: email, message: message, _subject: "Portfolio site — new message", _template: "table", _captcha: "false" })
+          }).then(function (r) { return r.json(); }).then(function (d) {
+            if (d && (d.success === true || d.success === "true")) { mSet("Sent — thanks, I'll get back to you.", "ok"); mMsg.value = ""; mFrom.value = ""; }
+            else { mSet("Couldn't send. Email me directly at aleclewis@psu.edu", "err"); }
+          }).catch(function () { mSet("Couldn't send. Email me directly at aleclewis@psu.edu", "err"); })
+            .then(function () { mSending = false; mSend.disabled = false; });
+        }
+        mForm.addEventListener("submit", function (e) { e.preventDefault(); mSendFn(); });
+        return {};
+      }
+
       function tb(ic, label) { return '<span class="ct-tb plain" title="' + label + '"><span class="mw-ic">' + ic + '</span></span>'; }
       ctx.body.innerHTML =
         '<div class="mw-root ct-root">' +

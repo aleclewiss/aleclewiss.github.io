@@ -204,6 +204,22 @@
     build: function (ctx) {
       injectStyles();
 
+      /* ---- MOBILE: light card + button to open the real demo (no heavy inline iframe) ---- */
+      if (AlecOS.isMobile()) {
+        ctx.body.innerHTML =
+          '<div class="m-screen m-proj" style="--m-accent:#e6bd6f">' +
+            '<div class="m-hd"><h1 class="m-title">Type it. Hear it.</h1>' +
+              '<p class="m-sub">Backline — a music generator.</p></div>' +
+            '<div class="m-card">' +
+              '<p class="m-lead">Describe a sound in plain words and it renders real, usable audio in seconds — a full desktop app wrapped around a diffusion model I run locally.</p>' +
+              '<div class="m-spec">ACE-Step diffusion · Electron + React · generative AI</div>' +
+              '<a class="m-btn m-btn-primary" href="backline-demo/index.html" target="_blank" rel="noopener">Open the demo ↗</a>' +
+              '<a class="m-btn" href="https://github.com/aleclewiss/backline" target="_blank" rel="noopener">Source ↗</a>' +
+            '</div>' +
+          '</div>';
+        return {};
+      }
+
       var sel = 0;                 // selected take index
       var progress = 0;            // 0..1 playhead of the selected take
       var playing = !reduce;       // auto-audition unless reduced motion

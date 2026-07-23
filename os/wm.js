@@ -63,8 +63,8 @@
     buildDesktop();
     buildAllWindows();
     buildDock();
-    buildTrack();
-    buildBoot();
+    if (mobile) { buildMobile(); }          // iPhone-style home screen instead of the desktop
+    else { buildTrack(); buildBoot(); }
 
     on(window, "resize", function () {
       mobile = matchMedia("(max-width: 860px)").matches || (matchMedia("(pointer: coarse)").matches && innerWidth < 1024);
@@ -160,6 +160,7 @@
       var d = new Date(), h = d.getHours(), m = d.getMinutes(), ap = h >= 12 ? "PM" : "AM", hh = h % 12 || 12;
       var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
       if (clockEl) clockEl.textContent = days[d.getDay()] + "  " + hh + ":" + (m < 10 ? "0" : "") + m + " " + ap;
+      if (mosTimeEl) mosTimeEl.textContent = hh + ":" + (m < 10 ? "0" : "") + m;   // iOS status-bar time
     }
     t(); setInterval(t, 20000);
   }
@@ -178,6 +179,85 @@
       });
       dockEl.appendChild(it); st.dockEl = it;
     });
+  }
+
+  /* ================= MOBILE (iPhone-style shell) =================
+     On phones we drop the desktop Spaces UI and present an iOS home screen:
+     status bar, a grid of app icons, tap-to-open a full-screen app, home
+     indicator / swipe-up to return. Each app's already-built window (st.el,
+     with its scrollable ctx.body) is reused as the full-screen app screen. */
+  var mosCurrent = null, mosTimeEl = null, mosTitleEl = null, mosStartY = 0;
+  var MOS_SIGNAL = '<svg viewBox="0 0 18 12" aria-hidden="true"><g fill="currentColor">' +
+    '<rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/>' +
+    '<rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></g></svg>';
+
+  function buildMobile() {
+    // status bar (always visible)
+    var sb = el("div", "mos-statusbar");
+    sb.innerHTML = '<span class="mos-time" id="mosTime"></span>' +
+      '<span class="mos-sbr">' + MOS_SIGNAL + ICON.wifi + ICON.battery + '</span>';
+    root.appendChild(sb);
+    mosTimeEl = sb.querySelector("#mosTime");
+
+    // home screen: hello + grid of app icons
+    var home = el("div", "mos-home");
+    var hello = el("div", "mos-hello", '<h1>Alec Lewis</h1><p>Portfolio &middot; tap an app</p>');
+    var grid = el("div", "mos-grid");
+    live.forEach(function (id) {
+      var st = byId[id], d = st.spec.dock || {};
+      var a = el("button", "mos-app"); a.dataset.id = id;
+      a.setAttribute("aria-label", d.label || st.spec.name);
+      a.innerHTML = '<span class="mos-ic" style="--tone:' + (d.tone || st.spec.accent || "#888") + '">' + (d.svg || "") + '</span>' +
+                    '<span class="mos-lbl">' + (d.label || st.spec.name) + '</span>';
+      on(a, "click", function () { openApp(id); });
+      grid.appendChild(a);
+    });
+    home.appendChild(hello); home.appendChild(grid);
+    root.appendChild(home);
+
+    // app bar (back + title), shown when an app is open
+    var appbar = el("div", "mos-appbar");
+    appbar.innerHTML =
+      '<button class="mos-back" id="mosBack" aria-label="Home">' +
+        '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>' +
+      '</button><span class="mos-apptitle" id="mosTitle"></span>';
+    root.appendChild(appbar);
+    mosTitleEl = appbar.querySelector("#mosTitle");
+    on(appbar.querySelector("#mosBack"), "click", closeApp);
+
+    // home indicator (tap or swipe-up = home)
+    var hi = el("button", "mos-homebar"); hi.setAttribute("aria-label", "Home");
+    on(hi, "click", closeApp);
+    root.appendChild(hi);
+
+    // swipe-up from the bottom edge closes the open app (iOS home gesture)
+    on(stage, "touchstart", function (e) { mosStartY = e.touches[0].clientY; }, { passive: true });
+    on(stage, "touchend", function (e) {
+      if (!mosCurrent) return;
+      var dy = mosStartY - e.changedTouches[0].clientY;
+      if (mosStartY > innerHeight * 0.72 && dy > 55) closeApp();
+    }, { passive: true });
+
+    root.classList.add("mos-ready");
+  }
+
+  function openApp(id) {
+    var st = byId[id]; if (!st || !st.el) return;
+    mosCurrent = id; activeId = id;
+    st.el.classList.add("mos-open");
+    if (mosTitleEl) mosTitleEl.textContent = st.spec.name;
+    root.classList.add("mos-app-active");
+    if (st.body) st.body.scrollTop = 0;
+    if (st.hooks && st.hooks.onFocus) try { st.hooks.onFocus(); } catch (e) {}
+    emit("focus", id);
+  }
+  function closeApp() {
+    if (!mosCurrent) return;
+    var st = byId[mosCurrent];
+    if (st && st.el) st.el.classList.remove("mos-open");
+    root.classList.remove("mos-app-active");
+    if (st && st.hooks && st.hooks.onBlur) try { st.hooks.onBlur(); } catch (e) {}
+    mosCurrent = null;
   }
   function markDock() {
     live.forEach(function (id) { var st = byId[id]; if (st.dockEl) st.dockEl.classList.toggle("active", id === activeId); });

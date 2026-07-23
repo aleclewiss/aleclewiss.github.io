@@ -1,0 +1,89 @@
+/* AlecOS — MOBILE (iPhone-style shell).
+   Active only under .aos-root.is-mobile. Loaded AFTER wm.css so these override the
+   older stacked-window mobile rules. Desktop is untouched. */
+
+.aos-root.is-mobile{position:fixed;inset:0;overflow:hidden;background:var(--wall);
+  font-family:-apple-system,"SF Pro Display","SF Pro Text","Inter",system-ui,sans-serif;
+  -webkit-user-select:none;user-select:none;}
+.aos-root.is-mobile .aos-wall{opacity:1;}
+
+/* hide all desktop chrome */
+.aos-root.is-mobile .aos-menubar,
+.aos-root.is-mobile .aos-dock,
+.aos-root.is-mobile .aos-caption,
+.aos-root.is-mobile .aos-hint,
+.aos-root.is-mobile .aos-progress,
+.aos-root.is-mobile .aos-boot,
+.aos-root.is-mobile .aos-track,
+.aos-root.is-mobile .alt-view{ display:none !important; }
+
+/* stage becomes the full-screen app layer */
+.aos-root.is-mobile .aos-stage{position:fixed;inset:0;opacity:1;transform:none;overflow:visible;
+  z-index:20;pointer-events:none;display:block;}
+
+/* ============ STATUS BAR (always visible) ============ */
+.mos-statusbar{position:fixed;top:0;left:0;right:0;z-index:60;pointer-events:none;
+  height:calc(env(safe-area-inset-top,0px) + 22px);
+  padding:0 24px calc(0px) 26px;display:flex;align-items:flex-end;justify-content:space-between;
+  padding-bottom:3px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.4);}
+.mos-time{font-size:15px;font-weight:600;letter-spacing:.01em;font-variant-numeric:tabular-nums;}
+.mos-sbr{display:flex;align-items:center;gap:6px;}
+.mos-sbr svg{height:12px;width:auto;color:#fff;display:block;}
+
+/* ============ HOME SCREEN ============ */
+.mos-home{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;overflow:hidden;
+  padding:calc(env(safe-area-inset-top,0px) + 74px) 20px calc(env(safe-area-inset-bottom,0px) + 52px);
+  transition:opacity .45s cubic-bezier(.32,.72,0,1),transform .45s cubic-bezier(.32,.72,0,1);}
+.aos-root.mos-app-active .mos-home{opacity:0;transform:scale(.92);pointer-events:none;}
+.mos-hello{text-align:center;color:#fff;margin-bottom:34px;}
+.mos-hello h1{font-size:27px;font-weight:700;letter-spacing:-.03em;margin:0;text-shadow:0 2px 18px rgba(0,0,0,.5);}
+.mos-hello p{font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:rgba(255,255,255,.62);margin:7px 0 0;}
+.mos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px 10px;align-content:start;justify-items:center;width:100%;}
+.mos-app{background:none;border:0;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:9px;
+  -webkit-tap-highlight-color:transparent;min-width:0;max-width:100%;}
+.mos-ic{width:62px;height:62px;border-radius:16px;overflow:hidden;display:grid;place-items:center;
+  background:linear-gradient(155deg,color-mix(in srgb,var(--tone) 46%,#24242e),#141419);
+  box-shadow:0 10px 20px -8px rgba(0,0,0,.7),inset 0 1.5px 0 rgba(255,255,255,.28),inset 0 -8px 14px rgba(0,0,0,.4);
+  transition:transform .14s cubic-bezier(.34,1.56,.64,1);}
+.mos-app:active .mos-ic{transform:scale(.88);}
+.mos-ic svg{width:100%;height:100%;display:block;}
+.mos-lbl{font-size:12.5px;font-weight:500;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.65);
+  max-width:82px;text-align:center;line-height:1.2;}
+
+/* ============ APP SCREENS (reuse .aos-win full-screen) ============ */
+.aos-root.is-mobile .aos-win{position:fixed !important;left:0 !important;top:0 !important;
+  width:100% !important;height:100% !important;border-radius:0 !important;outline:none !important;
+  box-shadow:none !important;background:var(--surface);z-index:40;opacity:1 !important;
+  transform:translateY(100%) !important;   /* beats the old wm.css .is-mobile transform:none!important */
+  transition:transform .44s cubic-bezier(.32,.72,0,1);will-change:transform;filter:none !important;}
+.aos-root.is-mobile .aos-win.mos-open{transform:translateY(0) !important;pointer-events:auto !important;}
+.aos-root.is-mobile .aos-win:not(.mos-open){pointer-events:none !important;}
+.aos-root.is-mobile .aos-titlebar{display:none !important;}
+.aos-root.is-mobile .aos-body{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding-top:calc(env(safe-area-inset-top,0px) + 52px);
+  padding-bottom:calc(env(safe-area-inset-bottom,0px) + 28px);}
+
+/* ============ APP NAV BAR (back + title) ============ */
+.mos-appbar{position:fixed;top:0;left:0;right:0;z-index:55;
+  height:calc(env(safe-area-inset-top,0px) + 22px + 44px);
+  padding-top:calc(env(safe-area-inset-top,0px) + 22px);
+  display:flex;align-items:center;gap:4px;padding-left:6px;
+  background:rgba(22,22,26,.62);-webkit-backdrop-filter:blur(16px) saturate(1.6);backdrop-filter:blur(16px) saturate(1.6);
+  border-bottom:1px solid rgba(255,255,255,.08);
+  opacity:0;pointer-events:none;transition:opacity .3s var(--ease);}
+.aos-root.mos-app-active .mos-appbar{opacity:1;pointer-events:auto;}
+.mos-back{width:44px;height:44px;flex:none;border:0;background:none;color:#fff;display:grid;place-items:center;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.mos-apptitle{font-size:17px;font-weight:600;color:#fff;letter-spacing:-.01em;}
+
+/* ============ HOME INDICATOR ============ */
+.mos-homebar{position:fixed;left:50%;transform:translateX(-50%);z-index:70;
+  bottom:calc(env(safe-area-inset-bottom,0px) + 7px);
+  width:135px;height:5px;border-radius:3px;border:0;padding:0;cursor:pointer;
+  background:rgba(255,255,255,.5);transition:background .3s;-webkit-tap-highlight-color:transparent;}
+.aos-root.mos-app-active .mos-homebar{background:rgba(255,255,255,.85);}
+
+@media (prefers-reduced-motion: reduce){
+  .mos-home,.aos-root.is-mobile .aos-win{transition:none !important;}
+}
