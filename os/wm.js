@@ -335,15 +335,22 @@
     var scale = (st.scale || 1) * (1 - 0.09 * a);
     var op = a >= 1 ? 0 : (1 - a * a * 0.9);
     var win = st.el;
+    // transform + opacity are compositor-cheap → write every frame
     win.style.transform = "translate3d(" + tx.toFixed(1) + "px,0,0) scale(" + scale.toFixed(4) + ")";
     win.style.opacity = op.toFixed(3);
-    win.style.zIndex = String(100 - Math.round(a * 50));
-    win.style.pointerEvents = a < 0.35 ? "auto" : "none";
-    win.classList.toggle("front", a < 0.5);
-    // depth cue via GPU-cheap dim/desaturate (NO per-frame blur — blur is the #1 cause of
-    // scroll jank on weaker GPUs). Scale + fade + dim still read as receding depth.
-    win.style.filter = a < 0.02 ? "none"
-      : "brightness(" + (1 - a * 0.2).toFixed(3) + ") saturate(" + (1 - a * 0.18).toFixed(3) + ")";
+    // the rest trigger style recalc / paint → only write when the value ACTUALLY changes
+    // (during most frames these are stable; caching skips the redundant writes = less work).
+    var z = 100 - Math.round(a * 50);
+    if (z !== st._z) { win.style.zIndex = String(z); st._z = z; }
+    var pe = a < 0.35 ? "auto" : "none";
+    if (pe !== st._pe) { win.style.pointerEvents = pe; st._pe = pe; }
+    var front = a < 0.5;
+    if (front !== st._front) { win.classList.toggle("front", front); st._front = front; }
+    // depth cue via GPU-cheap dim/desaturate (NO per-frame blur). Quantized + cached so it
+    // only repaints on a real step change, not every sub-pixel frame.
+    var filt = a < 0.02 ? "none"
+      : "brightness(" + (1 - a * 0.2).toFixed(2) + ") saturate(" + (1 - a * 0.18).toFixed(2) + ")";
+    if (filt !== st._filter) { win.style.filter = filt; st._filter = filt; }
   }
 
   function render(snap) {
@@ -371,8 +378,14 @@
       captionEl.style.transform = "translateX(" + (winTx * 0.5).toFixed(1) + "px)";
     }
 
-    if (progEl) progEl.firstChild.style.width = ((live.length > 1 ? scrollPos / (live.length - 1) : 0) * 100) + "%";
-    if (hintEl) hintEl.classList.toggle("hide", (window.scrollY || 0) > innerHeight * 0.25);
+    if (progEl) {
+      var pw = Math.round((live.length > 1 ? scrollPos / (live.length - 1) : 0) * 1000) / 10;
+      if (pw !== render._pw) { progEl.firstChild.style.width = pw + "%"; render._pw = pw; }
+    }
+    if (hintEl) {
+      var hide = (window.scrollY || 0) > innerHeight * 0.25;
+      if (hide !== render._hide) { hintEl.classList.toggle("hide", hide); render._hide = hide; }
+    }
   }
 
   function setActive(id) {

@@ -84,20 +84,26 @@
     .intro p{font-size:13px}
   }
 
-  /* Embedded in the personal site — drop duplicate chrome */
+  /* Embedded in the personal site — drop duplicate chrome and FIT the frame (no scroll).
+     The whole demo is a flex column filling the iframe height: the stage grows to fill
+     the leftover space (keeping its 1280/680 aspect, so the canvas neither stretches nor
+     letterboxes), the controls bar is fixed at the bottom, caption hidden. */
   html.embed,html.embed body{
     background:#09090b;
-    padding:0;
+    padding:0; height:100%; overflow:hidden;
   }
-  html.embed .intro,html.embed footer{display:none}
-  html.embed .wrap{max-width:none;margin:0}
+  html.embed .intro,html.embed footer,html.embed .caption{display:none}
+  html.embed .wrap{
+    max-width:none; margin:0;
+    display:flex; flex-direction:column; height:100vh;
+    padding:10px 12px; box-sizing:border-box; gap:8px;
+  }
   html.embed .stage{
-    border-radius:10px;
-    box-shadow:0 0 0 1px #ffffff12;
+    flex:1 1 0; min-height:0; width:auto; aspect-ratio:1280/680; margin:0 auto;
+    max-width:100%; border-radius:10px; box-shadow:0 0 0 1px #ffffff12;
   }
-  html.embed .caption{margin:12px 2px 0;font-size:12.5px;color:#8b8790}
   html.embed .bar{
-    margin-top:12px;
+    flex:0 0 auto; margin-top:0;
     background:linear-gradient(180deg,#141418,#0c0c0e);
     border-color:#ffffff14;
   }
