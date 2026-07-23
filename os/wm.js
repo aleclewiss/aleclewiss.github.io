@@ -210,32 +210,41 @@
     root.appendChild(sb);
     mosTimeEl = sb.querySelector("#mosTime");
 
-    // ---- Springboard home: greeting + a grid of large rounded app icons ----
-    var home = el("div", "mos-home"); mosHome = home;
-    // dock SVGs may define gradients by id; the (hidden) dock already uses those ids, so
-    // namespace the springboard copy's ids to avoid duplicate-id paint-server clashes.
-    function uniqSvg(svg) {
-      return String(svg).replace(/id="([^"]+)"/g, 'id="$1-m"').replace(/url\(#([^)]+)\)/g, "url(#$1-m)");
-    }
-    // distinct suffix for the dock copy so its gradient ids don't clash with the grid's -m ids
+    // dock SVGs may define gradients by id; namespace the copy so ids don't clash.
     function uniqSvg2(svg) {
       return String(svg).replace(/id="([^"]+)"/g, 'id="$1-d"').replace(/url\(#([^)]+)\)/g, "url(#$1-d)");
     }
-    var grid = "";
-    live.forEach(function (id) {
-      var st = byId[id], d = st.spec.dock || {};
-      grid += '<button class="mos-icon" type="button" data-id="' + id + '" aria-label="' + (d.label || st.spec.name) + '">' +
-          '<span class="mos-icon-tile" style="--tone:' + (d.tone || st.spec.accent || "#888") + '">' + uniqSvg(d.svg || "") + '</span>' +
-          '<span class="mos-icon-lbl">' + (d.label || st.spec.name) + '</span>' +
-        '</button>';
-    });
+    var DOCK_APPS = live.filter(function (id) { return id !== "photos"; });   // Photos is the carousel, not a dock app
+
+    // ---- HOME: greeting → Photos coverflow (desktop vibe) → app dock ----
+    var home = el("div", "mos-home"); mosHome = home;
     home.innerHTML =
       '<div class="mos-greet"><span class="mos-greet-k">Portfolio</span><h1>Alec Lewis</h1></div>' +
-      '<div class="mos-grid">' + grid + '</div>';
+      '<div class="mos-home-cf" id="mosHomeCf"></div>' +
+      '<div class="mos-dock" id="mosDock"></div>';
     root.appendChild(home);
 
-    // ---- one full-screen view per app (content persists between visits) ----
-    live.forEach(function (id) {
+    // put the Photos coverflow page(s) into the home carousel slot
+    var photosSt = byId.photos;
+    var cfSlot = home.querySelector("#mosHomeCf");
+    if (photosSt && photosSt.pages) photosSt.pages.forEach(function (pg) { cfSlot.appendChild(pg); });
+
+    // the app dock (bottom of home): the non-Photos apps, labelled
+    var dock = home.querySelector("#mosDock");
+    var dockHTML = "";
+    DOCK_APPS.forEach(function (id) {
+      var st = byId[id], d = st.spec.dock || {};
+      dockHTML += '<button class="mos-dock-i" type="button" data-id="' + id + '" aria-label="' + (d.label || st.spec.name) + '">' +
+        '<span class="mos-dock-tile" style="--tone:' + (d.tone || st.spec.accent || "#888") + '">' + uniqSvg2(d.svg || "") + '</span>' +
+        '<span class="mos-dock-lbl">' + (d.label || st.spec.name) + '</span></button>';
+    });
+    dock.innerHTML = dockHTML;
+    [].slice.call(dock.querySelectorAll(".mos-dock-i")).forEach(function (b) {
+      on(b, "click", function () { openMobileApp(b.dataset.id, b); });
+    });
+
+    // ---- one full-screen view per NON-Photos app ----
+    DOCK_APPS.forEach(function (id) {
       var st = byId[id];
       var view = el("div", "mos-appview"); view.dataset.id = id;
       view.style.setProperty("--m-accent", st.spec.accent || "#888");
@@ -252,24 +261,11 @@
       on(bar.querySelector(".mos-back"), "click", function () { closeMobileApp(); });
     });
 
-    // ---- icon taps open their app ----
-    [].slice.call(home.querySelectorAll(".mos-icon")).forEach(function (icon) {
-      on(icon, "click", function () { openMobileApp(icon.dataset.id, icon); });
-    });
-
-    // ---- bottom dock: quick app-switch bar (visible while inside an app) ----
-    var dock = el("div", "mos-dock");
-    var dockHTML = "";
-    live.forEach(function (id) {
-      var st = byId[id], d = st.spec.dock || {};
-      dockHTML += '<button class="mos-dock-i" type="button" data-id="' + id + '" aria-label="' + (d.label || st.spec.name) + '">' +
-        '<span class="mos-dock-tile" style="--tone:' + (d.tone || st.spec.accent || "#888") + '">' + uniqSvg2(d.svg || "") + '</span></button>';
-    });
-    dock.innerHTML = dockHTML;
-    root.appendChild(dock);
-    [].slice.call(dock.querySelectorAll(".mos-dock-i")).forEach(function (b) {
-      on(b, "click", function () { if (b.dataset.id !== activeMobId) openMobileApp(b.dataset.id, b); });
-    });
+    // Photos coverflow is always on the home screen — lay it out once dimensions are real
+    if (photosSt && photosSt.hooks && photosSt.hooks.onFocus) {
+      requestAnimationFrame(function () { try { photosSt.hooks.onFocus(); } catch (e) {} });
+      setTimeout(function () { try { photosSt.hooks.onFocus(); } catch (e) {} }, 220);
+    }
 
     // ---- home indicator: tap or swipe-up returns to the Springboard ----
     var hb = el("div", "mos-homebar"); hb.innerHTML = '<i></i>';
