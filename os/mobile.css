@@ -119,8 +119,10 @@
   text-transform:uppercase;color:#ff5c86;text-shadow:0 1px 3px rgba(0,0,0,.7);}
 .moscf-cap{font-size:19px;font-weight:600;letter-spacing:-.02em;line-height:1.2;color:#f0eef4;margin:0;
   min-height:1.2em;text-wrap:balance;text-shadow:0 2px 18px rgba(0,0,0,.8);}
+/* touch-action:none — the JS fully owns the swipe; the browser never scrolls/bounces the
+   page vertically during a horizontal photo swipe (that was the up/down jitter). */
 .moscf-stage{flex:1 1 auto;min-height:0;max-height:64vh;position:relative;perspective:1200px;overflow:hidden;cursor:grab;
-  touch-action:pan-y;}
+  touch-action:none;}
 .moscf-stage:active{cursor:grabbing;}
 .moscf-card{position:absolute;left:50%;top:50%;height:100%;display:flex;align-items:center;justify-content:center;
   transform-style:preserve-3d;backface-visibility:hidden;
