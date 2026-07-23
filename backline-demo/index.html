@@ -420,16 +420,46 @@
   .demo-foot a:hover { color: var(--accent); border-color: var(--accent-line); }
   .demo-foot .dot-sep { color: var(--faint); }
 
-  @media (max-width: 520px) {
-    .pb-titles { min-width: 80px; }
-    .pb-meter { display: none; }
-    /* stack the params row and the Generate button so nothing overlaps on a phone */
+  /* ---- Phone (portrait / narrow): make it feel built for the phone ----
+     Stack the composer, give every control a 44px+ touch target, and raise
+     all micro-labels to >=11px so nothing is hard to read. Gated on width so
+     the desktop layout is untouched. */
+  @media (max-width: 600px) {
+    /* composer: params over a full-width Generate button */
     .composer-bottom { flex-direction: column; align-items: stretch; }
     .params { min-width: 0; width: 100%; }
-    .generate-btn { width: 100%; }
-    /* footer: stack cleanly instead of cramming three columns */
-    .demo-foot { flex-direction: column; align-items: flex-start; gap: 3px; line-height: 1.4; }
-    .demo-foot .dot-sep, .demo-foot .spacer { display: none; }
+    .generate-btn { width: 100%; min-height: 48px; font-size: 14px; }
+    .editor-head .kbd { display: none; }           /* no physical Enter on a phone */
+    .field-box textarea { height: 66px; font-size: 15px; }
+
+    /* legible labels — no sub-11px text on mobile */
+    .editor-head, .section-head { font-size: 11px; }
+    .param-label { font-size: 11px; }
+    .param-value { font-size: 16px; }
+    .auto-chip { font-size: 11px; padding: 1px 7px; }
+    .t-name { font-size: 14px; }
+    .t-sub { font-size: 11px; }
+    .t-dur { font-size: 12px; }
+    .real-badge { font-size: 11px; }
+    .empty-note { font-size: 13px; }
+    .job-step { font-size: 11px; }
+    .pb-name { font-size: 13px; }
+    .pb-meta { font-size: 11px; }
+    .pb-time { font-size: 12px; }
+
+    /* finger-sized transport / take controls (>=44px) */
+    .track, .track-job { grid-template-columns: 44px 40px 1fr auto; gap: 10px; }
+    .t-play { width: 44px; height: 44px; font-size: 12px; }
+    .player-bar { height: 60px; gap: 10px; }
+    .pb-play { width: 44px; height: 44px; font-size: 12px; }
+    .pb-titles { min-width: 78px; max-width: 130px; }
+    .pb-scrub { height: 40px; }
+    .pb-meter { display: none; }
+
+    /* footer: one tight line — drop the long secondary sentence */
+    .demo-foot { flex-direction: column; align-items: flex-start; gap: 3px;
+      line-height: 1.4; font-size: 11px; padding: 7px 16px 8px; }
+    .demo-foot .dot-sep, .demo-foot .spacer, .demo-foot .foot-long { display: none; }
   }
 </style>
 </head>
@@ -499,7 +529,7 @@
   <div class="demo-foot">
     <span>Every take is real <b style="color:var(--accent)">ACE-STEP</b> output, generated locally by Backline.</span>
     <span class="dot-sep">·</span>
-    <span>This demo replays four real generations; the app itself generates unlimited takes docked beside Ableton Live.</span>
+    <span class="foot-long">This demo replays four real generations; the app itself generates unlimited takes docked beside Ableton Live.</span>
     <span class="spacer"></span>
     <a href="https://github.com/aleclewiss/backline" target="_blank" rel="noopener">github.com/aleclewiss/backline</a>
   </div>

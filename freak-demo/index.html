@@ -76,12 +76,27 @@
   .ctx button:disabled{color:var(--ink3);cursor:default}
   .ctx button:disabled:hover{background:transparent}
 
-  /* mobile: let the sample selector and toolbar wrap instead of clipping */
+  /* ---- Phone (portrait / narrow): reflow the toolbar into finger-sized rows ----
+     The plugin canvas stays a single scaled bitmap (sized to fit width elsewhere);
+     here we make the CONTROLS genuinely phone-native: full-width stacked groups,
+     44px+ touch targets, and no sub-11px text. */
   @media (max-width:600px){
-    .seg{flex-wrap:wrap}
-    .seg button{font-size:12px;padding:6px 11px}
-    .bar{gap:12px 16px;padding:12px 13px}
     .intro p{font-size:13px}
+    .bar{flex-direction:column; align-items:stretch; gap:12px; padding:13px; margin-top:14px}
+    .bar .spacer{display:none}
+    .grp{width:100%; flex-wrap:wrap; gap:8px 12px}
+    .lbl{font-size:11px; letter-spacing:.12em}
+    /* Sample selector: full-width, buttons flow 2-up as 44px targets */
+    .grp-sample .seg{width:100%; flex-wrap:wrap; padding:4px; gap:4px}
+    .grp-sample .seg button{flex:1 1 44%; justify-content:center; min-height:44px;
+      font-size:13px; padding:0 10px}
+    /* Transport: play + bypass on one line, scrubber spans full width below */
+    .grp-transport{align-items:center}
+    .play{width:48px; height:48px}
+    .toggle{min-height:44px; padding:0 18px; font-size:12.5px}
+    .scrub{flex:1 1 100%; min-width:0; gap:11px}
+    .track{height:8px}
+    .time{font-size:11px}
   }
 
   /* Embedded in the personal site — drop duplicate chrome and FIT the frame (no scroll).
@@ -120,11 +135,7 @@
       flex:0 0 auto; width:100%; height:auto; aspect-ratio:1280/680; max-height:none; margin:0;
     }
     html.embed canvas{object-fit:contain;}
-    html.embed .bar{
-      gap:11px 16px; padding:13px 14px; border-radius:12px;
-    }
-    html.embed .seg button{font-size:12.5px;padding:8px 12px;}
-    html.embed .play{width:48px;height:48px;}
+    html.embed .bar{ border-radius:12px; }
   }
 </style>
 <script>
@@ -151,12 +162,12 @@
   </div>
 
   <div class="bar">
-    <div class="grp">
+    <div class="grp grp-sample">
       <span class="lbl">Sample</span>
       <div class="seg" id="seg" role="tablist"></div>
     </div>
     <div class="spacer"></div>
-    <div class="grp">
+    <div class="grp grp-transport">
       <button class="play" id="play" aria-label="Play">
         <svg id="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
       </button>
@@ -604,10 +615,13 @@ const fmt=s=>{s=Math.floor(s||0);return Math.floor(s/60)+":"+String(s%60).padSta
    ============================================================ */
 function pt(e){ const r=cv.getBoundingClientRect(); return {x:(e.clientX-r.left)/r.width*W, y:(e.clientY-r.top)/r.height*H}; }
 const dist=(ax,ay,bx,by)=>Math.hypot(ax-bx,ay-by);
-function nodeAt(p){ for(let i=0;i<bands.length;i++){ if(dist(p.x,p.y,freqToX(bands[i].freq),gainToY(clamp(bands[i].gain,DB_MIN,DB_MAX)))<=16) return i; } return -1; }
+/* On a touch/coarse pointer the canvas is scaled small, so grow the grab radius
+   (in logical canvas units) to keep nodes/knobs/LEDs finger-reachable. Mouse = 0. */
+const TOUCH_HIT=(window.matchMedia&&matchMedia("(pointer:coarse)").matches)?12:0;
+function nodeAt(p){ for(let i=0;i<bands.length;i++){ if(dist(p.x,p.y,freqToX(bands[i].freq),gainToY(clamp(bands[i].gain,DB_MIN,DB_MAX)))<=16+TOUCH_HIT) return i; } return -1; }
 function tileAt(p){ if(p.x<BSx||p.x>BSx+BSw||p.y<BSy||p.y>BSy+BSh) return -1; return clamp(Math.floor((p.x-BSx)/(BSw/6)),0,5); }
-function ledAt(p,i){ const tx=BSx+i*(BSw/6); return dist(p.x,p.y,tx+16,BSy+BSh/2)<=10; }
-function knobAt(p){ for(let i=0;i<KNOBS.length;i++){ if(dist(p.x,p.y,KNOBS[i].cx,KNOBS[i].cy)<=KNOB_R+2) return i; } return -1; }
+function ledAt(p,i){ const tx=BSx+i*(BSw/6); return dist(p.x,p.y,tx+16,BSy+BSh/2)<=10+TOUCH_HIT; }
+function knobAt(p){ for(let i=0;i<KNOBS.length;i++){ if(dist(p.x,p.y,KNOBS[i].cx,KNOBS[i].cy)<=KNOB_R+2+TOUCH_HIT) return i; } return -1; }
 function inComp(p){ return p.x>=CQx-10&&p.x<=CQr+10&&p.y>=CQy-10&&p.y<=CQb+10; }
 function inAI(p){ return p.x>=AIx&&p.x<=AIx+AIw&&p.y>=AIy&&p.y<=AIy+AIh; }
 

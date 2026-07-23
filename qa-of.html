@@ -1,0 +1,9 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0}iframe{width:390px;height:760px;border:0;display:block}</style></head><body>
+<iframe id="a" src="/freak-demo/index.html?embed=1"></iframe>
+<script>
+var f=document.getElementById('a');
+f.onload=function(){setTimeout(function(){try{
+  var d=f.contentDocument, sw=d.documentElement.scrollWidth, iw=f.contentWindow.innerWidth;
+  document.title='FREAK sw='+sw+' iw='+iw+' overflow='+(sw>iw+1);
+}catch(e){document.title='FREAK err '+e.message;}},2500);};
+</script></body></html>
