@@ -268,7 +268,7 @@
       ".ct-tb.send:disabled{opacity:.55;cursor:default}",
       ".ct-in{flex:1;min-width:0;background:none;border:0;outline:none;color:#f2f0f5;font:inherit;font-size:15px}",
       ".ct-in::placeholder{color:#6b6570}",
-      ".ct-msg{width:100%;box-sizing:border-box;min-height:120px;resize:vertical;background:none;border:0;outline:none;",
+      ".ct-msg{width:100%;box-sizing:border-box;min-height:120px;flex:1 1 auto;resize:none;background:none;border:0;outline:none;",
       "  color:#e6e3ea;font:inherit;font-size:15px;line-height:1.6;padding:18px 24px;display:block}",
       ".ct-msg::placeholder{color:#6b6570}",
       ".ct-status{padding:4px 24px 0;font-size:13px;min-height:20px;color:#8a8590}",
