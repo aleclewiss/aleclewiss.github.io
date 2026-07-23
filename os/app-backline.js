@@ -428,7 +428,7 @@
     tour: [
       { kicker: "03 — Generative audio", focus: ".bl-composer", title: "Type it. Hear it.",
         body: "Backline, a music generator. Describe a sound in plain words and it renders real, usable audio in seconds — a full desktop app wrapped around a diffusion model I run locally.",
-        how: "ACE-Step diffusion · Electron + React · local inference  —  the skill: generative AI + product engineering" },
+        how: "ACE-Step diffusion · Electron + React  —  generative AI + product engineering" },
       { focus: ".bl-generate", title: "Generate real audio", click: true,
         body: "ACE-Step runs locally on my machine. Every take is actual audio — not a preset, not a loop." },
       { focus: ".bl-take.is-sel", title: "Audition, keep the one that earns it",

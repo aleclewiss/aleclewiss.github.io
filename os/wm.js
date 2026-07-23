@@ -294,7 +294,7 @@
     // Sit the heading just ABOVE its window (lower on screen, visually tied to the window),
     // but never let it clip up behind the menu bar on short screens — clamp the top.
     captionEl.style.bottom = "auto";
-    var gap = 22, h = captionEl.offsetHeight || 120;
+    var gap = 38, h = captionEl.offsetHeight || 120;   // clear separation between heading block and window
     var top = Math.max(Math.round(st.headTop || 40), Math.round((st.boxTop || 300) - gap - h));
     captionEl.style.top = top + "px";
   }
