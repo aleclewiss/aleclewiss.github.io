@@ -248,7 +248,9 @@
   function layoutAll() {
     var topInset = 25, pad = mobile ? 12 : 30, dockRoom = mobile ? 0 : 76;
     // hero band above each window — kept compact so the app windows get the space
-    var headH = mobile ? 0 : Math.max(126, Math.min(162, Math.round(innerHeight * 0.165)));
+    // band must be tall enough to hold the full chapter heading (kicker+title+body+bridge)
+    // so the window's own content starts BELOW it — otherwise they collide on short screens.
+    var headH = mobile ? 0 : Math.max(150, Math.min(174, Math.round(innerHeight * 0.185)));
     var headTop = topInset + 12;
     // COMFORT: windows never fill the whole available area — leave breathing room so the
     // composition reads spacious, not "zoomed in", especially on laptop-sized screens.

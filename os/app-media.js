@@ -127,8 +127,8 @@
       ".pc-root{position:absolute;inset:0;display:flex;flex-direction:column;background:transparent;",
       "  color:#f2f0f5;font-family:-apple-system,'SF Pro Display','Inter',system-ui,sans-serif;padding:4px 4px 0}",
       ".pc-head{flex:0 0 auto;text-align:center;display:flex;flex-direction:column;gap:8px;min-height:58px;justify-content:center;position:relative;z-index:20}",
-      ".pc-sec{font-family:ui-monospace,Menlo,monospace;font-size:14px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:#ff5c86;text-shadow:0 1px 3px rgba(0,0,0,.95),0 2px 12px rgba(0,0,0,.8)}",
-      ".pc-desc{font-size:clamp(22px,2.6vw,34px);font-weight:600;letter-spacing:-.02em;line-height:1.12;margin:0;color:#fff;text-wrap:balance;text-shadow:0 2px 24px rgba(0,0,0,.7)}",
+      ".pc-sec{font-family:ui-monospace,Menlo,monospace;font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#ff5c86;text-shadow:0 1px 3px rgba(0,0,0,.95),0 2px 12px rgba(0,0,0,.8)}",
+      ".pc-desc{font-size:clamp(17px,1.9vw,25px);font-weight:600;letter-spacing:-.02em;line-height:1.12;margin:0;color:#f0eef4;text-wrap:balance;text-shadow:0 2px 24px rgba(0,0,0,.7)}",
       ".pc-stage{flex:1;min-height:0;position:relative;perspective:1600px;overflow:visible;cursor:grab}",
       ".pc-card{position:absolute;left:50%;top:50%;height:80%;display:flex;align-items:center;justify-content:center;",
       "  transform-style:preserve-3d;will-change:transform,opacity;",
@@ -210,7 +210,7 @@
 
       /* ===== AMINAL — the process, the numbers, a link out (overrides YouTube styles above) ===== */
       ".am-root{background:radial-gradient(125% 80% at 50% -6%,#200c12,#0c0a0b 60%)!important;color:#f3eef0!important}",
-      ".am-wrap{padding:30px 34px 34px;max-width:920px;margin:0 auto;width:100%;box-sizing:border-box}",
+      ".am-wrap{padding:28px 40px 32px;max-width:1120px;margin:0 auto;width:100%;box-sizing:border-box}",
       ".am-hd{display:flex;align-items:center;gap:15px;margin-bottom:26px}",
       ".am-avm{width:50px;height:50px;border-radius:14px;background:#1c1416;border:1px solid #3a2429;flex:none;display:grid;place-items:center;overflow:hidden}",
       ".am-avm img{width:100%;height:100%;object-fit:cover;display:block}",
