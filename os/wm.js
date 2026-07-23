@@ -251,7 +251,8 @@
     // band must be tall enough to hold the full chapter heading (kicker+title+body+bridge)
     // so the window's own content starts BELOW it — otherwise they collide on short screens.
     var headH = mobile ? 0 : Math.max(150, Math.min(174, Math.round(innerHeight * 0.185)));
-    var headTop = topInset + 12;
+    var DROP = mobile ? 0 : 34;                 // nudge the whole composition down a bit
+    var headTop = topInset + 12 + DROP;
     // COMFORT: windows never fill the whole available area — leave breathing room so the
     // composition reads spacious, not "zoomed in", especially on laptop-sized screens.
     var COMFORT = 0.72;
@@ -266,7 +267,7 @@
       // Any leftover space collects harmlessly toward the dock.
       st.cx = innerWidth / 2;
       var region = innerHeight - topInset - headH - dockRoom;
-      st.cy = topInset + headH + Math.min(region / 2, (st.size.h * s) / 2 + 6);
+      st.cy = topInset + headH + DROP + Math.min(region / 2, (st.size.h * s) / 2 + 6);
       st.el.style.left = (st.cx - st.size.w / 2) + "px";
       st.el.style.top = (st.cy - st.size.h / 2) + "px";
       // on-screen box of the SCALED window — heading aligns to its left edge
