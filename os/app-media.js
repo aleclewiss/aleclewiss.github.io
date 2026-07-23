@@ -457,11 +457,12 @@
           capEl.textContent = s.cap;
           warm(center);   // decode the cards around wherever we've landed
           dots.forEach(function (d, di) { d.classList.toggle("on", di === center); });
-          cards.forEach(function (card, i) {
-            var v = card.querySelector("video"); if (!v) return;
-            if (i === center) { try { v.play(); } catch (e) {} } else { try { v.pause(); } catch (e) {} }
-          });
         }
+        // videos just play, always looping — no "select to play", so the carousel is alive
+        cards.forEach(function (card) {
+          var v = card.querySelector("video");
+          if (v) { v.play().catch(function () {}); }
+        });
         function go(i) { pos = Math.max(0, Math.min(N - 1, i)); stageEl.classList.remove("is-dragging"); place(pos); }
 
         // rAF-throttle the drag: touchmove can fire 120×/s, and each place() loops every card —

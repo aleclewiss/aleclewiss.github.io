@@ -113,12 +113,16 @@
   background:radial-gradient(120% 90% at 50% 0%,#170f14,#0b0a0b 64%);}
 /* caption sits in normal flow at the top; the stage below fills the rest and centers the
    photo in THAT space — so the caption and photo read together, no cavernous gap. */
-.moscf-head{flex:none;text-align:center;pointer-events:none;
-  padding:6px 20px 4px;display:flex;flex-direction:column;gap:5px;}
+/* FIXED height (not min-height) so a caption swapping between 1 and 2 lines never reflows
+   the head → the stage → the whole carousel. That reflow was the "glitch around". */
+.moscf-head{flex:none;text-align:center;pointer-events:none;height:74px;box-sizing:border-box;
+  padding:6px 20px 4px;display:flex;flex-direction:column;justify-content:flex-end;gap:5px;overflow:hidden;}
 .moscf-sec{font-family:ui-monospace,Menlo,monospace;font-size:11px;font-weight:600;letter-spacing:.22em;
-  text-transform:uppercase;color:#ff5c86;text-shadow:0 1px 3px rgba(0,0,0,.7);}
+  text-transform:uppercase;color:#ff5c86;text-shadow:0 1px 3px rgba(0,0,0,.7);
+  transition:opacity .3s ease;}
 .moscf-cap{font-size:19px;font-weight:600;letter-spacing:-.02em;line-height:1.2;color:#f0eef4;margin:0;
-  min-height:1.2em;text-wrap:balance;text-shadow:0 2px 18px rgba(0,0,0,.8);}
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  text-wrap:balance;text-shadow:0 2px 18px rgba(0,0,0,.8);transition:opacity .3s ease;}
 /* touch-action:none — the JS fully owns the swipe; the browser never scrolls/bounces the
    page vertically during a horizontal photo swipe (that was the up/down jitter).
    fixed ~46vh height (not flex-grow) so the photo sits tight under the caption instead of
@@ -129,9 +133,10 @@
 .moscf-card{position:absolute;left:50%;top:50%;height:100%;display:flex;align-items:center;justify-content:center;
   transform-style:preserve-3d;backface-visibility:hidden;
   transition:transform .5s cubic-bezier(.25,1,.3,1),opacity .4s ease;}
-/* only the cards near the center are GPU-promoted — far ones don't composite (perf on phones) */
+/* only the cards near the center are GPU-promoted — far ones don't composite (perf on phones).
+   far cards are opacity:0 (not visibility:hidden) so they fade rather than pop = no glitch. */
 .moscf-card.near{will-change:transform,opacity;}
-.moscf-card.far{visibility:hidden;}
+.moscf-card.far{opacity:0 !important;pointer-events:none;}
 .moscf-stage.is-dragging .moscf-card{transition:none;}
 .moscf-card img,.moscf-card video{max-width:84vw;max-height:94%;width:auto;height:auto;object-fit:contain;
   border-radius:18px;background:#141416;display:block;
