@@ -170,16 +170,16 @@
   left:var(--sp6);top:120px;width:min(52vw,640px);
   font-family:-apple-system,"SF Pro Display","SF Pro Text","Inter",system-ui,sans-serif;
 }
-.aos-caption .cap-k{display:inline-block;font-family:var(--mono);font-size:13px;letter-spacing:.26em;
-  text-transform:uppercase;color:var(--accent);margin-bottom:9px;font-weight:600;
+.aos-caption .cap-k{display:inline-block;font-family:var(--mono);font-size:11.5px;letter-spacing:.26em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:8px;font-weight:600;
   text-shadow:0 1px 3px rgba(0,0,0,.95),0 2px 16px rgba(0,0,0,.85);}
-.aos-caption h2{font-size:clamp(27px,3vw,42px);font-weight:600;letter-spacing:-.03em;line-height:1.02;
+.aos-caption h2{font-size:clamp(22px,2.4vw,34px);font-weight:600;letter-spacing:-.03em;line-height:1.03;
   color:#fff;margin:0;max-width:22ch;text-wrap:balance;text-shadow:0 2px 4px rgba(0,0,0,.6),0 3px 40px rgba(0,0,0,.7);}
-.aos-caption p{font-size:clamp(15px,1.25vw,17.5px);font-weight:450;color:#f2f0f6;margin:11px 0 0;line-height:1.45;
+.aos-caption p{font-size:clamp(13px,1.05vw,15px);font-weight:450;color:#f2f0f6;margin:9px 0 0;line-height:1.45;
   max-width:56ch;text-shadow:0 1px 3px rgba(0,0,0,.9),0 2px 18px rgba(0,0,0,.9);}
 /* compact spec line — the engineering, stated plainly */
-.aos-caption .cap-how{font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;color:#c6c2d0;
-  margin-top:13px;padding-left:15px;position:relative;text-shadow:0 1px 3px rgba(0,0,0,.95),0 2px 14px rgba(0,0,0,.9);}
+.aos-caption .cap-how{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:#c6c2d0;
+  margin-top:11px;padding-left:14px;position:relative;text-shadow:0 1px 3px rgba(0,0,0,.95),0 2px 14px rgba(0,0,0,.9);}
 .aos-caption .cap-how::before{content:"";position:absolute;left:0;top:.55em;width:8px;height:1px;background:var(--accent);opacity:.8;}
 /* opacity + transform are driven per-frame by wm.js render(), synced to the scroll swipe
    (no CSS transition — the scroll lerp IS the smoothing). Reduced-motion pins opacity:1. */

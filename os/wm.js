@@ -248,11 +248,11 @@
   function layoutAll() {
     var topInset = 25, pad = mobile ? 12 : 30, dockRoom = mobile ? 0 : 76;
     // hero band above each window — kept compact so the app windows get the space
-    var headH = mobile ? 0 : Math.max(150, Math.min(186, Math.round(innerHeight * 0.19)));
+    var headH = mobile ? 0 : Math.max(126, Math.min(162, Math.round(innerHeight * 0.165)));
     var headTop = topInset + 12;
     // COMFORT: windows never fill the whole available area — leave breathing room so the
     // composition reads spacious, not "zoomed in", especially on laptop-sized screens.
-    var COMFORT = 0.86;
+    var COMFORT = 0.72;
     var availW = innerWidth - pad * 2, availH = innerHeight - topInset - headH - dockRoom - pad;
     live.forEach(function (id) {
       var st = byId[id]; if (!st.el) return;
