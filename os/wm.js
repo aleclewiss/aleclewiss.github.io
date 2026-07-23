@@ -248,7 +248,7 @@
   function layoutAll() {
     var topInset = 25, pad = mobile ? 12 : 14, dockRoom = mobile ? 0 : 70;
     // hero band above each window — kept compact so the app windows get the space
-    var headH = mobile ? 0 : Math.max(140, Math.min(178, Math.round(innerHeight * 0.175)));
+    var headH = mobile ? 0 : Math.max(154, Math.min(190, Math.round(innerHeight * 0.2)));
     var headTop = topInset + 12;
     var availW = innerWidth - pad * 2, availH = innerHeight - topInset - headH - dockRoom - pad;
     live.forEach(function (id) {
@@ -276,9 +276,10 @@
     var left = Math.max(28, Math.round(st.boxLeft));
     captionEl.style.left = left + "px";
     captionEl.style.right = "auto";
-    // anchor the hero just ABOVE the window and let it grow upward — it can never overlap the window
-    captionEl.style.top = "auto";
-    captionEl.style.bottom = Math.round(innerHeight - (st.boxTop || 200) + 16) + "px";
+    // anchor the hero from the TOP (just below the menu bar) so the kicker can never clip
+    // off-screen on shorter viewports; it grows downward into the reserved band.
+    captionEl.style.bottom = "auto";
+    captionEl.style.top = Math.round(st.headTop || 40) + "px";
     var w = Math.max(st.boxW || 640, 640);
     captionEl.style.width = "min(" + Math.round(w) + "px, " + Math.round(innerWidth - left - 40) + "px)";
   }
