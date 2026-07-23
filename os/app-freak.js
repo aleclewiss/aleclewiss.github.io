@@ -94,7 +94,7 @@
             '<p class="mos-demo-d">Freak-Quencies — an AI mixing plugin. Pick a raw guitar take and a neural net writes a corrective EQ and compressor in real time. Hear raw vs. the AI-corrected mix.</p>' +
           '</div>' +
           '<div class="mos-demo-frame">' +
-            '<iframe data-src="freak-demo/index.html?embed=1&v=33" title="Freak-Quencies — the real AI mixing plugin" ' +
+            '<iframe data-src="freak-demo/index.html?embed=1&v=35" title="Freak-Quencies — the real AI mixing plugin" ' +
               'allow="autoplay; clipboard-write; encrypted-media; fullscreen" scrolling="auto"></iframe>' +
           '</div>';
         ctx.addPage(pg);
@@ -125,7 +125,7 @@
          this app becomes the focused Space. Full-screen button opens it un-cropped. */
       var stage = root.querySelector("#fqStage");
       var demoEl = ctx.launchDemo
-        ? ctx.launchDemo("freak-demo/index.html?embed=1&v=33", {
+        ? ctx.launchDemo("freak-demo/index.html?embed=1&v=35", {
             label: "Launch the plugin",
             note: "the real Freak-Quencies plugin — pick a sample, hear raw vs. the AI-corrected mix"
           })

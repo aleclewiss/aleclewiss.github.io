@@ -127,23 +127,23 @@
      so never stretch it. Keep true aspect, size it to the full width, and center the whole
      device (stage + controls) in the frame. object-fit is a belt-and-suspenders no-stretch. */
   @media (max-aspect-ratio: 1/1){
-    /* canvas is the hero: full-bleed edge-to-edge at the TOP (biggest it can be without
-       cropping/distorting the fixed 1280x680 shape), controls compacted below it. */
+    /* clean, contained card layout: everything centered vertically with even margins.
+       The EQ canvas is a rounded card (fixed 1280x680 shape, never stretched), and the
+       controls sit in a matching card below — consistent gutters, iOS spacing. */
+    html.embed body{ background:radial-gradient(120% 80% at 50% 0%,#12131a,#090a0e 62%); }
     html.embed .wrap{
-      justify-content:flex-start; gap:12px;
-      padding:0 0 calc(env(safe-area-inset-bottom,0px) + 12px);
+      justify-content:center; gap:14px;
+      padding:16px 14px calc(env(safe-area-inset-bottom,0px) + 16px);
     }
     html.embed .stage{
       flex:0 0 auto; width:100%; height:auto; aspect-ratio:1280/680; max-height:none; margin:0;
-      border-radius:0; box-shadow:0 1px 0 #ffffff14;
+      border-radius:16px; box-shadow:0 0 0 1px #ffffff14, 0 20px 44px -22px #000;
     }
     html.embed canvas{object-fit:contain;}
-    /* compact controls so the canvas dominates */
-    html.embed .bar{ border-radius:14px; margin:0 12px; padding:11px; gap:10px; }
-    html.embed .bar .lbl{ font-size:10.5px; }
-    html.embed .grp-sample .seg button{ min-height:40px; }
-    html.embed .play{ width:44px; height:44px; }
-    html.embed .toggle{ min-height:40px; }
+    html.embed .bar{
+      border-radius:16px; margin:0; padding:14px;
+      box-shadow:0 0 0 1px #ffffff10, 0 16px 34px -20px #000;
+    }
   }
 </style>
 <script>
