@@ -401,10 +401,13 @@
           SHOTS.filter(function (s) { return secOf(s) === k; }).forEach(function (s) { MITEMS.push(s); });
         });
         var cfReduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        var cardsHTML = MITEMS.map(function (s) {
+        var cardsHTML = MITEMS.map(function (s, i) {
+          // hero + first neighbours load with high priority; the rest still load (not lazy,
+          // so no pop-in when you swipe) but don't compete with the first paint.
+          var pr = i === 0 ? ' fetchpriority="high"' : (i <= 2 ? "" : ' fetchpriority="low"');
           var m = s.video
-            ? '<video src="' + BASE + s.f + '" poster="' + BASE + esc(s.poster) + '" muted loop playsinline preload="auto"></video>'
-            : '<img src="' + BASE + s.f + '" alt="' + esc(s.alt) + '" decoding="async" fetchpriority="high">';
+            ? '<video src="' + BASE + s.f + '" poster="' + BASE + esc(s.poster) + '" muted loop playsinline preload="metadata"></video>'
+            : '<img src="' + BASE + s.f + '" alt="' + esc(s.alt) + '" decoding="async"' + pr + '>';
           return '<div class="moscf-card">' + m + '</div>';
         }).join("");
         var page = document.createElement("div");
@@ -452,6 +455,7 @@
           var s = MITEMS[center];
           secEl.textContent = SECT[secOf(s)];
           capEl.textContent = s.cap;
+          warm(center);   // decode the cards around wherever we've landed
           dots.forEach(function (d, di) { d.classList.toggle("on", di === center); });
           cards.forEach(function (card, i) {
             var v = card.querySelector("video"); if (!v) return;
@@ -482,12 +486,17 @@
 
         dots.forEach(function (d) { d.addEventListener("click", function () { go(+d.dataset.i); }); });
 
-        // warm the image cache so swiping never pops in a blank card / janks on decode
-        cards.forEach(function (card) {
-          var img = card.querySelector("img");
-          if (img && img.decode) { img.decode().catch(function () {}); }
-        });
         place(0);   // initial paint (recomputed on open when the stage has real dimensions)
+        // decode only the visible cards up front (not all 12 — bulk decode janks first paint);
+        // the rest decode lazily as they come into view during a spin.
+        function warm(idx) {
+          for (var d = -2; d <= 2; d++) {
+            var c = cards[idx + d]; if (!c) continue;
+            var img = c.querySelector("img");
+            if (img && img.decode && !img.dataset.warm) { img.dataset.warm = "1"; img.decode().catch(function () {}); }
+          }
+        }
+        setTimeout(function () { warm(0); }, 40);
         // The view opens with a spring transform, so the stage may not have its real width on
         // the first frame — re-layout a few times after open so the hero lands dead-centered.
         function relayout() { pos = Math.round(pos); place(pos); }

@@ -203,12 +203,9 @@
   function buildMobile() {
     entered = true;   // no boot screen on mobile — the home screen is the entry point
 
-    // ---- status bar (always visible): live time + signal / wifi / battery ----
-    var sb = el("div", "mos-statusbar");
-    sb.innerHTML = '<span class="mos-time" id="mosTime"></span>' +
-      '<span class="mos-sbr">' + MOS_SIGNAL + ICON.wifi + ICON.battery + '</span>';
-    root.appendChild(sb);
-    mosTimeEl = sb.querySelector("#mosTime");
+    // No fake status bar — the real phone's OS status bar (time/battery) already shows
+    // at the top, so a second one just looks duplicated. The app bars sit below the notch
+    // via safe-area insets instead.
 
     // dock SVGs may define gradients by id; namespace the copy so ids don't clash.
     function uniqSvg2(svg) {
@@ -314,10 +311,14 @@
     var view = st.mobView; if (!view) return;
     var vids = view.querySelectorAll("video"), i;
     if (opening) {
-      var frames = view.querySelectorAll("iframe[data-src]");
-      for (i = 0; i < frames.length; i++) {
-        if (!frames[i].getAttribute("src")) frames[i].src = frames[i].getAttribute("data-src");
-      }
+      // Load heavy demo iframes AFTER the open animation settles — loading them mid-spring
+      // is what makes the transition stutter. ~500ms ≈ the open transition duration.
+      setTimeout(function () {
+        var frames = view.querySelectorAll("iframe[data-src]");
+        for (var k = 0; k < frames.length; k++) {
+          if (!frames[k].getAttribute("src")) frames[k].src = frames[k].getAttribute("data-src");
+        }
+      }, 500);
       if (st.hooks && st.hooks.onFocus) { try { st.hooks.onFocus(); } catch (e) {} }
     } else {
       if (st.hooks && st.hooks.onBlur) { try { st.hooks.onBlur(); } catch (e) {} }
