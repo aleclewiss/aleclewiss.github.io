@@ -246,15 +246,18 @@
 
   /* size + center each window-space to the viewport (scaled to fit under the menu bar) */
   function layoutAll() {
-    var topInset = 25, pad = mobile ? 12 : 14, dockRoom = mobile ? 0 : 70;
+    var topInset = 25, pad = mobile ? 12 : 30, dockRoom = mobile ? 0 : 76;
     // hero band above each window — kept compact so the app windows get the space
-    var headH = mobile ? 0 : Math.max(154, Math.min(190, Math.round(innerHeight * 0.2)));
+    var headH = mobile ? 0 : Math.max(150, Math.min(186, Math.round(innerHeight * 0.19)));
     var headTop = topInset + 12;
+    // COMFORT: windows never fill the whole available area — leave breathing room so the
+    // composition reads spacious, not "zoomed in", especially on laptop-sized screens.
+    var COMFORT = 0.86;
     var availW = innerWidth - pad * 2, availH = innerHeight - topInset - headH - dockRoom - pad;
     live.forEach(function (id) {
       var st = byId[id]; if (!st.el) return;
       if (mobile) { st.el.style.transform = ""; return; }   // CSS handles mobile stacking
-      var s = Math.min(1, availW / st.size.w, availH / st.size.h);
+      var s = Math.min(1, availW / st.size.w, availH / st.size.h) * COMFORT;
       st.scale = s;
       // position: horizontally centered; vertically centered in the band below the heading
       st.cx = innerWidth / 2;
