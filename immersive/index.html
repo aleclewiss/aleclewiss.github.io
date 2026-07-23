@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alec Lewis — (immersive slice)</title>
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+  <!-- fixed full-screen scene stage (photos/video crossfade behind the text) -->
+  <div class="stage" aria-hidden="true">
+    <div class="layer is-active" data-layer="0"></div>
+    <div class="layer" data-layer="1">
+      <img src="../assets/personal/gf-and-me.jpg" alt="" loading="eager">
+    </div>
+    <div class="layer" data-layer="2">
+      <video src="../assets/personal/climbing.mp4" poster="../assets/personal/climbing-poster.jpg" autoplay loop muted playsinline preload="auto"></video>
+    </div>
+    <div class="layer" data-layer="3">
+      <img src="../assets/personal/photo-trestle.jpg" alt="" loading="lazy">
+    </div>
+    <div class="layer" data-layer="4">
+      <img src="../assets/personal/dogs.jpg" alt="" loading="lazy">
+    </div>
+    <div class="grain"></div>
+  </div>
+
+  <header class="hud">
+    <a class="hud-name" href="#s0">Alec Lewis</a>
+    <span class="hud-index"><b id="idx">01</b> / 05</span>
+  </header>
+
+  <!-- smooth-scrolled content -->
+  <div class="scroll" id="scroll">
+    <section class="scene scene--center" id="s0" data-scene="0">
+      <div class="scene-in">
+        <p class="kicker">Personal site — State College, PA</p>
+        <h1 class="mega">ALEC<br>LEWIS</h1>
+        <p class="lede">I build music software &amp; automation — and spend the rest of the time outside with a camera.</p>
+        <p class="cue">scroll <span aria-hidden="true">↓</span></p>
+      </div>
+    </section>
+
+    <section class="scene scene--dark scene--bl" id="s1" data-scene="1">
+      <div class="scene-in">
+        <p class="kicker kicker--light">01 — the good part</p>
+        <h2 class="big">Home is her,<br>and two loud dogs.</h2>
+      </div>
+    </section>
+
+    <section class="scene scene--dark scene--br" id="s2" data-scene="2">
+      <div class="scene-in">
+        <p class="kicker kicker--light">02 — off the wall</p>
+        <h2 class="big">I climb to stop<br>thinking about code.</h2>
+      </div>
+    </section>
+
+    <section class="scene scene--dark scene--bl" id="s3" data-scene="3">
+      <div class="scene-in">
+        <p class="kicker kicker--light">03 — behind the camera</p>
+        <h2 class="big">And I chase<br>the light.</h2>
+      </div>
+    </section>
+
+    <section class="scene scene--dark scene--center" id="s4" data-scene="4">
+      <div class="scene-in">
+        <p class="kicker kicker--light">this is just the intro</p>
+        <h2 class="big">There's a whole<br>lot more.</h2>
+        <p class="lede lede--light">If this feels right, I'll build the rest of it — dogs, ducks, the music tools, the works — in exactly this world.</p>
+      </div>
+    </section>
+  </div>
+
+</body>
+</html>

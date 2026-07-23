@@ -2,227 +2,68 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Alec Lewis — music tools &amp; automation</title>
-  <meta name="description" content="Alec Lewis builds software that makes music — and software that runs itself.">
-  <meta name="theme-color" content="#09090b">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Alec Lewis — audio software &amp; automation</title>
+  <meta name="description" content="The desk of Alec Lewis — a usable desktop of everything he's built: an AI mixing plugin, a music generator, an automated channel, and the life outside it.">
+  <meta name="theme-color" content="#08080B">
   <link rel="canonical" href="https://aleclewiss.github.io/">
   <meta property="og:title" content="Alec Lewis">
-  <meta property="og:description" content="Music tools, AI audio, and automation that runs a media channel by itself.">
+  <meta property="og:description" content="Everything I've built, on the machine I built it on. Look around.">
   <meta property="og:url" content="https://aleclewiss.github.io/">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://aleclewiss.github.io/assets/og.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Alec Lewis — music tools and automation">
   <meta property="og:site_name" content="Alec Lewis">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://aleclewiss.github.io/assets/og.jpg">
   <link rel="icon" href="assets/favicon-32.png">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap">
-  <link rel="stylesheet" href="styles.css">
-  <script src="script.js" defer></script>
+
+  <link rel="stylesheet" href="os/tokens.css?v=7">
+  <link rel="stylesheet" href="os/wm.css?v=7">
 </head>
-<body data-stage="hero">
+<body>
+  <noscript>
+    <div style="max-width:40rem;margin:12vh auto;padding:0 1.5rem;font-family:system-ui,sans-serif;color:#F2F0F5;background:#08080B">
+      <h1 style="font-size:2.4rem;letter-spacing:-.03em">Alec Lewis</h1>
+      <p style="color:#9A94A0;line-height:1.6">I build audio software and automation in State College, PA — an AI mixing plugin (Freak-Quencies),
+      a music generator (Backline), and an automated video channel (Aminal House). This site is an
+      interactive desktop; it needs JavaScript. Reach me at
+      <a href="mailto:aleclewis@psu.edu" style="color:#ecc270">aleclewis@psu.edu</a> or on
+      <a href="https://github.com/aleclewiss" style="color:#ecc270">GitHub</a>.</p>
+    </div>
+  </noscript>
 
-  <header class="nav">
-    <a class="nav-name" href="#top">Alec Lewis</a>
-    <nav class="nav-links">
-      <a href="#aminal">Aminal</a>
-      <a href="#backline">Backline</a>
-      <a href="#mixing">Mixing</a>
-    </nav>
-    <a class="nav-mail" href="mailto:aleclewis@psu.edu">aleclewis@psu.edu</a>
-  </header>
+  <!-- The window manager builds the desktop into this root. -->
+  <a class="alt-view" href="signalpath.html" style="position:fixed;right:14px;bottom:10px;z-index:70;font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#9A94A0;text-decoration:none;padding:.5rem .8rem;border:1px solid rgba(255,255,255,.14);border-radius:999px;background:rgba(12,12,16,.6);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)">Signal Path &#8599;</a>
+  <div id="alecos" aria-label="Alec Lewis — interactive desktop"></div>
 
-  <main id="top">
+  <!-- Motion (motion.dev) — springs the scroll snap with real physics. Loaded as a
+       module so it never blocks; wm.js feature-detects window.Motion and falls back to
+       the browser's native smooth scroll if this fails to load. -->
+  <script type="module">
+    try { window.Motion = await import("https://cdn.jsdelivr.net/npm/motion@11/+esm"); }
+    catch (e) { /* offline / blocked → wm.js uses its built-in fallback */ }
+  </script>
+  <!-- anime.js — playful, on-brand motion touches (dock stagger-in on wake, macOS-style
+       dock bounce on app change). Feature-detected; the site works fine without it. -->
+  <script type="module">
+    try { window.anime = await import("https://cdn.jsdelivr.net/npm/animejs@4/+esm"); }
+    catch (e) { /* offline / blocked → touches are simply skipped */ }
+  </script>
 
-    <section class="hero">
-      <div class="hero-glow" aria-hidden="true"></div>
-      <div class="hero-inner">
-        <div class="hero-main reveal">
-          <h1 class="hero-name">
-            <span>Alec</span>
-            <span>Lewis</span>
-          </h1>
-          <p class="hero-line">I live in State College and build the music software I wish existed — plus a few machines that keep going after I close the laptop.</p>
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="mailto:aleclewis@psu.edu">Email me</a>
-            <a class="btn-text" href="https://github.com/aleclewiss" target="_blank" rel="noopener">GitHub</a>
-          </div>
-        </div>
-
-        <aside class="hero-aside reveal" style="--d:.12s">
-          <p class="hero-aside-lead">Lately</p>
-          <ul class="hero-work">
-            <li>
-              <a href="#aminal">
-                <b>Aminal House</b>
-                <span>A dog-shorts channel my pipeline runs for me</span>
-              </a>
-            </li>
-            <li>
-              <a href="#backline">
-                <b>Backline</b>
-                <span>An AI co-producer you can click around in below</span>
-              </a>
-            </li>
-            <li>
-              <a href="#mixing">
-                <b>Freak-Quencies</b>
-                <span>A plugin that mixes guitar inside Ableton</span>
-              </a>
-            </li>
-          </ul>
-          <p class="hero-meta">AI + IT at Penn State · BIS from Pitt ’24</p>
-        </aside>
-      </div>
-    </section>
-
-    <section class="aminal" id="aminal">
-      <div class="cinema reveal">
-        <div class="cinema-screen"
-             data-yt="6_kjs4aNw_s" data-title="Goldens are so adorable" data-meta="36K views">
-          <iframe
-            src="https://www.youtube-nocookie.com/embed/6_kjs4aNw_s?rel=0&modestbranding=1&playsinline=1"
-            title="Goldens are so adorable"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen
-            loading="eager"
-            referrerpolicy="strict-origin-when-cross-origin"></iframe>
-        </div>
-        <p class="cinema-now">
-          <b class="cinema-title">Goldens are so adorable</b>
-          <span class="cinema-sub">36K views · tap a thumbnail to switch</span>
-        </p>
-      </div>
-
-      <div class="aminal-intro reveal" style="--d:.06s">
-        <h2>Aminal House</h2>
-        <p>
-          I wanted to know if a real channel could post without me babysitting it.
-          So I built one. Python finds clips, CLIP checks they’re actually on-brief,
-          AI narrates the short, and the same job ships to YouTube, TikTok, Instagram,
-          and Facebook.
-        </p>
-      </div>
-
-      <div class="gallery reveal" style="--d:.1s">
-        <p class="gallery-label">The channel’s most-watched — play any one right here</p>
-        <div class="gallery-strip">
-          <button type="button" class="vid is-active" data-yt="6_kjs4aNw_s" data-title="Goldens are so adorable" data-meta="36K views">
-            <img src="https://i.ytimg.com/vi/6_kjs4aNw_s/hqdefault.jpg" alt="" loading="lazy" width="480" height="360">
-            <span class="vid-cap"><b>Goldens</b> 36K</span>
-          </button>
-          <button type="button" class="vid" data-yt="06zBHnTDSUQ" data-title="Dachshunds are built different" data-meta="17K views">
-            <img src="https://i.ytimg.com/vi/06zBHnTDSUQ/hqdefault.jpg" alt="" loading="lazy" width="480" height="360">
-            <span class="vid-cap"><b>Dachshunds</b> 17K</span>
-          </button>
-          <button type="button" class="vid" data-yt="wqiywAoppdk" data-title="Dachshund" data-meta="4,900 views">
-            <img src="https://i.ytimg.com/vi/wqiywAoppdk/hqdefault.jpg" alt="" loading="lazy" width="480" height="360">
-            <span class="vid-cap"><b>Dachshund</b> 4.9K</span>
-          </button>
-          <button type="button" class="vid" data-yt="d6_QjHM7b6Q" data-title="Bear, Raven, and Wolf" data-meta="4,800 views">
-            <img src="https://i.ytimg.com/vi/d6_QjHM7b6Q/hqdefault.jpg" alt="" loading="lazy" width="480" height="360">
-            <span class="vid-cap"><b>Bear &amp; Wolf</b> 4.8K</span>
-          </button>
-          <button type="button" class="vid" data-yt="0TQ_3SqfWJo" data-title="German shepherds" data-meta="4,700 views">
-            <img src="https://i.ytimg.com/vi/0TQ_3SqfWJo/hqdefault.jpg" alt="" loading="lazy" width="480" height="360">
-            <span class="vid-cap"><b>Shepherds</b> 4.7K</span>
-          </button>
-          <button type="button" class="vid" data-yt="M3GPqLDo6t0" data-title="Pugs" data-meta="4,100 views">
-            <img src="https://i.ytimg.com/vi/M3GPqLDo6t0/hqdefault.jpg" alt="" loading="lazy" width="480" height="360">
-            <span class="vid-cap"><b>Pugs</b> 4.1K</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="stats reveal" style="--d:.12s">
-        <p class="aminal-pipe">Scrape → CLIP verify → assemble → post × 4</p>
-        <div class="stats-grid" data-countup>
-          <div class="stat">
-            <span class="stat-num" data-to="108">0</span>
-            <span class="stat-label">Shorts published</span>
-          </div>
-          <div class="stat">
-            <span class="stat-num" data-to="177653">0</span>
-            <span class="stat-label">Total views</span>
-          </div>
-          <div class="stat">
-            <span class="stat-num" data-to="321">0</span>
-            <span class="stat-label">Subscribers</span>
-          </div>
-          <div class="stat">
-            <span class="stat-num" data-to="1645" data-prefix="~">0</span>
-            <span class="stat-label">Avg views / short</span>
-          </div>
-        </div>
-        <p class="stats-foot">Every one of those posted to <b>YouTube</b>, <b>TikTok</b>, <b>Instagram</b> &amp; <b>Facebook</b> from a single job — <b>zero</b> hands on deck.</p>
-        <div class="aminal-links">
-          <a class="btn btn-yt" href="https://www.youtube.com/@Aminal_House?sub_confirmation=1" target="_blank" rel="noopener">Subscribe on YouTube</a>
-          <a class="btn-text" href="https://github.com/aleclewiss/aminal-house-pipeline" target="_blank" rel="noopener">Pipeline on GitHub</a>
-        </div>
-      </div>
-    </section>
-
-    <section class="blx" id="backline">
-      <div class="blx-banner reveal">
-        <div>
-          <h2>Backline</h2>
-          <p>
-            The co-producer I wanted next to Ableton. Describe a song, audition real
-            ACE-Step takes in the browser, drop the winner into a session. What’s below
-            is the real UI — not a mock.
-          </p>
-        </div>
-        <a class="btn btn-primary" href="https://github.com/aleclewiss/backline" target="_blank" rel="noopener">Source</a>
-      </div>
-      <div class="blx-frame reveal" style="--d:.08s">
-        <iframe src="backline-demo/index.html" title="Backline — interactive demo" loading="lazy"></iframe>
-      </div>
-    </section>
-
-    <section class="mix" id="mixing">
-      <div class="mix-layout">
-        <div class="theater reveal">
-          <div class="theater-screen">
-            <button type="button" class="mix-play" hidden aria-label="Play mixing demo with sound">
-              <span class="mix-play-icon" aria-hidden="true"></span>
-              <span class="mix-play-label">Tap for sound</span>
-            </button>
-            <video class="dev-display" src="assets/ai-mix-demo.mp4" poster="assets/demo-poster.jpg"
-                   preload="auto" loop playsinline controls width="1280" height="720"
-                   aria-label="Freak-Quencies analyzing and mixing a guitar take in real time"></video>
-          </div>
-        </div>
-        <div class="mix-copy reveal" style="--d:.08s">
-          <h2>Freak-Quencies</h2>
-          <p>
-            Born from mixing guitar the slow way. A JUCE plugin with a CNN that hears
-            the DI and writes a 24-parameter EQ + compression chain live in Ableton —
-            the moves I’d make, just faster.
-          </p>
-          <p class="mix-hint" id="mix-hint">Scroll here and it should play with sound. If your browser blocks it, tap the video once.</p>
-          <a class="btn btn-primary" href="https://github.com/aleclewiss/Freak-Quencies" target="_blank" rel="noopener">Source</a>
-        </div>
-      </div>
-
-      <div class="mix-frame reveal" style="--d:.12s">
-        <p class="mix-frame-label">Hear it yourself — raw take vs. the AI-corrected mix, right in the browser.</p>
-        <iframe id="freak-frame" src="freak-demo/index.html" title="Freak-Quencies — interactive AI mix-correction demo" loading="lazy" scrolling="no"></iframe>
-      </div>
-    </section>
-
-  </main>
-
-  <footer class="footer">
-    <span>Alec · State College · © <span id="year">2026</span></span>
-    <a href="mailto:aleclewis@psu.edu">Say hi</a>
-  </footer>
-
+  <!-- Window manager first (defines window.AlecOS), then the apps register themselves. -->
+  <script src="os/wm.js?v=7" defer></script>
+  <script src="os/app-freak.js?v=7" defer></script>
+  <script src="os/app-backline.js?v=7" defer></script>
+  <script src="os/app-media.js?v=7" defer></script>
+  <script defer>
+    // All deferred scripts run in order; boot once the last one (this) is reached.
+    document.addEventListener("DOMContentLoaded", function () {
+      if (window.AlecOS && typeof window.AlecOS.boot === "function") window.AlecOS.boot();
+    });
+  </script>
 </body>
 </html>

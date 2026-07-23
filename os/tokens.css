@@ -1,0 +1,102 @@
+/* AlecOS — design tokens (SHELL) ------------------------------------------------
+   Dark, premium, tactile. Art-directed macOS, not a copy. Consumed by wm.css and
+   every app-*.js. Apps read the per-app accent via their window's --accent (set by
+   the window manager from registerApp.accent) and may use these globals directly. */
+
+:root{
+  color-scheme: dark;
+
+  /* ground + surfaces */
+  --bg:#08080B;
+  --wall: linear-gradient(rgba(6,6,10,.28), rgba(6,6,10,.42)),
+          url("../assets/wallpaper.jpg") center/cover no-repeat,
+          #0a0910;
+  --surface:#161619;
+  --surface-2:#1E1E23;
+  --surface-3:#26262c;
+  --titlebar: linear-gradient(180deg,#26262d 0%,#1c1c21 100%);
+  --well:#0d0d10;
+
+  /* ink */
+  --ink:#F2F0F5;
+  --ink-soft:#d9d6e0;
+  --muted:#9A94A0;
+  --dim:#6B6570;
+  --faint:#48454f;
+  --line:#2A2A32;
+  --line-soft:#201f26;
+
+  /* per-app accents */
+  --amber:#ecc270;
+  --amber-2:#d3a24c;
+  --gold:#d3a24c;
+  --gold-2:#ecc270;
+  --red:#ff0033;
+  --pink:#E1306C;
+  --coral:#e08167;
+  --ok:#7bb98a;
+  --blue:#5B8DEF;
+
+  /* default active accent (window manager overrides per window via --accent) */
+  --accent:#ecc270;
+
+  /* traffic lights */
+  --tl-close:#FF5F57;
+  --tl-min:#FEBC2E;
+  --tl-zoom:#28C840;
+
+  /* type */
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Code",Menlo,Consolas,monospace;
+
+  /* geometry */
+  --win-radius:13px;
+  --ctl-radius:8px;
+  --chrome-h:40px;
+
+  /* shadows — soft, layered, low opacity */
+  --shadow-win: 0 2px 6px rgba(0,0,0,.34), 0 26px 60px -22px rgba(0,0,0,.72), 0 60px 140px -60px rgba(0,0,0,.7);
+  --shadow-win-active: 0 4px 14px rgba(0,0,0,.45), 0 40px 90px -26px rgba(0,0,0,.86), 0 120px 230px -80px rgba(0,0,0,.9);
+  --shadow-pop: 0 18px 50px -12px rgba(0,0,0,.7);
+
+  /* motion */
+  --ease: cubic-bezier(.22,1,.36,1);
+  --ease-out: cubic-bezier(.16,1,.3,1);
+  --dur-win: 220ms;
+
+  /* type scale (px) — 11 · 12.5 · 14 · 16 · 20 · 26 · 34 — stay on it */
+  --t1:11px; --t2:12.5px; --t3:14px; --t4:16px; --t5:20px; --t6:26px; --t7:34px;
+  --lh:1.5; --lh-tight:1.12; --track-label:.2em;
+
+  /* spacing rhythm (px) — 4 · 8 · 12 · 16 · 24 · 32 */
+  --sp1:4px; --sp2:8px; --sp3:12px; --sp4:16px; --sp5:24px; --sp6:32px;
+
+  /* contact accent (blue) — completes the per-app palette */
+  --contact:#3B82F6;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;               /* scroll DRIVES the camera: body scrolls a tall track */
+  overflow-y:auto;
+  overscroll-behavior-y:none;
+}
+html{scroll-behavior:auto;}
+a{color:inherit;}
+::selection{background:rgba(236,194,112,.28);color:#fff;}
+
+/* shared focus ring for keyboard users everywhere in the OS */
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px;}
+
+/* thin dark scrollbars inside windows */
+.aos-scroll{scrollbar-width:thin;scrollbar-color:#3a3a42 transparent;}
+.aos-scroll::-webkit-scrollbar{width:10px;height:10px;}
+.aos-scroll::-webkit-scrollbar-thumb{background:#33333c;border-radius:8px;border:3px solid transparent;background-clip:content-box;}
+.aos-scroll::-webkit-scrollbar-thumb:hover{background:#44444e;background-clip:content-box;}
+.aos-scroll::-webkit-scrollbar-track{background:transparent;}

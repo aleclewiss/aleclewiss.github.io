@@ -83,7 +83,33 @@
     .bar{gap:12px 16px;padding:12px 13px}
     .intro p{font-size:13px}
   }
+
+  /* Embedded in the personal site — drop duplicate chrome */
+  html.embed,html.embed body{
+    background:#09090b;
+    padding:0;
+  }
+  html.embed .intro,html.embed footer{display:none}
+  html.embed .wrap{max-width:none;margin:0}
+  html.embed .stage{
+    border-radius:10px;
+    box-shadow:0 0 0 1px #ffffff12;
+  }
+  html.embed .caption{margin:12px 2px 0;font-size:12.5px;color:#8b8790}
+  html.embed .bar{
+    margin-top:12px;
+    background:linear-gradient(180deg,#141418,#0c0c0e);
+    border-color:#ffffff14;
+  }
 </style>
+<script>
+  (function () {
+    var q = new URLSearchParams(location.search);
+    if (q.get("embed") === "1" || window.parent !== window) {
+      document.documentElement.classList.add("embed");
+    }
+  })();
+</script>
 </head>
 <body>
 <div class="wrap">
@@ -520,14 +546,26 @@ function drawComp(){
   }
 }
 
+// Backgrounds are static — build the gradients ONCE, not every frame. Rebuilding a
+// vertical + radial gradient across a multi-megapixel canvas 60×/s saturated the main
+// thread (fatal when this page is composited inside an iframe). Cache + reuse instead.
+let _bgV=null,_bgSpot=null;
+function buildBg(){
+  _bgV=vgrad(0,0,H,[[0,"#10131c"],[1,"#05060c"]]);
+  _bgSpot=g.createRadialGradient(W/2,H*.25,0,W/2,H*.25,H*.9);
+  _bgSpot.addColorStop(0,"#ff2a8d1a"); _bgSpot.addColorStop(1,"#00000000");
+}
+buildBg();
 function frame(){
+  // Don't burn the main thread while the tab/window is hidden — pause cleanly and
+  // resume on visibility. Keeps the demo embeddable without hanging the host page.
+  if(document.hidden){ setTimeout(frame,250); return; }
   const now=performance.now();
   if(analyzing) stepAnalyze(now);
   syncAudio();
   g.clearRect(0,0,W,H);
-  g.fillStyle=vgrad(0,0,H,[[0,"#10131c"],[1,"#05060c"]]); g.fillRect(0,0,W,H);
-  const sp=g.createRadialGradient(W/2,H*.25,0,W/2,H*.25,H*.9); sp.addColorStop(0,"#ff2a8d1a"); sp.addColorStop(1,"#00000000");
-  g.fillStyle=sp; g.fillRect(0,0,W,H);
+  g.fillStyle=_bgV; g.fillRect(0,0,W,H);
+  g.fillStyle=_bgSpot; g.fillRect(0,0,W,H);
   fillCard(EQx,EQy,EQw,EQh); fillCard(CPx,CPy,CPw,CPh);
   drawEQ(); drawComp();
   if(el&&el.duration){ document.getElementById("fill").style.width=(el.currentTime/el.duration*100)+"%";

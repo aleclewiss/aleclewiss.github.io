@@ -1,15 +1,15 @@
 # Alec Lewis — personal site · agent brief
 
 Static personal portfolio. Vanilla HTML/CSS/JS, no framework, no build step.
-Deploys to GitHub Pages. Three hand-written files: `index.html`, `styles.css`,
-`script.js`, plus `assets/` and `backline-demo/`.
+Deploys to GitHub Pages. Hand-written files: `index.html`, `styles.css`,
+`script.js`, plus `assets/`, `backline-demo/`, and `freak-demo/`.
 
 ## Run it locally
 ```
 npx serve -l 8734 .
 ```
 Then open http://localhost:8734. Do NOT open index.html via file:// — the YouTube
-embed and the Backline demo iframe need a real http origin.
+embed and the demo iframes need a real http origin.
 
 ## The design (SETTLED — do not re-explore)
 Bold near-black studio (`--ground: #09090b`), not a warm-brown editorial template.
@@ -23,7 +23,7 @@ Structure, top to bottom:
 1. **Intro** — stacked name, personal line, email/GitHub, Lately list.
 2. **Aminal** — cinema, story, filmstrip, metrics + pipeline.
 3. **Backline** — banner, live demo iframe.
-4. **Mixing** — theater video, then explanation + Source.
+4. **Mixing** — banner, interactive `freak-demo` (embed mode), Ableton theater video.
 
 ## Hard-won taste rules (respect these)
 - Real content only. Never fabricate stats, videos, testimonials, or fake app chrome.
@@ -36,7 +36,9 @@ Structure, top to bottom:
 
 ## Accessibility / perf conventions already in place
 - `.js` class gate for reveals; reduced-motion fully handled.
-- YouTube player and the demo video are click/scroll-loaded, not eager.
+- YouTube cinema is preloaded; Backline/Freak demos load lazy; mix video
+  scroll-plays with sound after a user gesture.
+- Freak demo supports `?embed=1` (hides its own intro/footer when iframed).
 - Real favicons + Open Graph/Twitter meta present.
 
 ## Real details
