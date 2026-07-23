@@ -89,25 +89,29 @@
 .mos-page{width:100%;box-sizing:border-box;}
 
 /* ============ PHOTOS — touch 3D coverflow ============ */
-.moscf{display:flex;flex-direction:column;background:radial-gradient(120% 90% at 50% 0%,#170f14,#0b0a0b 64%);}
-.moscf-head{flex:none;text-align:center;padding:18px 18px 6px;display:flex;flex-direction:column;gap:7px;}
+.moscf{position:relative;display:flex;flex-direction:column;background:radial-gradient(120% 90% at 50% 0%,#170f14,#0b0a0b 64%);}
+/* title floats over the top of the stage so the photo hero can use the FULL height and
+   sit vertically centered — no dead gap between the caption and the photo. */
+.moscf-head{position:absolute;top:0;left:0;right:0;z-index:5;text-align:center;pointer-events:none;
+  padding:16px 20px 34px;display:flex;flex-direction:column;gap:6px;
+  background:linear-gradient(180deg,rgba(11,10,11,.9),rgba(11,10,11,.5) 55%,transparent);}
 .moscf-sec{font-family:ui-monospace,Menlo,monospace;font-size:11px;font-weight:600;letter-spacing:.22em;
   text-transform:uppercase;color:#ff5c86;text-shadow:0 1px 3px rgba(0,0,0,.7);}
-.moscf-cap{font-size:18px;font-weight:600;letter-spacing:-.02em;line-height:1.2;color:#f0eef4;margin:0;
-  min-height:1.2em;text-wrap:balance;}
-.moscf-stage{flex:1;min-height:0;position:relative;perspective:1100px;overflow:hidden;cursor:grab;
+.moscf-cap{font-size:19px;font-weight:600;letter-spacing:-.02em;line-height:1.2;color:#f0eef4;margin:0;
+  min-height:1.2em;text-wrap:balance;text-shadow:0 2px 18px rgba(0,0,0,.8);}
+.moscf-stage{flex:1;min-height:0;position:relative;perspective:1200px;overflow:hidden;cursor:grab;
   touch-action:pan-y;}
 .moscf-stage:active{cursor:grabbing;}
-.moscf-card{position:absolute;left:50%;top:50%;height:88%;display:flex;align-items:center;justify-content:center;
+.moscf-card{position:absolute;left:50%;top:50%;height:100%;display:flex;align-items:center;justify-content:center;
   transform-style:preserve-3d;will-change:transform,opacity;backface-visibility:hidden;
-  transition:transform .5s cubic-bezier(.22,1,.36,1),opacity .4s ease;}
+  transition:transform .52s cubic-bezier(.22,1,.36,1),opacity .42s ease;}
 .moscf-stage.is-dragging .moscf-card{transition:none;}
-.moscf-card img,.moscf-card video{max-width:76vw;max-height:100%;width:auto;height:auto;object-fit:contain;
-  border-radius:16px;background:#141416;display:block;
-  box-shadow:0 30px 66px -30px #000,0 0 0 1px rgba(255,255,255,.08);}
-.moscf-card.is-side img,.moscf-card.is-side video{filter:brightness(.6) saturate(.9);}
+.moscf-card img,.moscf-card video{max-width:80vw;max-height:78%;width:auto;height:auto;object-fit:contain;
+  border-radius:18px;background:#141416;display:block;
+  box-shadow:0 34px 74px -28px #000,0 0 0 1px rgba(255,255,255,.09);}
+.moscf-card.is-side img,.moscf-card.is-side video{filter:brightness(.55) saturate(.88);}
 .moscf-dots{flex:none;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;
-  padding:12px 18px calc(env(safe-area-inset-bottom,0px) + 22px);}
+  padding:14px 18px calc(env(safe-area-inset-bottom,0px) + 22px);}
 .moscf-dot{width:8px;height:8px;border-radius:50%;border:0;padding:0;cursor:pointer;
   background:rgba(255,255,255,.28);transition:background .2s,transform .2s;-webkit-tap-highlight-color:transparent;}
 .moscf-dot.on{background:#E1306C;transform:scale(1.35);}

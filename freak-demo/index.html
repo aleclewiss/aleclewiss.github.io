@@ -107,6 +107,25 @@
     background:linear-gradient(180deg,#141418,#0c0c0e);
     border-color:#ffffff14;
   }
+
+  /* Embedded in a PORTRAIT frame (phone): the plugin is a fixed 1280x680 landscape canvas,
+     so never stretch it. Keep true aspect, size it to the full width, and center the whole
+     device (stage + controls) in the frame. object-fit is a belt-and-suspenders no-stretch. */
+  @media (max-aspect-ratio: 1/1){
+    html.embed .wrap{
+      justify-content:center; gap:12px;
+      padding:12px 12px calc(env(safe-area-inset-bottom,0px) + 12px);
+    }
+    html.embed .stage{
+      flex:0 0 auto; width:100%; height:auto; aspect-ratio:1280/680; max-height:none; margin:0;
+    }
+    html.embed canvas{object-fit:contain;}
+    html.embed .bar{
+      gap:11px 16px; padding:13px 14px; border-radius:12px;
+    }
+    html.embed .seg button{font-size:12.5px;padding:8px 12px;}
+    html.embed .play{width:48px;height:48px;}
+  }
 </style>
 <script>
   (function () {

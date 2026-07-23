@@ -425,16 +425,17 @@
         var pos = 0, center = -1, dragging = false, startX = 0, startPos = 0;
         var N = MITEMS.length;
 
-        function spacing() { return Math.min((stageEl.clientWidth || window.innerWidth) * 0.52, 230); }
+        function spacing() { return Math.min((stageEl.clientWidth || window.innerWidth) * 0.5, 205); }
         function place(p) {
           var sp = spacing();
           cards.forEach(function (card, i) {
             var off = i - p, abs = Math.abs(off), cl = Math.min(abs, 3);
             var offc = Math.max(-3, Math.min(3, off));
-            var tx = off * sp, tz = -cl * 130, ry = -offc * 38, sc = Math.max(0.62, 1 - cl * 0.14);
-            card.style.opacity = (abs > 3 ? 0 : Math.max(0, 1 - abs * 0.34)).toFixed(2);
+            var tx = off * sp, tz = -cl * 92, ry = -offc * 34, sc = Math.max(0.66, 1 - cl * 0.12);
+            card.style.opacity = (abs > 3 ? 0 : Math.max(0, 1 - abs * 0.32)).toFixed(2);
             card.style.zIndex = String(100 - Math.round(abs * 10));
-            card.style.transform = "translate(-50%,-50%) translateX(" + tx.toFixed(1) + "px) translateZ(" +
+            // -18px lift keeps the hero optically centered above the dots (title overlays the top)
+            card.style.transform = "translate(-50%,-50%) translateY(-18px) translateX(" + tx.toFixed(1) + "px) translateZ(" +
               tz.toFixed(1) + "px) rotateY(" + ry.toFixed(1) + "deg) scale(" + sc.toFixed(3) + ")";
             card.classList.toggle("is-side", abs > 0.5);
             card.style.pointerEvents = abs < 0.5 ? "auto" : "none";
@@ -474,8 +475,15 @@
         dots.forEach(function (d) { d.addEventListener("click", function () { go(+d.dataset.i); }); });
 
         place(0);   // initial paint (recomputed on open when the stage has real dimensions)
+        // The view opens with a spring transform, so the stage may not have its real width on
+        // the first frame — re-layout a few times after open so the hero lands dead-centered.
+        function relayout() { pos = Math.round(pos); place(pos); }
         return {
-          onFocus: function () { requestAnimationFrame(function () { place(pos); }); },
+          onFocus: function () {
+            requestAnimationFrame(relayout);
+            setTimeout(relayout, 80);
+            setTimeout(relayout, 260);
+          },
           onBlur: function () {
             cards.forEach(function (card) { var v = card.querySelector("video"); if (v) { try { v.pause(); } catch (e) {} } });
           }
