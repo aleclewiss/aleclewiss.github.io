@@ -251,7 +251,7 @@
     // band must be tall enough to hold the full chapter heading (kicker+title+body+bridge)
     // so the window's own content starts BELOW it — otherwise they collide on short screens.
     var headH = mobile ? 0 : Math.max(150, Math.min(174, Math.round(innerHeight * 0.185)));
-    var DROP = mobile ? 0 : 34;                 // nudge the whole composition down a bit
+    var DROP = mobile ? 0 : 52;                 // nudge the whole composition down a bit
     var headTop = topInset + 12 + DROP;
     // COMFORT: windows never fill the whole available area — leave breathing room so the
     // composition reads spacious, not "zoomed in", especially on laptop-sized screens.
