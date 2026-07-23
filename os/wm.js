@@ -340,11 +340,10 @@
     win.style.zIndex = String(100 - Math.round(a * 50));
     win.style.pointerEvents = a < 0.35 ? "auto" : "none";
     win.classList.toggle("front", a < 0.5);
-    // cinematic depth of field: the active app stays razor-sharp; neighbours soften,
-    // dim and desaturate as they leave — so the eye always lands on the hero window.
+    // depth cue via GPU-cheap dim/desaturate (NO per-frame blur — blur is the #1 cause of
+    // scroll jank on weaker GPUs). Scale + fade + dim still read as receding depth.
     win.style.filter = a < 0.02 ? "none"
-      : "blur(" + (a * 9).toFixed(1) + "px) brightness(" + (1 - a * 0.16).toFixed(3) +
-        ") saturate(" + (1 - a * 0.14).toFixed(3) + ")";
+      : "brightness(" + (1 - a * 0.2).toFixed(3) + ") saturate(" + (1 - a * 0.18).toFixed(3) + ")";
   }
 
   function render(snap) {
@@ -399,7 +398,7 @@
     snapAnim = null; snapping = false; clearTimeout(snapRelease);
   }
   function onScroll() {
-    scrollPending = true; if (reduce) render(true);
+    scrollPending = true; kick(); if (reduce) render(true);
     if (mobile || snapping) return;                 // ignore programmatic scroll while snapping
     var y = window.scrollY || 0;
     if (y > lastScrollY + 1) scrollDir = 1; else if (y < lastScrollY - 1) scrollDir = -1;
@@ -438,10 +437,16 @@
       snapRelease = setTimeout(function () { snapping = false; }, 650);
     }
   }
+  var idleFrames = 0;
   function loop(now) {
-    if (scrollPending || Math.abs(aimPos - scrollPos) > 0.0004) { render(false); scrollPending = false; }
+    if (scrollPending || Math.abs(aimPos - scrollPos) > 0.0004) {
+      render(false); scrollPending = false; idleFrames = 0;
+    } else if (++idleFrames > 40) {          // ~0.6s settled → stop spinning the rAF
+      raf = 0; return;                        // (saves CPU/battery; woken by kick() on scroll)
+    }
     raf = requestAnimationFrame(loop);
   }
+  function kick() { if (!raf && !reduce && !mobile) { idleFrames = 0; raf = requestAnimationFrame(loop); } }
 
   /* ---- keyboard: move through the app deck like Spaces (⌃→/⌃←, arrows, space) ---- */
   function stepApp(dir) {
