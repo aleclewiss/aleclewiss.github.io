@@ -38,8 +38,7 @@
 .mb-left{display:flex;align-items:center;gap:19px;min-width:0;}
 .mb-apple{display:inline-flex;color:#f4f4f6;opacity:.92;margin-right:-5px;}
 .mb-app{font-weight:600;letter-spacing:-.005em;white-space:nowrap;}          /* macOS uses semibold, not bold */
-.mb-menus{color:#c9cbd2;font-weight:400;white-space:nowrap;overflow:hidden;opacity:.88;
-  -webkit-mask:linear-gradient(90deg,#000 82%,transparent);mask:linear-gradient(90deg,#000 82%,transparent);}
+.mb-menus{color:#c9cbd2;font-weight:400;white-space:nowrap;opacity:.88;}
 .mb-right{display:flex;align-items:center;gap:15px;color:#eef0f4;flex:none;}
 .mb-ico{display:inline-flex;align-items:center;opacity:.9;}
 .mb-clock{font-weight:500;letter-spacing:.01em;font-variant-numeric:tabular-nums;white-space:nowrap;}
