@@ -86,6 +86,26 @@
 .mos-appscroll.is-fill .mos-page{flex:1 1 auto;min-height:0;}
 .mos-appscroll::-webkit-scrollbar{display:none;}
 
+/* ============ BOTTOM DOCK (quick app-switch, visible inside an app) ============ */
+.mos-dock{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 20px);transform:translateX(-50%) translateY(24px);
+  z-index:68;display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:26px;
+  background:rgba(28,28,34,.6);-webkit-backdrop-filter:blur(20px) saturate(1.6);backdrop-filter:blur(20px) saturate(1.6);
+  box-shadow:0 1px 0 rgba(255,255,255,.14) inset,0 0 0 .5px rgba(255,255,255,.1),0 18px 40px -14px rgba(0,0,0,.7);
+  opacity:0;pointer-events:none;transition:opacity .3s var(--ease,cubic-bezier(.22,1,.36,1)),transform .38s var(--ease,cubic-bezier(.22,1,.36,1));}
+.mos-inapp .mos-dock{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0);}
+.mos-dock-i{border:0;background:none;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;
+  position:relative;transition:transform .18s cubic-bezier(.34,1.56,.64,1);}
+.mos-dock-i:active{transform:scale(.9);}
+.mos-dock-tile{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;overflow:hidden;
+  background:linear-gradient(155deg,color-mix(in srgb,var(--tone) 44%,#26262e),#141419);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.24),0 4px 10px -4px rgba(0,0,0,.6);}
+.mos-dock-tile svg{width:100%;height:100%;display:block;}
+.mos-dock-i.on::after{content:"";position:absolute;left:50%;bottom:-7px;width:4px;height:4px;border-radius:50%;
+  transform:translateX(-50%);background:#fff;box-shadow:0 0 6px rgba(255,255,255,.6);}
+.mos-dock-i.on .mos-dock-tile{box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 0 2px color-mix(in srgb,var(--tone) 80%,#fff),0 4px 12px -4px rgba(0,0,0,.7);}
+/* keep app content clear of the dock */
+.mos-inapp .mos-appscroll:not(.is-fill){padding-bottom:96px;}
+
 .mos-page{width:100%;box-sizing:border-box;}
 
 /* ============ PHOTOS — touch 3D coverflow ============ */
@@ -103,12 +123,15 @@
   touch-action:pan-y;}
 .moscf-stage:active{cursor:grabbing;}
 .moscf-card{position:absolute;left:50%;top:50%;height:100%;display:flex;align-items:center;justify-content:center;
-  transform-style:preserve-3d;will-change:transform,opacity;backface-visibility:hidden;
-  transition:transform .52s cubic-bezier(.22,1,.36,1),opacity .42s ease;}
+  transform-style:preserve-3d;backface-visibility:hidden;
+  transition:transform .5s cubic-bezier(.25,1,.3,1),opacity .4s ease;}
+/* only the cards near the center are GPU-promoted — far ones don't composite (perf on phones) */
+.moscf-card.near{will-change:transform,opacity;}
+.moscf-card.far{visibility:hidden;}
 .moscf-stage.is-dragging .moscf-card{transition:none;}
-.moscf-card img,.moscf-card video{max-width:90vw;max-height:90%;width:auto;height:auto;object-fit:contain;
+.moscf-card img,.moscf-card video{max-width:82vw;max-height:86%;width:auto;height:auto;object-fit:contain;
   border-radius:18px;background:#141416;display:block;
-  box-shadow:0 30px 70px -24px #000,0 0 0 1px rgba(255,255,255,.1);}
+  box-shadow:0 30px 66px -22px #000,0 0 0 1px rgba(255,255,255,.1);}
 .moscf-card.is-side img,.moscf-card.is-side video{filter:brightness(.55) saturate(.88);}
 .moscf-dots{flex:none;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;
   padding:14px 18px calc(env(safe-area-inset-bottom,0px) + 22px);}

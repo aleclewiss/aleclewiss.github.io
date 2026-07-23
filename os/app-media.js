@@ -425,14 +425,20 @@
         var pos = 0, center = -1, dragging = false, startX = 0, startPos = 0;
         var N = MITEMS.length;
 
-        function spacing() { return Math.min((stageEl.clientWidth || window.innerWidth) * 0.5, 205); }
+        // wider spacing => clear air between the hero and its neighbours (no cramped overlap)
+        function spacing() { return Math.min((stageEl.clientWidth || window.innerWidth) * 0.72, 300); }
         function place(p) {
           var sp = spacing();
           cards.forEach(function (card, i) {
             var off = i - p, abs = Math.abs(off), cl = Math.min(abs, 3);
             var offc = Math.max(-3, Math.min(3, off));
-            var tx = off * sp, tz = -cl * 92, ry = -offc * 34, sc = Math.max(0.66, 1 - cl * 0.12);
-            card.style.opacity = (abs > 3 ? 0 : Math.max(0, 1 - abs * 0.32)).toFixed(2);
+            var tx = off * sp, tz = -cl * 80, ry = -offc * 30, sc = Math.max(0.7, 1 - cl * 0.11);
+            // far cards don't paint/composite — only ~5 layers live at once (perf on phones)
+            var far = abs > 2.6;
+            card.classList.toggle("far", far);
+            card.classList.toggle("near", !far);
+            if (far) { return; }
+            card.style.opacity = Math.max(0, 1 - abs * 0.34).toFixed(2);
             card.style.zIndex = String(100 - Math.round(abs * 10));
             card.style.transform = "translate(-50%,-50%) translateX(" + tx.toFixed(1) + "px) translateZ(" +
               tz.toFixed(1) + "px) rotateY(" + ry.toFixed(1) + "deg) scale(" + sc.toFixed(3) + ")";

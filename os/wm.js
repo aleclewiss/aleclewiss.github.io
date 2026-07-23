@@ -217,6 +217,10 @@
     function uniqSvg(svg) {
       return String(svg).replace(/id="([^"]+)"/g, 'id="$1-m"').replace(/url\(#([^)]+)\)/g, "url(#$1-m)");
     }
+    // distinct suffix for the dock copy so its gradient ids don't clash with the grid's -m ids
+    function uniqSvg2(svg) {
+      return String(svg).replace(/id="([^"]+)"/g, 'id="$1-d"').replace(/url\(#([^)]+)\)/g, "url(#$1-d)");
+    }
     var grid = "";
     live.forEach(function (id) {
       var st = byId[id], d = st.spec.dock || {};
@@ -253,6 +257,20 @@
       on(icon, "click", function () { openMobileApp(icon.dataset.id, icon); });
     });
 
+    // ---- bottom dock: quick app-switch bar (visible while inside an app) ----
+    var dock = el("div", "mos-dock");
+    var dockHTML = "";
+    live.forEach(function (id) {
+      var st = byId[id], d = st.spec.dock || {};
+      dockHTML += '<button class="mos-dock-i" type="button" data-id="' + id + '" aria-label="' + (d.label || st.spec.name) + '">' +
+        '<span class="mos-dock-tile" style="--tone:' + (d.tone || st.spec.accent || "#888") + '">' + uniqSvg2(d.svg || "") + '</span></button>';
+    });
+    dock.innerHTML = dockHTML;
+    root.appendChild(dock);
+    [].slice.call(dock.querySelectorAll(".mos-dock-i")).forEach(function (b) {
+      on(b, "click", function () { if (b.dataset.id !== activeMobId) openMobileApp(b.dataset.id, b); });
+    });
+
     // ---- home indicator: tap or swipe-up returns to the Springboard ----
     var hb = el("div", "mos-homebar"); hb.innerHTML = '<i></i>';
     root.appendChild(hb);
@@ -279,6 +297,8 @@
     if (st.mobScroll) st.mobScroll.scrollTop = 0;
     root.classList.add("mos-inapp");
     view.classList.add("is-open");
+    var dk = root.querySelector(".mos-dock");
+    if (dk) [].forEach.call(dk.querySelectorAll(".mos-dock-i"), function (b) { b.classList.toggle("on", b.dataset.id === id); });
     activateMobView(st, true);
     if (appLabel) appLabel.textContent = st.spec.name;
     emit("focus", id);
