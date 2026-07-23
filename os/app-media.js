@@ -403,8 +403,8 @@
         var cfReduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         var cardsHTML = MITEMS.map(function (s) {
           var m = s.video
-            ? '<video src="' + BASE + s.f + '" poster="' + BASE + esc(s.poster) + '" muted loop playsinline preload="metadata"></video>'
-            : '<img src="' + BASE + s.f + '" alt="' + esc(s.alt) + '" loading="lazy">';
+            ? '<video src="' + BASE + s.f + '" poster="' + BASE + esc(s.poster) + '" muted loop playsinline preload="auto"></video>'
+            : '<img src="' + BASE + s.f + '" alt="' + esc(s.alt) + '" decoding="async" fetchpriority="high">';
           return '<div class="moscf-card">' + m + '</div>';
         }).join("");
         var page = document.createElement("div");
@@ -434,8 +434,7 @@
             var tx = off * sp, tz = -cl * 92, ry = -offc * 34, sc = Math.max(0.66, 1 - cl * 0.12);
             card.style.opacity = (abs > 3 ? 0 : Math.max(0, 1 - abs * 0.32)).toFixed(2);
             card.style.zIndex = String(100 - Math.round(abs * 10));
-            // -18px lift keeps the hero optically centered above the dots (title overlays the top)
-            card.style.transform = "translate(-50%,-50%) translateY(-18px) translateX(" + tx.toFixed(1) + "px) translateZ(" +
+            card.style.transform = "translate(-50%,-50%) translateX(" + tx.toFixed(1) + "px) translateZ(" +
               tz.toFixed(1) + "px) rotateY(" + ry.toFixed(1) + "deg) scale(" + sc.toFixed(3) + ")";
             card.classList.toggle("is-side", abs > 0.5);
             card.style.pointerEvents = abs < 0.5 ? "auto" : "none";
@@ -455,6 +454,9 @@
         }
         function go(i) { pos = Math.max(0, Math.min(N - 1, i)); stageEl.classList.remove("is-dragging"); place(pos); }
 
+        // rAF-throttle the drag: touchmove can fire 120×/s, and each place() loops every card —
+        // updating at most once per frame keeps the spin buttery on a phone.
+        var dragRaf = 0;
         stageEl.addEventListener("touchstart", function (e) {
           dragging = true; startX = e.touches[0].clientX; startPos = pos; stageEl.classList.add("is-dragging");
         }, { passive: true });
@@ -462,7 +464,7 @@
           if (!dragging) return;
           var dx = e.touches[0].clientX - startX;
           pos = Math.max(-0.4, Math.min(N - 1 + 0.4, startPos - dx / spacing()));
-          place(pos);
+          if (!dragRaf) dragRaf = requestAnimationFrame(function () { dragRaf = 0; place(pos); });
         }, { passive: true });
         stageEl.addEventListener("touchend", function () {
           dragging = false;
@@ -474,6 +476,11 @@
 
         dots.forEach(function (d) { d.addEventListener("click", function () { go(+d.dataset.i); }); });
 
+        // warm the image cache so swiping never pops in a blank card / janks on decode
+        cards.forEach(function (card) {
+          var img = card.querySelector("img");
+          if (img && img.decode) { img.decode().catch(function () {}); }
+        });
         place(0);   // initial paint (recomputed on open when the stage has real dimensions)
         // The view opens with a spring transform, so the stage may not have its real width on
         // the first frame — re-layout a few times after open so the hero lands dead-centered.
