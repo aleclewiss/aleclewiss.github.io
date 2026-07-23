@@ -181,76 +181,132 @@
     });
   }
 
-  /* ================= MOBILE (continuous horizontal swipe pager) =================
-     Phones get ONE full-screen horizontal scroll-snap pager — the touch-native
-     mirror of the desktop Spaces. Every page comes, IN ORDER, from an app: Photos
-     contributes one slide per photo (the gallery opens the experience), then
-     Freak-Quencies, Backline, Aminal House and Contact contribute one slide each.
-     Apps hand their slides to the shell via ctx.addPage(el) during their build();
-     here we string them into a single track (scroll-snap-type:x mandatory). A
-     scroll listener drives a slim position bar, plays only the on-screen video, and
-     lazy-loads each demo iframe when its page is active or adjacent (so the heavy
-     canvases never all load at once and swiping stays smooth). */
-  var mosTimeEl = null, mosPager = null;
+  /* ================= MOBILE (iPhone Springboard + full-screen apps) =================
+     Phones get a real iOS-style home screen: the aurora wallpaper, a greeting, and a
+     grid of large rounded app icons (built from each app's dock.svg + label). Tapping
+     an icon opens that app FULL-SCREEN with an iOS scale/spring from the icon; a slim
+     top bar carries a back chevron + the app title, and the content scrolls with
+     momentum. The back chevron or the home indicator (tap / swipe-up) returns to the
+     Springboard with the reverse animation.
+
+     Each app still renders its mobile content by calling ctx.addPage(el) once during
+     build(); the shell mounts that element inside the app's own full-screen view (so
+     state — coverflow position, a running demo iframe, form input — persists between
+     visits). Demo iframes are lazy-loaded only when their app is first opened. */
+  var mosTimeEl = null, mosHome = null, activeMobId = null;
   var MOS_SIGNAL = '<svg viewBox="0 0 18 12" aria-hidden="true"><g fill="currentColor">' +
     '<rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/>' +
     '<rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></g></svg>';
+  var MOS_BACK = '<svg viewBox="0 0 24 24" width="27" height="27" aria-hidden="true">' +
+    '<path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
   function buildMobile() {
-    // status bar (always visible): live time + signal / wifi / battery
+    entered = true;   // no boot screen on mobile — the home screen is the entry point
+
+    // ---- status bar (always visible): live time + signal / wifi / battery ----
     var sb = el("div", "mos-statusbar");
     sb.innerHTML = '<span class="mos-time" id="mosTime"></span>' +
       '<span class="mos-sbr">' + MOS_SIGNAL + ICON.wifi + ICON.battery + '</span>';
     root.appendChild(sb);
     mosTimeEl = sb.querySelector("#mosTime");
 
-    // the single horizontal pager; gather each app's page-slides IN ORDER
-    var pager = el("div", "mos-pager"); pager.id = "mosPager"; mosPager = pager;
+    // ---- Springboard home: greeting + a grid of large rounded app icons ----
+    var home = el("div", "mos-home"); mosHome = home;
+    // dock SVGs may define gradients by id; the (hidden) dock already uses those ids, so
+    // namespace the springboard copy's ids to avoid duplicate-id paint-server clashes.
+    function uniqSvg(svg) {
+      return String(svg).replace(/id="([^"]+)"/g, 'id="$1-m"').replace(/url\(#([^)]+)\)/g, "url(#$1-m)");
+    }
+    var grid = "";
     live.forEach(function (id) {
-      var st = byId[id], pgs = st.pages || [];
-      st.mosPages = pgs;
-      pgs.forEach(function (pg) { pager.appendChild(pg); });
+      var st = byId[id], d = st.spec.dock || {};
+      grid += '<button class="mos-icon" type="button" data-id="' + id + '" aria-label="' + (d.label || st.spec.name) + '">' +
+          '<span class="mos-icon-tile" style="--tone:' + (d.tone || st.spec.accent || "#888") + '">' + uniqSvg(d.svg || "") + '</span>' +
+          '<span class="mos-icon-lbl">' + (d.label || st.spec.name) + '</span>' +
+        '</button>';
     });
-    root.appendChild(pager);
+    home.innerHTML =
+      '<div class="mos-greet"><span class="mos-greet-k">Portfolio</span><h1>Alec Lewis</h1></div>' +
+      '<div class="mos-grid">' + grid + '</div>';
+    root.appendChild(home);
 
-    // slim position indicator (a thin bar reads cleaner than ~18 dots)
-    var pos = el("div", "mos-pos"); pos.innerHTML = '<i></i>';
-    root.appendChild(pos);
-    var posFill = pos.firstChild;
+    // ---- one full-screen view per app (content persists between visits) ----
+    live.forEach(function (id) {
+      var st = byId[id];
+      var view = el("div", "mos-appview"); view.dataset.id = id;
+      view.style.setProperty("--m-accent", st.spec.accent || "#888");
+      var bar = el("div", "mos-appbar");
+      bar.innerHTML = '<button class="mos-back" type="button" aria-label="Back to home">' + MOS_BACK + '</button>' +
+        '<span class="mos-apptitle">' + st.spec.name + '</span>';
+      var scroll = el("div", "mos-appscroll");
+      var fill = false;
+      (st.pages || []).forEach(function (pg) { scroll.appendChild(pg); if (pg.classList.contains("mos-fill")) fill = true; });
+      if (fill) scroll.classList.add("is-fill");
+      view.appendChild(bar); view.appendChild(scroll);
+      root.appendChild(view);
+      st.mobView = view; st.mobScroll = scroll;
+      on(bar.querySelector(".mos-back"), "click", function () { closeMobileApp(); });
+    });
 
-    // home indicator
-    root.appendChild(el("div", "mos-homebar"));
+    // ---- icon taps open their app ----
+    [].slice.call(home.querySelectorAll(".mos-icon")).forEach(function (icon) {
+      on(icon, "click", function () { openMobileApp(icon.dataset.id, icon); });
+    });
 
-    var pages = [].slice.call(pager.querySelectorAll(".mos-page"));
-    var count = pages.length, activeIdx = -1, ticking = false;
-
-    function onActive(idx) {
-      for (var i = 0; i < count; i++) {
-        var pg = pages[i], near = Math.abs(i - idx) <= 1, j, list;
-        if (near) {                       // lazy-load demo iframes for active + adjacent pages
-          list = pg.querySelectorAll("iframe[data-src]");
-          for (j = 0; j < list.length; j++) {
-            if (!list[j].getAttribute("src")) list[j].src = list[j].getAttribute("data-src");
-          }
-        }
-        list = pg.querySelectorAll("video");   // play ONLY the on-screen video; pause the rest
-        for (j = 0; j < list.length; j++) {
-          if (i === idx) { try { list[j].play(); } catch (e) {} } else { try { list[j].pause(); } catch (e) {} }
-        }
-      }
-    }
-    function apply() {
-      ticking = false;
-      var pw = pager.clientWidth || innerWidth;
-      var maxScroll = Math.max(1, pager.scrollWidth - pw);
-      posFill.style.width = (clamp(pager.scrollLeft / maxScroll, 0, 1) * 100).toFixed(2) + "%";
-      var idx = clamp(Math.round(pager.scrollLeft / pw), 0, count - 1);
-      if (idx !== activeIdx) { activeIdx = idx; onActive(idx); }
-    }
-    on(pager, "scroll", function () { if (!ticking) { ticking = true; requestAnimationFrame(apply); } }, { passive: true });
+    // ---- home indicator: tap or swipe-up returns to the Springboard ----
+    var hb = el("div", "mos-homebar"); hb.innerHTML = '<i></i>';
+    root.appendChild(hb);
+    var hy = 0;
+    on(hb, "click", function () { if (activeMobId) closeMobileApp(); });
+    on(hb, "touchstart", function (e) { hy = e.touches[0].clientY; }, { passive: true });
+    on(hb, "touchend", function (e) {
+      if (activeMobId && (e.changedTouches[0].clientY - hy) < -18) closeMobileApp();
+    }, { passive: true });
 
     root.classList.add("mos-ready");
-    requestAnimationFrame(apply);        // initial: load + play the first page
+  }
+
+  // open an app full-screen; the iOS zoom springs from the tapped icon's center
+  function openMobileApp(id, iconEl) {
+    var st = byId[id]; if (!st || !st.mobView) return;
+    if (activeMobId && activeMobId !== id) closeMobileApp();
+    var view = st.mobView;
+    if (iconEl && iconEl.getBoundingClientRect) {
+      var r = iconEl.getBoundingClientRect();
+      view.style.transformOrigin = Math.round(r.left + r.width / 2) + "px " + Math.round(r.top + r.height / 2) + "px";
+    }
+    activeMobId = id;
+    if (st.mobScroll) st.mobScroll.scrollTop = 0;
+    root.classList.add("mos-inapp");
+    view.classList.add("is-open");
+    activateMobView(st, true);
+    if (appLabel) appLabel.textContent = st.spec.name;
+    emit("focus", id);
+  }
+
+  function closeMobileApp() {
+    if (!activeMobId) return;
+    var st = byId[activeMobId];
+    if (st) { activateMobView(st, false); if (st.mobView) st.mobView.classList.remove("is-open"); }
+    root.classList.remove("mos-inapp");
+    activeMobId = null;
+  }
+
+  // on open: lazy-load demo iframes, fire the app's onFocus, resume video.
+  // on close: fire onBlur and pause any video so nothing plays behind the home screen.
+  function activateMobView(st, opening) {
+    var view = st.mobView; if (!view) return;
+    var vids = view.querySelectorAll("video"), i;
+    if (opening) {
+      var frames = view.querySelectorAll("iframe[data-src]");
+      for (i = 0; i < frames.length; i++) {
+        if (!frames[i].getAttribute("src")) frames[i].src = frames[i].getAttribute("data-src");
+      }
+      if (st.hooks && st.hooks.onFocus) { try { st.hooks.onFocus(); } catch (e) {} }
+    } else {
+      if (st.hooks && st.hooks.onBlur) { try { st.hooks.onBlur(); } catch (e) {} }
+      for (i = 0; i < vids.length; i++) { try { vids[i].pause(); } catch (e) {} }
+    }
   }
   function markDock() {
     live.forEach(function (id) { var st = byId[id]; if (st.dockEl) st.dockEl.classList.toggle("active", id === activeId); });
@@ -392,7 +448,7 @@
   function goTo(id) {
     var idx = live.indexOf(id); if (idx < 0) return;
     if (!entered && bootEl) { bootEl.click(); }
-    if (mobile) { var st = byId[id]; if (st && mosPager && st.mosPages && st.mosPages[0]) mosPager.scrollTo({ left: st.mosPages[0].offsetLeft, behavior: reduce ? "auto" : "smooth" }); return; }
+    if (mobile) { openMobileApp(id); return; }
     var max = Math.max(1, trackEl.offsetHeight - innerHeight);
     var y = (idx / (live.length - 1)) * max;
     window.scrollTo({ top: y, behavior: reduce ? "auto" : "smooth" });

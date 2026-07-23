@@ -86,7 +86,7 @@
       /* ---- MOBILE: the real demo EMBEDDED inline as one swipe page (lazy-loaded via data-src) ---- */
       if (AlecOS.isMobile()) {
         var pg = document.createElement("div");
-        pg.className = "mos-page mos-demo";
+        pg.className = "mos-page mos-fill mos-demo";
         pg.style.setProperty("--m-accent", AMBER);
         pg.innerHTML =
           '<div class="mos-demo-hd">' +

@@ -394,27 +394,92 @@
         return "hobbies";
       }
 
-      /* ---- MOBILE: one photo per full-screen swipe slide (the gallery opens the pager) ---- */
+      /* ---- MOBILE: a TOUCH 3D coverflow — swipe/drag to spin, dots to jump ---- */
       if (AlecOS.isMobile()) {
-        var first = true;
+        var MITEMS = [];
         ORDERK.forEach(function (k) {
-          SHOTS.filter(function (s) { return secOf(s) === k; }).forEach(function (s) {
-            // videos autoplay muted only when their slide is active (the shell drives play/pause)
-            var media = s.video
-              ? '<video src="' + BASE + s.f + '" poster="' + BASE + esc(s.poster) + '" muted loop playsinline preload="metadata"></video>'
-              : '<img src="' + BASE + s.f + '" alt="' + esc(s.alt) + '" loading="lazy">';
-            var pg = document.createElement("div");
-            pg.className = "mos-page mos-shot";
-            pg.innerHTML =
-              (first ? '<div class="mos-shot-hello">Alec Lewis</div>' : "") +
-              '<div class="mos-shot-lbl">' + esc(SECT[k]) + '</div>' +
-              '<div class="mos-shot-media">' + media + '</div>' +
-              '<div class="mos-shot-cap">' + esc(s.cap) + '</div>';
-            ctx.addPage(pg);
-            first = false;
-          });
+          SHOTS.filter(function (s) { return secOf(s) === k; }).forEach(function (s) { MITEMS.push(s); });
         });
-        return {};
+        var cfReduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        var cardsHTML = MITEMS.map(function (s) {
+          var m = s.video
+            ? '<video src="' + BASE + s.f + '" poster="' + BASE + esc(s.poster) + '" muted loop playsinline preload="metadata"></video>'
+            : '<img src="' + BASE + s.f + '" alt="' + esc(s.alt) + '" loading="lazy">';
+          return '<div class="moscf-card">' + m + '</div>';
+        }).join("");
+        var page = document.createElement("div");
+        page.className = "mos-page mos-fill moscf";
+        page.innerHTML =
+          '<div class="moscf-head"><div class="moscf-sec"></div><h2 class="moscf-cap"></h2></div>' +
+          '<div class="moscf-stage">' + cardsHTML + '</div>' +
+          '<div class="moscf-dots">' + MITEMS.map(function (_, i) {
+            return '<button class="moscf-dot" type="button" data-i="' + i + '" aria-label="Photo ' + (i + 1) + '"></button>';
+          }).join("") + '</div>';
+        ctx.addPage(page);
+
+        var secEl = page.querySelector(".moscf-sec");
+        var capEl = page.querySelector(".moscf-cap");
+        var stageEl = page.querySelector(".moscf-stage");
+        var cards = [].slice.call(stageEl.querySelectorAll(".moscf-card"));
+        var dots = [].slice.call(page.querySelectorAll(".moscf-dot"));
+        var pos = 0, center = -1, dragging = false, startX = 0, startPos = 0;
+        var N = MITEMS.length;
+
+        function spacing() { return Math.min((stageEl.clientWidth || window.innerWidth) * 0.52, 230); }
+        function place(p) {
+          var sp = spacing();
+          cards.forEach(function (card, i) {
+            var off = i - p, abs = Math.abs(off), cl = Math.min(abs, 3);
+            var offc = Math.max(-3, Math.min(3, off));
+            var tx = off * sp, tz = -cl * 130, ry = -offc * 38, sc = Math.max(0.62, 1 - cl * 0.14);
+            card.style.opacity = (abs > 3 ? 0 : Math.max(0, 1 - abs * 0.34)).toFixed(2);
+            card.style.zIndex = String(100 - Math.round(abs * 10));
+            card.style.transform = "translate(-50%,-50%) translateX(" + tx.toFixed(1) + "px) translateZ(" +
+              tz.toFixed(1) + "px) rotateY(" + ry.toFixed(1) + "deg) scale(" + sc.toFixed(3) + ")";
+            card.classList.toggle("is-side", abs > 0.5);
+            card.style.pointerEvents = abs < 0.5 ? "auto" : "none";
+          });
+          var c = Math.max(0, Math.min(N - 1, Math.round(p)));
+          if (c !== center) { center = c; updateMeta(); }
+        }
+        function updateMeta() {
+          var s = MITEMS[center];
+          secEl.textContent = SECT[secOf(s)];
+          capEl.textContent = s.cap;
+          dots.forEach(function (d, di) { d.classList.toggle("on", di === center); });
+          cards.forEach(function (card, i) {
+            var v = card.querySelector("video"); if (!v) return;
+            if (i === center) { try { v.play(); } catch (e) {} } else { try { v.pause(); } catch (e) {} }
+          });
+        }
+        function go(i) { pos = Math.max(0, Math.min(N - 1, i)); stageEl.classList.remove("is-dragging"); place(pos); }
+
+        stageEl.addEventListener("touchstart", function (e) {
+          dragging = true; startX = e.touches[0].clientX; startPos = pos; stageEl.classList.add("is-dragging");
+        }, { passive: true });
+        stageEl.addEventListener("touchmove", function (e) {
+          if (!dragging) return;
+          var dx = e.touches[0].clientX - startX;
+          pos = Math.max(-0.4, Math.min(N - 1 + 0.4, startPos - dx / spacing()));
+          place(pos);
+        }, { passive: true });
+        stageEl.addEventListener("touchend", function () {
+          dragging = false;
+          var moved = pos - startPos, target;
+          if (Math.abs(moved) > 0.18 && Math.abs(moved) < 0.5) target = startPos + (moved > 0 ? 1 : -1);
+          else target = Math.round(pos);
+          go(Math.max(0, Math.min(N - 1, target)));
+        }, { passive: true });
+
+        dots.forEach(function (d) { d.addEventListener("click", function () { go(+d.dataset.i); }); });
+
+        place(0);   // initial paint (recomputed on open when the stage has real dimensions)
+        return {
+          onFocus: function () { requestAnimationFrame(function () { place(pos); }); },
+          onBlur: function () {
+            cards.forEach(function (card) { var v = card.querySelector("video"); if (v) { try { v.pause(); } catch (e) {} } });
+          }
+        };
       }
       var ITEMS = [];
       ORDERK.forEach(function (k) {

@@ -1,58 +1,69 @@
-# AlecOS — Mobile REBUILD Brief (continuous horizontal swipe)
+# AlecOS — Mobile REBUILD Brief (iPhone home screen + app screens)
 
-REPLACE the current mobile experience (home-screen grid + tap-to-open) with a single
-**continuous horizontal swipe pager** — the mobile mirror of the desktop's horizontal Spaces,
-but touch-native. Same idea as desktop: one thing on screen at a time, swipe left/right (both
-directions) to move through everything.
+REPLACE the current mobile experience (single continuous horizontal swipe pager) with an
+**iPhone-quality home-screen + app model**. Goal: it should look and feel like an Apple iPhone
+demo — a real Springboard home screen of app icons, tap an icon to open that app full-screen with
+iOS motion, a back/home gesture to return. Polished, premium, native.
 
 ## The model (what to build)
-- Mobile = ONE full-screen **horizontal scroll-snap pager** (native touch swipe + momentum,
-  `scroll-snap-type: x mandatory`, each page = 100vw, `scroll-snap-align:start`). Swipes both
-  directions. This is the whole experience — NO home-screen-of-icons, NO tap-to-open-a-screen.
-- **Page order (one continuous swipe):**
-  `[ photo 1 ][ photo 2 ] … [ photo N ]  →  [ Freak-Quencies ]  →  [ Backline ]  →  [ Aminal House ]  →  [ Contact ]`
-  The **gallery is FIRST** — you swipe through each photo, then keep swiping into the projects.
-- **Each photo** is its own full-screen slide: the image fills nicely, with its caption + the
-  section label (Me & my girlfriend / My doggies / My hobbies). Videos autoplay muted when
-  their slide is active (pause when off-screen for perf).
-- **Freak-Quencies & Backline**: the real demo is **EMBEDDED INLINE** on the page (like desktop)
-  — NOT a button that opens a new screen. Include a short title/desc above it. LAZY-LOAD the
-  demo iframe (set its `src` only when that page is active or adjacent) so swiping stays smooth
-  and heavy canvases don't all load at once.
-- **Aminal House**: the automation dashboard as one full-screen page (stats, pipeline, Watch
-  button), single column, no horizontal overflow.
-- **Contact**: the working Formsubmit form as one full-screen page (To / From / message / Send,
-  GitHub + LinkedIn), big touch targets, send still works.
-- Keep an **iOS status bar** on top (live time + signal/wifi/battery) and add a slim **position
-  indicator** (a progress bar or small dots — 18 pages, so a bar likely reads cleaner than dots),
-  plus a home-indicator bar at the bottom if it fits the feel. Safe-area insets, SF font.
+1. **iOS status bar** (top, safe-area aware): live time + signal/wifi/battery SVG glyphs.
+2. **Home screen (Springboard)**: the aurora wallpaper + a clean grid of large **rounded app
+   icons** with labels, built from each registered app's `dock.svg` + `label`
+   (Photos, Freak-Quencies, Backline, Aminal House, Mail). iOS spacing/typography, a greeting
+   ("Alec Lewis"), and a **home-indicator** bar at the bottom. This must look genuinely iOS —
+   real icon sizing (~60px, 18px radius), even grid, correct gaps, NOTHING clipped at any phone
+   width (test 390 AND 360 wide). The 5 icons should fit cleanly (a 3-wide grid = 2 rows).
+3. **Open an app**: tap an icon → the app opens **full-screen** with an iOS open animation
+   (icon → view scale/spring). A slim top bar with a **back chevron** + the app title. Content
+   scrolls vertically with momentum. Safe areas respected.
+4. **Return home**: tap the back chevron OR tap/swipe-up the home indicator → reverse animation
+   back to the Springboard.
+
+## Per-app mobile content
+- **Photos**: a **3D coverflow carousel** (like the desktop) adapted for TOUCH — the center
+  photo faces you, neighbors rotate/recede in 3D, and you **swipe left/right to spin** through
+  them (touch drag + momentum/snap; also works with the on-screen dots). Section label + caption
+  above/under the active photo. Videos autoplay muted only when centered. Keep it smooth on a
+  phone (no per-frame blur; GPU transforms only).
+- **Freak-Quencies** & **Backline**: the app screen shows a short title + what-it-does, and the
+  **REAL demo runs EMBEDDED inline right there**, sized to fit the phone screen and touch-usable
+  (freak-demo/index.html?embed=1, backline-demo/index.html). NOT a launch button. The demo should
+  fit its area with no awkward internal scroll; make it as usable as possible on a small touch
+  screen (the freak-demo has an embed mode — use/adjust it so it fits a phone). Lazy-load the
+  iframe src when the app opens (not before) so the home screen stays light.
+- **Aminal House**: the automation dashboard in one scrollable column — stats, pipeline steps
+  stacked, "Watch on YouTube" button. No horizontal overflow.
+- **Contact**: the working Formsubmit form full-width (To / From input / message / Send) + GitHub
+  & LinkedIn buttons, 44px+ touch targets. Send must still work.
 
 ## LOCKED — do not break
-Desktop experience stays 100% unchanged (only the mobile / `is-mobile` path changes), all
-wording/copy, the working Contact form (Formsubmit), real Aminal logo, real photos/captions,
-no emoji, cache-busting `?v=` tags. `node --check` clean on every JS file; zero console errors
-on BOTH mobile and desktop.
+Desktop experience 100% unchanged (only the mobile / `is-mobile` path changes), all wording/copy,
+the working Contact form (Formsubmit), real Aminal logo, real photos/captions, no emoji (use SVG),
+cache-busting `?v=` tags. `node --check` clean on every JS file; zero console errors on BOTH
+mobile and desktop.
 
 ## Architecture
-- `wm.js` detects mobile (`AlecOS.isMobile()`). Rebuild `buildMobile()` to construct the
-  horizontal scroll-snap pager and collect the page-slides from each app in ORDER (photos first).
-- Each app's mobile `build()` should produce its slide(s) as full-viewport `.mos-page` elements
-  the pager can place in the single track: **Photos → many slides (one per photo)**, the other
-  apps → one slide each. (You own all the files, so pick a clean way to hand slides to the pager —
-  e.g., the app appends its `.mos-page`(s) into a shared track element, or exposes them for the
-  shell to append. Just keep it in ONE horizontal scroll-snap track so it's one continuous swipe.)
-- Perf: lazy-load demo iframes; pause off-screen videos; use an IntersectionObserver or the
-  scroll position to know the active page. Respect prefers-reduced-motion.
+- `wm.js` detects mobile (`AlecOS.isMobile()`, true at ≤860px). Rebuild the mobile shell:
+  Springboard home + open/close full-screen app navigation + status bar + home indicator + iOS
+  transitions. Each registered app is opened full-screen showing its mobile content.
+- Each app's `build(ctx)` branches on `AlecOS.isMobile()` to render mobile content (Photos =
+  touch 3D coverflow; Freak/Backline = writeup + embedded demo; Aminal/Contact = single column).
+  The shell shows the app's content full-screen when its icon is tapped.
+- Perf: lazy-load a demo iframe only when its app opens; pause off-screen/closed videos; no
+  per-frame blur; respect prefers-reduced-motion.
 
 ## QA
-Local http://127.0.0.1:8777/. Phone width: `--window-size=390,844` (note: headless may report a
-wider innerWidth and crop the screenshot — verify structurally via DOM/geometry as well as
-screenshots). `AlecOS.isMobile()` is true at ≤860px. Verify: gallery is first and you can swipe
-photo→photo→…→into the projects; demos are embedded (not buttons); Contact form present + send
-wired; status bar + position indicator; and DESKTOP (1440×900) is completely unchanged.
+Local http://127.0.0.1:8777/ (server serves this repo). Phone widths: test 390×844 AND 360×780.
+Headless may report a wider innerWidth and crop screenshots, and the freak/backline demo canvases
+can hang a screenshot — so ALSO verify structurally via --dump-dom: home screen has 5 app icons
+none clipped, tapping opens an app full-screen, Photos has the coverflow (cards + dots), Freak/
+Backline app screens contain an <iframe> (embedded), Contact has the form, window.onerror empty,
+`AlecOS.isMobile()` true. Use an in-repo harness (tokens.css+wm.css+mobile.css+wm.js+3 app JS,
+AlecOS.boot()) if forcing mobile headless. Confirm DESKTOP 1440×900 is byte-unchanged (menu bar +
+dock + coverflow present, no mobile leak, zero errors). Clean up harness/screenshot files.
 
 ## File ownership
-ONE engineer owns ALL mobile code: `os/wm.js`, `os/mobile.css`, `os/app-media.js`,
-`os/app-freak.js`, `os/app-backline.js`, and may bump the `?v=` on the mobile.css link in
-`index.html`. Be surgical on the desktop paths (leave them byte-for-byte); rework only mobile.
-`node --check` all touched JS once at the end; report what you built.
+ONE engineer owns all mobile code: `os/wm.js`, `os/mobile.css`, `os/app-media.js`,
+`os/app-freak.js`, `os/app-backline.js`, and bump the mobile.css `?v=` in `index.html`. Rework
+only the mobile paths; leave desktop byte-for-byte. `node --check` all touched JS once; report
+what you built + how verified.

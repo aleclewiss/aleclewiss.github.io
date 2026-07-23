@@ -1,18 +1,19 @@
-/* AlecOS — MOBILE (continuous horizontal swipe pager).
+/* AlecOS — MOBILE (iPhone Springboard + full-screen apps).
    Active only under .aos-root.is-mobile. Loaded AFTER wm.css so these override the
-   older stacked-window mobile rules. Desktop is untouched.
+   older mobile rules. Desktop is untouched.
 
-   The whole mobile experience is ONE full-screen horizontal scroll-snap track
-   (.mos-pager) whose slides (.mos-page) come, in order, from every app: each photo
-   first, then Freak-Quencies, Backline, Aminal House and Contact. Native touch
-   swipe + momentum, one page per 100vw. */
+   The mobile experience is a real iOS home screen: the aurora wallpaper, a greeting,
+   and a grid of large rounded app icons. Tap an icon → the app opens full-screen with
+   an iOS scale/spring from the icon; a slim top bar carries a back chevron + the app
+   title; content scrolls with momentum. Back chevron or the home indicator (tap /
+   swipe-up) returns to the Springboard. */
 
 .aos-root.is-mobile{position:fixed;inset:0;overflow:hidden;background:var(--wall);
   font-family:-apple-system,"SF Pro Display","SF Pro Text","Inter",system-ui,sans-serif;
   -webkit-user-select:none;user-select:none;-webkit-text-size-adjust:100%;}
 .aos-root.is-mobile .aos-wall{opacity:1;}
 
-/* hide ALL desktop chrome + the empty desktop windows (mobile builds .mos-page slides) */
+/* hide ALL desktop chrome + the empty desktop windows */
 .aos-root.is-mobile .aos-menubar,
 .aos-root.is-mobile .aos-dock,
 .aos-root.is-mobile .aos-caption,
@@ -24,8 +25,8 @@
 .aos-root.is-mobile .aos-win,
 .aos-root.is-mobile .alt-view{ display:none !important; }
 
-/* ============ STATUS BAR (always visible) ============ */
-.mos-statusbar{position:fixed;top:0;left:0;right:0;z-index:60;pointer-events:none;
+/* ============ STATUS BAR (always visible, above everything) ============ */
+.mos-statusbar{position:fixed;top:0;left:0;right:0;z-index:90;pointer-events:none;
   height:calc(env(safe-area-inset-top,0px) + 22px);
   padding:0 24px 3px 26px;display:flex;align-items:flex-end;justify-content:space-between;
   color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.55);}
@@ -33,61 +34,113 @@
 .mos-sbr{display:flex;align-items:center;gap:6px;}
 .mos-sbr svg{height:12px;width:auto;color:#fff;display:block;}
 
-/* ============ THE PAGER (one horizontal scroll-snap track) ============ */
-.mos-pager{position:fixed;inset:0;z-index:20;display:flex;
-  overflow-x:auto;overflow-y:hidden;
-  scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
-  scrollbar-width:none;-ms-overflow-style:none;}
-.mos-pager::-webkit-scrollbar{display:none;}
+/* ============ SPRINGBOARD HOME ============ */
+.mos-home{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;
+  box-sizing:border-box;background:transparent;
+  padding:calc(env(safe-area-inset-top,0px) + 62px) 18px calc(env(safe-area-inset-bottom,0px) + 40px);
+  transition:opacity .42s ease,transform .42s cubic-bezier(.32,.72,0,1);}
+.mos-inapp .mos-home{opacity:0;transform:scale(1.12);pointer-events:none;}
 
-.mos-page{flex:0 0 100%;width:100vw;height:100%;scroll-snap-align:start;scroll-snap-stop:always;
-  position:relative;box-sizing:border-box;background:var(--wall);}
+.mos-greet{text-align:center;margin:6vh 0 5vh;}
+.mos-greet-k{display:block;font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:11px;font-weight:600;
+  letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.62);text-shadow:0 1px 4px rgba(0,0,0,.6);}
+.mos-greet h1{margin:8px 0 0;font-size:34px;font-weight:700;letter-spacing:-.03em;color:#fff;
+  text-shadow:0 2px 22px rgba(0,0,0,.65);}
 
-/* ============ PHOTO SLIDE (one photo per page — the gallery opener) ============ */
-.mos-shot{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
-  overflow:hidden;text-align:center;
-  padding:calc(env(safe-area-inset-top,0px) + 48px) 20px calc(env(safe-area-inset-bottom,0px) + 42px);
-  background:radial-gradient(120% 90% at 50% 0%,#1a1016,#0c0a0b 62%);}
-.mos-shot-hello{flex:none;font-size:15px;font-weight:700;letter-spacing:-.02em;color:#fff;
-  text-shadow:0 2px 14px rgba(0,0,0,.6);}
-.mos-shot-lbl{flex:none;font-family:ui-monospace,Menlo,monospace;font-size:11px;font-weight:600;
-  letter-spacing:.22em;text-transform:uppercase;color:#ff5c86;text-shadow:0 1px 3px rgba(0,0,0,.7);}
-.mos-shot-media{flex:1 1 auto;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;}
-.mos-shot-media img,.mos-shot-media video{max-width:100%;max-height:100%;width:auto;height:auto;
-  object-fit:contain;border-radius:18px;background:#141416;
-  box-shadow:0 30px 70px -30px #000,0 0 0 1px rgba(255,255,255,.06);}
-.mos-shot-cap{flex:none;font-size:16px;font-weight:500;line-height:1.4;color:#f0eef4;max-width:32ch;
-  text-shadow:0 1px 3px rgba(0,0,0,.5);}
+.mos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px 22px;width:100%;max-width:320px;
+  justify-items:center;}
+.mos-icon{border:0;background:none;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;
+  gap:8px;width:74px;-webkit-tap-highlight-color:transparent;transition:transform .14s ease;}
+.mos-icon:active{transform:scale(.9);}
+.mos-icon-tile{width:60px;height:60px;border-radius:15px;overflow:hidden;display:grid;place-items:center;flex:none;
+  background:linear-gradient(155deg,color-mix(in srgb,var(--tone) 42%,#22222c),#131318);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,.28),inset 0 -9px 16px rgba(0,0,0,.45),
+             0 8px 18px -8px rgba(0,0,0,.7);}
+.mos-icon-tile svg{width:100%;height:100%;display:block;}
+.mos-icon-lbl{font-size:12px;font-weight:500;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.7);
+  max-width:74px;text-align:center;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mos-icon:focus-visible{outline:none;}
+.mos-icon:focus-visible .mos-icon-tile{outline:2px solid #fff;outline-offset:3px;}
 
-/* ============ DEMO SLIDE (Freak-Quencies / Backline — real iframe embedded inline) ============ */
-.mos-demo{display:flex;flex-direction:column;overflow:hidden;
-  padding-top:calc(env(safe-area-inset-top,0px) + 40px);
-  background:linear-gradient(180deg,#161310,#0d0b08);}
-.mos-demo-hd{flex:none;padding:8px 20px 14px;}
-.mos-demo-h{margin:0;font-size:23px;font-weight:700;letter-spacing:-.03em;color:#fff;}
+/* ============ FULL-SCREEN APP VIEW ============ */
+.mos-appview{position:fixed;inset:0;z-index:40;display:flex;flex-direction:column;
+  background:#0d0c10;opacity:0;visibility:hidden;transform:scale(.32);transform-origin:50% 50%;
+  transition:transform .46s cubic-bezier(.32,.72,0,1),opacity .3s ease,visibility .46s;
+  overflow:hidden;}
+.mos-appview.is-open{opacity:1;visibility:visible;transform:none;}
+
+.mos-appbar{flex:none;position:relative;z-index:2;display:flex;align-items:center;gap:4px;
+  padding:calc(env(safe-area-inset-top,0px) + 26px) 8px 9px;
+  background:rgba(18,17,22,.82);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);
+  border-bottom:1px solid rgba(255,255,255,.07);}
+.mos-back{border:0;background:none;padding:2px 6px;cursor:pointer;display:inline-flex;align-items:center;
+  color:var(--m-accent,#4C8DFF);min-width:44px;min-height:36px;-webkit-tap-highlight-color:transparent;}
+.mos-back:active{opacity:.6;}
+.mos-apptitle{font-size:17px;font-weight:600;letter-spacing:-.01em;color:#f3f1f6;
+  position:absolute;left:50%;transform:translateX(-50%);pointer-events:none;
+  max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;}
+
+.mos-appscroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;display:flex;flex-direction:column;}
+.mos-appscroll.is-fill{overflow:hidden;}
+.mos-appscroll.is-fill .mos-page{flex:1 1 auto;min-height:0;}
+.mos-appscroll::-webkit-scrollbar{display:none;}
+
+.mos-page{width:100%;box-sizing:border-box;}
+
+/* ============ PHOTOS — touch 3D coverflow ============ */
+.moscf{display:flex;flex-direction:column;background:radial-gradient(120% 90% at 50% 0%,#170f14,#0b0a0b 64%);}
+.moscf-head{flex:none;text-align:center;padding:18px 18px 6px;display:flex;flex-direction:column;gap:7px;}
+.moscf-sec{font-family:ui-monospace,Menlo,monospace;font-size:11px;font-weight:600;letter-spacing:.22em;
+  text-transform:uppercase;color:#ff5c86;text-shadow:0 1px 3px rgba(0,0,0,.7);}
+.moscf-cap{font-size:18px;font-weight:600;letter-spacing:-.02em;line-height:1.2;color:#f0eef4;margin:0;
+  min-height:1.2em;text-wrap:balance;}
+.moscf-stage{flex:1;min-height:0;position:relative;perspective:1100px;overflow:hidden;cursor:grab;
+  touch-action:pan-y;}
+.moscf-stage:active{cursor:grabbing;}
+.moscf-card{position:absolute;left:50%;top:50%;height:88%;display:flex;align-items:center;justify-content:center;
+  transform-style:preserve-3d;will-change:transform,opacity;backface-visibility:hidden;
+  transition:transform .5s cubic-bezier(.22,1,.36,1),opacity .4s ease;}
+.moscf-stage.is-dragging .moscf-card{transition:none;}
+.moscf-card img,.moscf-card video{max-width:76vw;max-height:100%;width:auto;height:auto;object-fit:contain;
+  border-radius:16px;background:#141416;display:block;
+  box-shadow:0 30px 66px -30px #000,0 0 0 1px rgba(255,255,255,.08);}
+.moscf-card.is-side img,.moscf-card.is-side video{filter:brightness(.6) saturate(.9);}
+.moscf-dots{flex:none;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;
+  padding:12px 18px calc(env(safe-area-inset-bottom,0px) + 22px);}
+.moscf-dot{width:8px;height:8px;border-radius:50%;border:0;padding:0;cursor:pointer;
+  background:rgba(255,255,255,.28);transition:background .2s,transform .2s;-webkit-tap-highlight-color:transparent;}
+.moscf-dot.on{background:#E1306C;transform:scale(1.35);}
+
+/* ============ DEMO SCREEN (Freak-Quencies / Backline — real iframe inline) ============ */
+.mos-demo{display:flex;flex-direction:column;background:linear-gradient(180deg,#161310,#0d0b08);}
+.mos-demo-hd{flex:none;padding:14px 20px 12px;}
+.mos-demo-h{margin:0;font-size:22px;font-weight:700;letter-spacing:-.03em;color:#fff;}
 .mos-demo-d{margin:6px 0 0;font-size:13.5px;line-height:1.45;color:#a7a3af;}
-.mos-demo-frame{flex:1 1 auto;min-height:0;position:relative;background:#0d0b08;
+.mos-demo-frame{flex:1 1 auto;min-height:0;position:relative;background:#09090b;
   border-top:2px solid var(--m-accent,rgba(255,255,255,.14));}
 .mos-demo-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;}
 
-/* ============ PANE SLIDE (Aminal House / Contact — single-column, vertical scroll) ============ */
-.mos-pane{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:#0d0c10;}
+/* ============ PANE SCREEN (Aminal House / Contact — single-column scroll) ============ */
+.mos-pane{background:#0d0c10;}
 .mos-pane.m-aminal{background:radial-gradient(125% 80% at 50% -6%,#200c12,#0c0a0b 60%);}
 .mos-inner{width:100%;max-width:560px;margin:0 auto;box-sizing:border-box;color:#f3f1f6;
-  padding:calc(env(safe-area-inset-top,0px) + 46px) 20px calc(env(safe-area-inset-bottom,0px) + 64px);}
+  padding:20px 20px calc(env(safe-area-inset-bottom,0px) + 48px);}
 
-/* ============ POSITION INDICATOR (slim bar across ~18 pages) ============ */
-.mos-pos{position:fixed;left:0;right:0;z-index:58;pointer-events:none;
-  top:calc(env(safe-area-inset-top,0px) + 24px);height:2px;background:rgba(255,255,255,.14);}
-.mos-pos i{display:block;height:100%;width:0;border-radius:0 2px 2px 0;
-  background:rgba(255,255,255,.92);transition:width .12s linear;}
+/* ============ HOME INDICATOR (interactive in-app) ============ */
+.mos-homebar{position:fixed;left:50%;transform:translateX(-50%);z-index:70;
+  bottom:calc(env(safe-area-inset-bottom,0px) + 2px);
+  width:170px;height:24px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px;
+  pointer-events:none;}
+.mos-inapp .mos-homebar{pointer-events:auto;cursor:pointer;}
+.mos-homebar i{display:block;width:135px;height:5px;border-radius:3px;background:rgba(255,255,255,.6);}
 
-/* ============ HOME INDICATOR ============ */
-.mos-homebar{position:fixed;left:50%;transform:translateX(-50%);z-index:70;pointer-events:none;
-  bottom:calc(env(safe-area-inset-bottom,0px) + 7px);
-  width:135px;height:5px;border-radius:3px;background:rgba(255,255,255,.6);}
+/* the desktop-only "Signal Path" pill lives outside .aos-root (a <body> sibling), so it
+   can't be hidden by a descendant selector — suppress it on phones here. */
+@media (max-width:860px){ .alt-view{display:none !important;} }
 
 @media (prefers-reduced-motion: reduce){
-  .mos-pos i{transition:none;}
-  .mos-shot-media img,.mos-shot-media video{transition:none;}
+  .mos-home,.mos-appview{transition:opacity .2s ease;transform:none !important;}
+  .mos-appview.is-open{transform:none;}
+  .moscf-card{will-change:auto;}
 }
