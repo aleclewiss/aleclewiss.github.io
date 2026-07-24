@@ -21,9 +21,9 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 
-  <link rel="stylesheet" href="os/tokens.css?v=42">
-  <link rel="stylesheet" href="os/wm.css?v=42">
-  <link rel="stylesheet" href="os/mobile.css?v=42">
+  <link rel="stylesheet" href="os/tokens.css?v=45">
+  <link rel="stylesheet" href="os/wm.css?v=45">
+  <link rel="stylesheet" href="os/mobile.css?v=45">
 
   <!-- P5: pull the two known-critical, every-visit assets onto the critical path. The
        wallpaper lives only inside CSS (--wall) so it's otherwise discovered late; the hero
@@ -54,21 +54,21 @@
        Loaded as a module so it never blocks; wm.js feature-detects window.Motion and falls
        back to the browser's native smooth scroll if this fails to load. -->
   <script type="module">
-    try { window.Motion = await import("./os/vendor/motion.js?v=42"); }
+    try { window.Motion = await import("./os/vendor/motion.js?v=45"); }
     catch (e) { /* offline / blocked → wm.js uses its built-in fallback */ }
   </script>
   <!-- anime.js — playful, on-brand motion touches (dock stagger-in on wake, macOS-style
        dock bounce on app change). Vendored locally; feature-detected; site works without it. -->
   <script type="module">
-    try { window.anime = await import("./os/vendor/anime.js?v=42"); }
+    try { window.anime = await import("./os/vendor/anime.js?v=45"); }
     catch (e) { /* offline / blocked → touches are simply skipped */ }
   </script>
 
   <!-- Window manager first (defines window.AlecOS), then the apps register themselves. -->
-  <script src="os/wm.js?v=42" defer></script>
-  <script src="os/app-freak.js?v=42" defer></script>
-  <script src="os/app-backline.js?v=42" defer></script>
-  <script src="os/app-media.js?v=42" defer></script>
+  <script src="os/wm.js?v=45" defer></script>
+  <script src="os/app-freak.js?v=45" defer></script>
+  <script src="os/app-backline.js?v=45" defer></script>
+  <script src="os/app-media.js?v=45" defer></script>
   <script defer>
     // All deferred scripts run in order; boot once the last one (this) is reached.
     document.addEventListener("DOMContentLoaded", function () {
@@ -82,7 +82,7 @@
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", function () {
-        navigator.serviceWorker.register("sw.js?v=42").catch(function () { /* SW optional — site works without it */ });
+        navigator.serviceWorker.register("sw.js?v=45").catch(function () { /* SW optional — site works without it */ });
       });
     }
   </script>
