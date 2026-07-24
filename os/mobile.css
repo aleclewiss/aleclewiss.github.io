@@ -44,7 +44,7 @@
 .mos-greet{text-align:center;margin:2px 0 2px;flex:none;}
 .mos-greet-k{display:block;font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:10px;font-weight:600;
   letter-spacing:.26em;text-transform:uppercase;color:rgba(255,255,255,.55);text-shadow:0 1px 4px rgba(0,0,0,.6);}
-.mos-greet h1{margin:4px 0 0;font-size:24px;font-weight:700;letter-spacing:-.03em;color:#fff;
+.mos-greet h1{margin:4px 0 0;font-size:28px;font-weight:700;letter-spacing:-.03em;color:#fff;
   text-shadow:0 2px 22px rgba(0,0,0,.65);}
 
 .mos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px 22px;width:100%;max-width:320px;
@@ -74,8 +74,8 @@
   padding:calc(env(safe-area-inset-top,0px) + 10px) 8px 9px;
   background:rgba(18,17,22,.82);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);
   border-bottom:1px solid rgba(255,255,255,.07);}
-.mos-back{border:0;background:none;padding:2px 6px;cursor:pointer;display:inline-flex;align-items:center;
-  color:var(--m-accent,#4C8DFF);min-width:44px;min-height:36px;-webkit-tap-highlight-color:transparent;}
+.mos-back{border:0;background:none;padding:10px 6px;cursor:pointer;display:inline-flex;align-items:center;
+  color:var(--m-accent,#4C8DFF);min-width:44px;min-height:44px;-webkit-tap-highlight-color:transparent;}
 .mos-back:active{opacity:.6;}
 .mos-apptitle{font-size:17px;font-weight:600;letter-spacing:-.01em;color:#f3f1f6;
   position:absolute;left:50%;transform:translateX(-50%);pointer-events:none;
@@ -92,8 +92,8 @@
 .mos-home-cf{flex:1 1 auto;min-height:0;width:100%;position:relative;display:flex;margin-top:2px;}
 .mos-home-cf .moscf{flex:1 1 auto;min-height:0;width:100%;background:transparent;}
 /* app dock: a centered frosted pill of the (non-Photos) apps, with labels */
-.mos-dock{flex:none;display:flex;justify-content:center;align-items:flex-start;gap:16px;margin-top:14px;
-  padding:12px 16px 10px;border-radius:26px;
+.mos-dock{flex:none;display:flex;justify-content:center;align-items:flex-start;gap:8px;margin-top:14px;
+  padding:12px 12px 10px;border-radius:26px;
   background:rgba(30,30,36,.52);-webkit-backdrop-filter:blur(20px) saturate(1.6);backdrop-filter:blur(20px) saturate(1.6);
   box-shadow:0 1px 0 rgba(255,255,255,.13) inset,0 0 0 .5px rgba(255,255,255,.09),0 16px 34px -14px rgba(0,0,0,.6);}
 .mos-dock-i{border:0;background:none;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;
@@ -103,8 +103,11 @@
   background:linear-gradient(155deg,color-mix(in srgb,var(--tone) 44%,#26262e),#141419);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.24),0 5px 12px -4px rgba(0,0,0,.6);}
 .mos-dock-tile svg{width:100%;height:100%;display:block;}
-.mos-dock-lbl{font-size:10.5px;font-weight:500;color:rgba(255,255,255,.8);max-width:64px;text-align:center;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 3px rgba(0,0,0,.7);}
+/* F3/F4: 11px (>=legibility floor) and room to wrap to 2 lines so "Freak-Quencies" /
+   "Aminal House" read in full. max-width 74px keeps the four-up dock inside 360px. */
+.mos-dock-lbl{font-size:11px;font-weight:500;color:rgba(255,255,255,.8);max-width:74px;text-align:center;
+  line-height:1.18;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  text-shadow:0 1px 3px rgba(0,0,0,.7);}
 
 .mos-page{width:100%;box-sizing:border-box;}
 
@@ -125,9 +128,10 @@
   text-wrap:balance;text-shadow:0 2px 18px rgba(0,0,0,.8);transition:opacity .3s ease;}
 /* touch-action:none — the JS fully owns the swipe; the browser never scrolls/bounces the
    page vertically during a horizontal photo swipe (that was the up/down jitter).
-   fixed ~46vh height (not flex-grow) so the photo sits tight under the caption instead of
-   floating centered in a cavernous stage. */
-.moscf-stage{flex:0 0 46vh;min-height:0;position:relative;perspective:1200px;overflow:hidden;cursor:grab;
+   flex:1 1 auto so the stage CONSUMES the free column height — the photo + dots sit just
+   above the dock instead of leaving a ~170px cavern below the dots (F1). The head stays a
+   FIXED height (flex:none; height:74px) so a caption 1↔2-line swap never reflows the stage. */
+.moscf-stage{flex:1 1 auto;min-height:0;position:relative;perspective:1200px;overflow:hidden;cursor:grab;
   touch-action:none;}
 .moscf-stage:active{cursor:grabbing;}
 .moscf-card{position:absolute;left:50%;top:50%;height:100%;display:flex;align-items:center;justify-content:center;
@@ -142,16 +146,21 @@
   border-radius:18px;background:#141416;display:block;
   box-shadow:0 30px 66px -22px #000,0 0 0 1px rgba(255,255,255,.1);}
 .moscf-card.is-side img,.moscf-card.is-side video{filter:brightness(.55) saturate(.88);}
-.moscf-dots{flex:none;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;
-  padding:14px 18px calc(env(safe-area-inset-bottom,0px) + 22px);}
-.moscf-dot{width:8px;height:8px;border-radius:50%;border:0;padding:0;cursor:pointer;
-  background:rgba(255,255,255,.28);transition:background .2s,transform .2s;-webkit-tap-highlight-color:transparent;}
-.moscf-dot.on{background:#E1306C;transform:scale(1.35);}
+.moscf-dots{flex:none;display:flex;gap:0;justify-content:center;flex-wrap:nowrap;
+  padding:10px 8px calc(env(safe-area-inset-bottom,0px) + 16px);}
+/* F5: the visible dot stays 8px, but the button is a 22×34 transparent tap target (the dot
+   is drawn by ::before, centered). 14 targets × 22px + 16px pad = 324px → fits 360 with no
+   overflow, and every dot is comfortably tappable. */
+.moscf-dot{width:22px;height:34px;border:0;padding:0;cursor:pointer;background:none;
+  display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;}
+.moscf-dot::before{content:"";width:8px;height:8px;border-radius:50%;
+  background:rgba(255,255,255,.28);transition:background .2s,transform .2s;}
+.moscf-dot.on::before{background:#E1306C;transform:scale(1.35);}
 
 /* ============ DEMO SCREEN (Freak-Quencies / Backline — real iframe inline) ============ */
 .mos-demo{display:flex;flex-direction:column;background:linear-gradient(180deg,#161310,#0d0b08);}
 .mos-demo-hd{flex:none;padding:14px 20px 12px;}
-.mos-demo-h{margin:0;font-size:22px;font-weight:700;letter-spacing:-.03em;color:#fff;}
+.mos-demo-h{margin:0;font-size:28px;font-weight:700;letter-spacing:-.03em;color:#fff;}
 .mos-demo-d{margin:6px 0 0;font-size:13.5px;line-height:1.45;color:#a7a3af;}
 .mos-demo-frame{flex:1 1 auto;min-height:0;position:relative;background:#09090b;
   border-top:2px solid var(--m-accent,rgba(255,255,255,.14));}

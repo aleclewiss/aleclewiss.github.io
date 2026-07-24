@@ -296,7 +296,7 @@
       "  background:#0d0c10;color:#f3f1f6;font-family:-apple-system,'SF Pro Text','SF Pro Display',system-ui,sans-serif;",
       "  padding:6px 18px calc(30px + env(safe-area-inset-bottom))}",
       ".m-hd{padding:6px 2px 14px}",
-      ".m-title{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:0;line-height:1.05}",
+      ".m-title{font-size:28px;font-weight:700;letter-spacing:-.03em;margin:0;line-height:1.05}",
       ".m-sub{font-size:15px;color:#a7a3af;margin:5px 0 0;line-height:1.45}",
       ".m-sec-h{font-size:12.5px;font-weight:600;letter-spacing:.06em;color:#8b8790;text-transform:uppercase;margin:24px 2px 11px}",
       ".m-photo{margin:0 0 18px}",
@@ -436,6 +436,13 @@
             var off = i - p, abs = Math.abs(off), cl = Math.min(abs, 3);
             var offc = Math.max(-3, Math.min(3, off));
             var tx = off * sp, tz = -cl * 80, ry = -offc * 30, sc = Math.max(0.7, 1 - cl * 0.11);
+            // F8: only the centered (±1) video is alive; off-screen ones stay paused (battery/
+            // decoder). The centered one auto-plays with no tap, mirroring desktop layout().
+            var vid = card.querySelector("video");
+            if (vid) {
+              if (abs <= 1.2) { if (vid.paused) vid.play().catch(function () {}); }
+              else if (!vid.paused) { try { vid.pause(); } catch (e) {} }
+            }
             // far cards don't paint/composite — only ~5 layers live at once (perf on phones)
             var far = abs > 2.6;
             card.classList.toggle("far", far);
@@ -458,11 +465,7 @@
           warm(center);   // decode the cards around wherever we've landed
           dots.forEach(function (d, di) { d.classList.toggle("on", di === center); });
         }
-        // videos just play, always looping — no "select to play", so the carousel is alive
-        cards.forEach(function (card) {
-          var v = card.querySelector("video");
-          if (v) { v.play().catch(function () {}); }
-        });
+        // video play/pause is managed per-frame in place() (F8): only the centered video runs.
         function go(i) { pos = Math.max(0, Math.min(N - 1, i)); stageEl.classList.remove("is-dragging"); place(pos); }
 
         // rAF-throttle the drag: touchmove can fire 120×/s, and each place() loops every card —
@@ -649,7 +652,11 @@
             '<div class="m-hd"><h1 class="m-title">It runs itself.</h1>' +
               '<p class="m-sub">@Aminal_House — a dog-shorts channel that posts on its own.</p></div>' +
             '<a class="m-btn m-btn-primary" style="--m-accent:#ff0033;color:#fff;margin-bottom:20px" href="https://www.youtube.com/@Aminal_House" target="_blank" rel="noopener">' +
-              '<span style="width:22px;height:16px;display:inline-flex">' + ICON_YOUTUBE + '</span>Watch on YouTube</a>' +
+              /* F6: monochrome WHITE YouTube glyph (outline + play) — the red-fill ICON_YOUTUBE
+                 vanished on the red button and left a stray white triangle. */
+              '<span style="width:22px;height:16px;display:inline-flex" aria-hidden="true">' +
+                '<svg viewBox="0 0 24 17" width="22" height="16"><rect x="1" y="1" width="22" height="15" rx="4.6" fill="none" stroke="#fff" stroke-width="1.6"/><path d="M9.6 5 15.2 8.5 9.6 12z" fill="#fff"/></svg>' +
+              '</span>Watch on YouTube</a>' +
             '<div class="m-astats">' +
               '<div class="m-astat hero"><b>177,653</b><span>total views</span></div>' +
               '<div class="m-astat"><b>321</b><span>subscribers</span></div>' +

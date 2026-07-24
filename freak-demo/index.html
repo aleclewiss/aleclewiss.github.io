@@ -123,25 +123,27 @@
     border-color:#ffffff14;
   }
 
-  /* Embedded in a PORTRAIT frame (phone): the plugin is a fixed 1280x680 landscape canvas,
-     so never stretch it. Keep true aspect, size it to the full width, and center the whole
-     device (stage + controls) in the frame. object-fit is a belt-and-suspenders no-stretch. */
+  /* Embedded in a PORTRAIT frame (phone) — F2: the plugin is a fixed 1280x680 landscape
+     canvas whose desktop two-pane (EQ + compressor) layout is illegibly cramped when squeezed
+     into phone width. So make the EQ the READABLE HERO: zoom the stage to ~140% frame width so
+     the EQ pane fills the screen, and let the compressor pane run off the right edge (clipped
+     by the wrap) — the EQ, its band selector and the AI-Analyze button stay fully visible and
+     interactive (pointer maths use the canvas's own rect, so the zoom is transparent to it).
+     Top-align the whole device to kill the ~115px dead band that vertical-centering created. */
   @media (max-aspect-ratio: 1/1){
-    /* clean, contained card layout: everything centered vertically with even margins.
-       The EQ canvas is a rounded card (fixed 1280x680 shape, never stretched), and the
-       controls sit in a matching card below — consistent gutters, iOS spacing. */
     html.embed body{ background:radial-gradient(120% 80% at 50% 0%,#12131a,#090a0e 62%); }
     html.embed .wrap{
-      justify-content:center; gap:14px;
-      padding:16px 14px calc(env(safe-area-inset-bottom,0px) + 16px);
+      justify-content:flex-start; align-items:flex-start; gap:14px; overflow:hidden;
+      padding:12px 14px calc(env(safe-area-inset-bottom,0px) + 14px);
     }
     html.embed .stage{
-      flex:0 0 auto; width:100%; height:auto; aspect-ratio:1280/680; max-height:none; margin:0;
+      flex:0 0 auto; align-self:flex-start;
+      width:140%; height:auto; max-width:none; max-height:none; aspect-ratio:1280/680; margin:0;
       border-radius:16px; box-shadow:0 0 0 1px #ffffff14, 0 20px 44px -22px #000;
     }
     html.embed canvas{object-fit:contain;}
     html.embed .bar{
-      border-radius:16px; margin:0; padding:14px;
+      flex:0 0 auto; align-self:stretch; border-radius:16px; margin:0; padding:14px;
       box-shadow:0 0 0 1px #ffffff10, 0 16px 34px -20px #000;
     }
   }
