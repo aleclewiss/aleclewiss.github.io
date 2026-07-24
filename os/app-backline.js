@@ -215,7 +215,7 @@
             '<p class="mos-demo-d">Backline — a music generator. Describe a sound in plain words and it renders real, usable audio in seconds, from a diffusion model I run locally.</p>' +
           '</div>' +
           '<div class="mos-demo-frame">' +
-            '<iframe data-src="backline-demo/index.html?v=39" title="Backline — the real music generator" ' +
+            '<iframe data-src="backline-demo/index.html?v=42" title="Backline — the real music generator" ' +
               'allow="autoplay; clipboard-write; encrypted-media; fullscreen" scrolling="auto"></iframe>' +
           '</div>';
         ctx.addPage(pg);
@@ -394,7 +394,7 @@
       // Mount the launchDemo node into a dedicated overlay so (a) it lives in the DOM
       // and the shell auto-loads it the moment Backline becomes the focused Space, and
       // (b) it presents at full window size, usable. "Overview" returns to the mock.
-      var demoNode = ctx.launchDemo("backline-demo/index.html?v=39", {
+      var demoNode = ctx.launchDemo("backline-demo/index.html?v=42", {
         label: "Launch the real Backline",
         note: "the actual app — describe a sound, generate, audition, live in your browser"
       });

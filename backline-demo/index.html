@@ -461,6 +461,42 @@
       line-height: 1.4; font-size: 11px; padding: 7px 16px 8px; }
     .demo-foot .dot-sep, .demo-foot .spacer, .demo-foot .foot-long { display: none; }
   }
+
+  /* ===== Auto-play guided tour ===== */
+  .tour-layer{position:fixed;inset:0;z-index:1000;pointer-events:none;opacity:0;transition:opacity .4s ease;}
+  .tour-layer.on{opacity:1;}
+  .tour-scrim{position:absolute;inset:0;background:rgba(8,7,5,.34);opacity:0;transition:opacity .4s;}
+  .tour-layer.on .tour-scrim{opacity:1;}
+  .tour-cursor{position:absolute;left:0;top:0;width:26px;height:26px;z-index:3;
+    transition:transform .7s cubic-bezier(.5,0,.2,1);will-change:transform;filter:drop-shadow(0 3px 6px rgba(0,0,0,.6));}
+  .tour-cursor svg{width:100%;height:100%;display:block;}
+  .tour-cursor.tap{animation:tour-tap .32s ease;}
+  @keyframes tour-tap{40%{transform:scale(.8)}}
+  .tour-ring{position:absolute;z-index:2;border:2px solid #d3a24c;border-radius:12px;
+    box-shadow:0 0 0 4px rgba(211,162,76,.18),0 0 22px rgba(211,162,76,.4);opacity:0;
+    transition:opacity .3s,left .6s cubic-bezier(.5,0,.2,1),top .6s,width .6s,height .6s;pointer-events:none;}
+  .tour-ring.on{opacity:1;}
+  .tour-ring.pulse{animation:tour-pulse 1.1s ease-in-out infinite;}
+  @keyframes tour-pulse{50%{box-shadow:0 0 0 8px rgba(211,162,76,.08),0 0 30px rgba(211,162,76,.5)}}
+  .tour-cap{position:absolute;left:50%;bottom:22px;transform:translateX(-50%) translateY(8px);z-index:4;
+    max-width:min(86%,440px);padding:12px 18px;border-radius:14px;text-align:center;
+    background:rgba(20,17,13,.9);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+    border:1px solid rgba(255,255,255,.1);box-shadow:0 16px 40px -16px #000;
+    color:#f2efe8;font-size:14px;line-height:1.45;opacity:0;transition:opacity .35s,transform .35s;}
+  .tour-cap.on{opacity:1;transform:translateX(-50%) translateY(0);}
+  .tour-cap b{color:#e6bd6f;font-weight:600;}
+  .tour-skip{position:absolute;top:12px;right:14px;z-index:5;pointer-events:auto;cursor:pointer;
+    font:600 12px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#cabfa8;
+    background:rgba(20,17,13,.8);border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:8px 14px;}
+  .tour-skip:hover{color:#fff;}
+  .tour-replay{position:fixed;right:14px;bottom:14px;z-index:900;pointer-events:auto;cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px;font:600 12px/1 inherit;color:#f2efe8;
+    background:rgba(20,17,13,.82);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:9px 15px;
+    box-shadow:0 10px 26px -12px #000;opacity:0;transform:translateY(8px);transition:opacity .4s,transform .4s;}
+  .tour-replay.show{opacity:1;transform:none;}
+  .tour-replay svg{width:14px;height:14px;}
+  @media (prefers-reduced-motion:reduce){.tour-cursor,.tour-ring{transition:none}}
 </style>
 </head>
 <body>
@@ -1258,6 +1294,69 @@
   drawWave(null, 0);
   addEventListener('resize', () => drawWave(playing || lastShown, 0));
   requestAnimationFrame(raf);
+
+  /* =================== AUTO-PLAY GUIDED TOUR ===================
+     A cursor types a prompt, hits Generate, and captions narrate. Runs once
+     on first open; a Replay button repeats it. Lives inside the IIFE so it can
+     call generate() and reach promptEl / generateBtn. */
+  (function(){
+    const CURSOR='<svg viewBox="0 0 24 24" fill="#fff" stroke="#111" stroke-width="1"><path d="M5 3l15 8.5-6.4 1.2 3.5 6.8-2.9 1.5-3.5-6.8L5 20z"/></svg>';
+    const REPLAY_IC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>';
+    const layer=document.createElement('div'); layer.className='tour-layer';
+    layer.innerHTML='<div class="tour-scrim"></div><div class="tour-ring"></div>'+
+      '<div class="tour-cursor">'+CURSOR+'</div><div class="tour-cap"></div>'+
+      '<button class="tour-skip" type="button">SKIP ✕</button>';
+    document.body.appendChild(layer);
+    const replay=document.createElement('button'); replay.className='tour-replay';
+    replay.innerHTML=REPLAY_IC+'<span>Watch how it works</span>';
+    document.body.appendChild(replay);
+    const scrim=layer.querySelector('.tour-scrim'), ring=layer.querySelector('.tour-ring'),
+          cursor=layer.querySelector('.tour-cursor'), cap=layer.querySelector('.tour-cap'),
+          skip=layer.querySelector('.tour-skip');
+    let running=false, cancelled=false, timers=[];
+    const wait=ms=>new Promise(res=>{const t=setTimeout(res,ms);timers.push(t);});
+    function center(el){ if(!el) return null; const r=el.getBoundingClientRect(); return {x:r.left+r.width/2,y:r.top+r.height/2,w:r.width,h:r.height}; }
+    function moveTo(p){ cursor.style.transform='translate('+(p.x-4)+'px,'+(p.y-2)+'px)'; }
+    function showRing(p){ ring.style.left=(p.x-p.w/2-8)+'px'; ring.style.top=(p.y-p.h/2-8)+'px'; ring.style.width=(p.w+16)+'px'; ring.style.height=(p.h+16)+'px'; ring.classList.add('on','pulse'); }
+    function hideRing(){ ring.classList.remove('on','pulse'); }
+    function say(html){ cap.classList.remove('on'); cap.innerHTML=html; requestAnimationFrame(()=>cap.classList.add('on')); }
+    function tap(){ cursor.classList.remove('tap'); void cursor.offsetWidth; cursor.classList.add('tap'); }
+    function endTour(){ running=false; timers.forEach(clearTimeout); timers=[]; layer.classList.remove('on'); hideRing(); setTimeout(()=>replay.classList.add('show'),300); }
+    skip.onclick=()=>{ cancelled=true; endTour(); };
+    async function typeInto(el, text){ el.value=''; el.focus();
+      for(let i=0;i<text.length;i++){ if(cancelled) return; el.value=text.slice(0,i+1); await wait(38); } }
+
+    async function run(){
+      if(running) return; running=true; cancelled=false; replay.classList.remove('show');
+      layer.classList.add('on'); cap.classList.remove('on');
+      moveTo({x:innerWidth/2,y:innerHeight/2}); await wait(120);
+      if(cancelled) return;
+      // step 1: the prompt
+      const pr=center(promptEl); if(pr){ moveTo(pr); showRing(pr); }
+      say('Start by describing any sound in plain words.'); await wait(1200);
+      if(cancelled) return;
+      await typeInto(promptEl, 'heartfelt acoustic guitar, warm fingerpicking'); await wait(700);
+      if(cancelled) return;
+      // step 2: generate
+      const gb=center(generateBtn); if(gb){ moveTo(gb); showRing(gb); await wait(800); }
+      if(cancelled) return;
+      tap(); say('Hit <b>Generate</b> — Backline renders a real, usable take in seconds.');
+      try{ generateBtn.click(); }catch(e){}
+      await wait(2800);
+      if(cancelled) return;
+      // step 3: play the result
+      const pb=center(document.getElementById('pbPlay'));
+      if(pb){ moveTo(pb); showRing(pb); await wait(800);
+        if(cancelled) return; tap(); say('Play it back — that’s genuine generated audio.'); await wait(1900); }
+      if(cancelled) return;
+      hideRing(); say('Now try your own prompt. Generate as many as you like.'); await wait(2000);
+      endTour();
+    }
+    replay.onclick=run;
+    let seen=false; try{ seen=localStorage.getItem('bl-tour')==='1'; }catch(e){}
+    if(!seen && !reducedMotion){ try{ localStorage.setItem('bl-tour','1'); }catch(e){} setTimeout(run, 900); }
+    else { replay.classList.add('show'); }
+  })();
 })();
 </script>
 </body>
