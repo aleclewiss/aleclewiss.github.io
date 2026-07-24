@@ -411,7 +411,7 @@
           // place() assigns src + play()s a card once it becomes centered, so off-screen clips
           // are never downloaded at first paint.
           var m = s.video
-            ? '<video data-src="' + BASE + s.f + '" poster="' + BASE + esc(s.poster) + '" muted loop playsinline preload="none"></video>'
+            ? '<video data-src="' + BASE + s.f + '?q=720" poster="' + BASE + esc(s.poster) + '" muted loop playsinline preload="none"></video>'
             : '<img src="' + BASE + "720/" + s.f.replace(/\.jpg$/, ".webp") + '" alt="' + esc(s.alt) + '" decoding="async"' + pr + '>';
           return '<div class="moscf-card">' + m + '</div>';
         }).join("");
@@ -537,7 +537,7 @@
         // fallback <img> so non-WebP browsers are unaffected. The <img> is still what the
         // .pc-card styles target ( <picture> is display:contents — see am-media-styles ).
         var m = s.video
-          ? '<video src="' + BASE + s.f + '" poster="' + BASE + s.poster + '" muted loop playsinline></video>'
+          ? '<video src="' + BASE + s.f + '?q=720" poster="' + BASE + s.poster + '" muted loop playsinline></video>'
           : '<picture><source type="image/webp" srcset="' + BASE + s.f.replace(/\.jpg$/, ".webp") +
             '"><img src="' + BASE + s.f + '" alt="' + esc(s.alt) + '" loading="lazy"></picture>';
         return '<div class="pc-card">' + m + '</div>';
