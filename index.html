@@ -21,9 +21,17 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 
-  <link rel="stylesheet" href="os/tokens.css?v=39">
-  <link rel="stylesheet" href="os/wm.css?v=39">
-  <link rel="stylesheet" href="os/mobile.css?v=39">
+  <link rel="stylesheet" href="os/tokens.css?v=40">
+  <link rel="stylesheet" href="os/wm.css?v=40">
+  <link rel="stylesheet" href="os/mobile.css?v=40">
+
+  <!-- P5: pull the two known-critical, every-visit assets onto the critical path. The
+       wallpaper lives only inside CSS (--wall) so it's otherwise discovered late; the hero
+       photo is built by JS. Desktop shows the 1280px JPEG, mobile the 720px WebP — preload
+       the one each viewport actually uses so neither downloads a variant it won't show. -->
+  <link rel="preload" as="image" href="assets/wallpaper.jpg">
+  <link rel="preload" as="image" href="assets/personal/gf-and-me.jpg" media="(min-width: 861px)" fetchpriority="high">
+  <link rel="preload" as="image" href="assets/personal/720/gf-and-me.webp" media="(max-width: 860px)" fetchpriority="high">
 </head>
 <body>
   <noscript>
@@ -41,30 +49,42 @@
   <a class="alt-view" href="signalpath.html" style="position:fixed;right:14px;bottom:10px;z-index:70;font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#9A94A0;text-decoration:none;padding:.5rem .8rem;border:1px solid rgba(255,255,255,.14);border-radius:999px;background:rgba(12,12,16,.6);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)">Signal Path &#8599;</a>
   <div id="alecos" aria-label="Alec Lewis — interactive desktop"></div>
 
-  <!-- Motion (motion.dev) — springs the scroll snap with real physics. Loaded as a
-       module so it never blocks; wm.js feature-detects window.Motion and falls back to
-       the browser's native smooth scroll if this fails to load. -->
+  <!-- Motion (motion.dev) — springs the scroll snap with real physics. Vendored locally
+       (P4: was cdn.jsdelivr.net) so there's no cross-origin DNS/TLS or third-party dependency.
+       Loaded as a module so it never blocks; wm.js feature-detects window.Motion and falls
+       back to the browser's native smooth scroll if this fails to load. -->
   <script type="module">
-    try { window.Motion = await import("https://cdn.jsdelivr.net/npm/motion@11/+esm"); }
+    try { window.Motion = await import("./os/vendor/motion.js?v=40"); }
     catch (e) { /* offline / blocked → wm.js uses its built-in fallback */ }
   </script>
   <!-- anime.js — playful, on-brand motion touches (dock stagger-in on wake, macOS-style
-       dock bounce on app change). Feature-detected; the site works fine without it. -->
+       dock bounce on app change). Vendored locally; feature-detected; site works without it. -->
   <script type="module">
-    try { window.anime = await import("https://cdn.jsdelivr.net/npm/animejs@4/+esm"); }
+    try { window.anime = await import("./os/vendor/anime.js?v=40"); }
     catch (e) { /* offline / blocked → touches are simply skipped */ }
   </script>
 
   <!-- Window manager first (defines window.AlecOS), then the apps register themselves. -->
-  <script src="os/wm.js?v=39" defer></script>
-  <script src="os/app-freak.js?v=39" defer></script>
-  <script src="os/app-backline.js?v=39" defer></script>
-  <script src="os/app-media.js?v=39" defer></script>
+  <script src="os/wm.js?v=40" defer></script>
+  <script src="os/app-freak.js?v=40" defer></script>
+  <script src="os/app-backline.js?v=40" defer></script>
+  <script src="os/app-media.js?v=40" defer></script>
   <script defer>
     // All deferred scripts run in order; boot once the last one (this) is reached.
     document.addEventListener("DOMContentLoaded", function () {
       if (window.AlecOS && typeof window.AlecOS.boot === "function") window.AlecOS.boot();
     });
+  </script>
+
+  <!-- P6: service worker for near-instant repeat visits. Registered after load so it never
+       competes with the first paint. skipWaiting + clients.claim in sw.js make a version bump
+       take effect on the next navigation; old caches are evicted on activate. -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker.register("sw.js?v=40").catch(function () { /* SW optional — site works without it */ });
+      });
+    }
   </script>
 </body>
 </html>

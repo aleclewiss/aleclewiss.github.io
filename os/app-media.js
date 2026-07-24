@@ -133,6 +133,7 @@
       ".pc-card{position:absolute;left:50%;top:50%;height:80%;display:flex;align-items:center;justify-content:center;",
       "  transform-style:preserve-3d;will-change:transform,opacity;",
       "  transition:transform .62s cubic-bezier(.22,1,.36,1),opacity .5s ease}",
+      ".pc-card picture{display:contents}",   /* P3: <picture> wrapper must not become the flex child — keep <img> the styled item */
       ".pc-card img,.pc-card video{max-height:100%;max-width:46vw;width:auto;border-radius:16px;object-fit:contain;display:block;",
       "  box-shadow:0 44px 100px -40px #000,0 0 0 1px rgba(255,255,255,.08)}",
       ".pc-card.is-side img,.pc-card.is-side video{filter:brightness(.62) saturate(.9)}",
@@ -405,9 +406,13 @@
           // hero + first neighbours load with high priority; the rest still load (not lazy,
           // so no pop-in when you swipe) but don't compete with the first paint.
           var pr = i === 0 ? ' fetchpriority="high"' : (i <= 2 ? "" : ' fetchpriority="low"');
+          // P1: mobile shows a ~330px card — serve the 720px WebP (q80), not the 1280px JPEG.
+          // P2: videos carry only a data-src + poster at boot (preload="none", no autoplay);
+          // place() assigns src + play()s a card once it becomes centered, so off-screen clips
+          // are never downloaded at first paint.
           var m = s.video
-            ? '<video src="' + BASE + s.f + '" poster="' + BASE + esc(s.poster) + '" muted loop playsinline autoplay preload="auto"></video>'
-            : '<img src="' + BASE + s.f + '" alt="' + esc(s.alt) + '" decoding="async"' + pr + '>';
+            ? '<video data-src="' + BASE + s.f + '" poster="' + BASE + esc(s.poster) + '" muted loop playsinline preload="none"></video>'
+            : '<img src="' + BASE + "720/" + s.f.replace(/\.jpg$/, ".webp") + '" alt="' + esc(s.alt) + '" decoding="async"' + pr + '>';
           return '<div class="moscf-card">' + m + '</div>';
         }).join("");
         var page = document.createElement("div");
@@ -440,8 +445,15 @@
             // decoder). The centered one auto-plays with no tap, mirroring desktop layout().
             var vid = card.querySelector("video");
             if (vid) {
-              if (abs <= 1.2) { if (vid.paused) vid.play().catch(function () {}); }
-              else if (!vid.paused) { try { vid.pause(); } catch (e) {} }
+              if (abs <= 1.2) {
+                // centered: attach the real source on first arrival, then autoplay (P2).
+                if (!vid.src && vid.dataset.src) { vid.preload = "auto"; vid.src = vid.dataset.src; vid.load(); }
+                if (vid.paused) vid.play().catch(function () {});
+              } else {
+                if (!vid.paused) { try { vid.pause(); } catch (e) {} }
+                // warm the neighbour one swipe away with metadata only, to hide swap latency.
+                if (abs <= 2.2 && !vid.src && vid.dataset.src) { vid.preload = "metadata"; vid.src = vid.dataset.src; }
+              }
             }
             // far cards don't paint/composite — only ~5 layers live at once (perf on phones)
             var far = abs > 2.6;
@@ -521,9 +533,13 @@
       });
 
       var cardsHTML = ITEMS.map(function (s) {
+        // P3: serve a 1280px WebP (q80) via <picture>, with the original JPEG as the
+        // fallback <img> so non-WebP browsers are unaffected. The <img> is still what the
+        // .pc-card styles target ( <picture> is display:contents — see am-media-styles ).
         var m = s.video
           ? '<video src="' + BASE + s.f + '" poster="' + BASE + s.poster + '" muted loop playsinline></video>'
-          : '<img src="' + BASE + s.f + '" alt="' + esc(s.alt) + '" loading="lazy">';
+          : '<picture><source type="image/webp" srcset="' + BASE + s.f.replace(/\.jpg$/, ".webp") +
+            '"><img src="' + BASE + s.f + '" alt="' + esc(s.alt) + '" loading="lazy"></picture>';
         return '<div class="pc-card">' + m + '</div>';
       }).join("");
       ctx.body.innerHTML =
